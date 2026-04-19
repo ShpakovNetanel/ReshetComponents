@@ -4,6 +4,14 @@
   "description": "ReshetComponents React component library extracted from the Daba frontend base components.",
   "type": "module",
   "private": false,
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ShpakovNetanel/ReshetComponents"
+  },
+  "homepage": "https://github.com/ShpakovNetanel/ReshetComponents",
+  "bugs": {
+    "url": "https://github.com/ShpakovNetanel/ReshetComponents/issues"
+  },
   "main": "./dist/index.js",
   "module": "./dist/index.js",
   "types": "./dist/index.d.ts",
