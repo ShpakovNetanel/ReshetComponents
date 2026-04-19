@@ -1,5 +1,3 @@
-declare module '*.css';
-
 import './theme.css';
 
 export { Accordion } from './baseComponents/Accordion/Accordion';
