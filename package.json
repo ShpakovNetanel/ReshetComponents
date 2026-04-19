@@ -1,6 +1,6 @@
 {
   "name": "reshet-components",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "ReshetComponents React component library extracted from the Daba frontend base components.",
   "type": "module",
   "private": false,
