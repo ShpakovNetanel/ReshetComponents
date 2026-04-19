@@ -1,0 +1,85 @@
+@layer base {
+    .InputWrapper {
+        position: relative;
+        display: inline-flex;
+        align-items: center;
+        background: transparent;
+        direction: ltr;
+        border: 1px solid var(--color-navbar-border);
+        border-radius: var(--navbar-radius);
+        padding: 0 0.5rem;
+        height: 2rem;
+    }
+
+    .Date {
+        border: none;
+        background: transparent;
+        color: var(--color-navbar-foreground);
+        padding: 0;
+        width: 5.5rem;
+        height: fit-content;
+        font-size: 0.8rem;
+        text-align: right;
+    }
+
+    .Date:focus {
+        outline: none;
+    }
+
+    .Date::placeholder {
+        color: var(--color-navbar-foreground-muted);
+    }
+
+    .IconButton {
+        order: -1;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 1rem;
+        border-radius: 0.9rem;
+        border: none;
+        background: transparent;
+        color: var(--color-navbar-foreground);
+        cursor: pointer;
+        padding: 0;
+        transition:
+            color 150ms ease,
+            transform 150ms ease;
+    }
+
+    .CalendarIcon {
+        width: 1.8rem;
+        height: 1.8rem;
+        stroke-width: 1.7;
+    }
+
+    .Popup {
+        box-sizing: border-box;
+        background: var(--color-datepicker-background);
+        color: var(--color-datepicker-text);
+        transform-origin: var(--transform-origin);
+        transition:
+            transform 150ms ease,
+            opacity 150ms ease;
+        border: 1px solid var(--color-datepicker-border);
+        border-radius: 1rem;
+        padding: 14px;
+        box-shadow: 0 24px 60px var(--color-datepicker-shadow);
+        backdrop-filter: blur(16px) saturate(1.2);
+        -webkit-backdrop-filter: blur(16px) saturate(1.2);
+
+        &[data-starting-style],
+        &[data-ending-style] {
+            opacity: 0;
+            transform: scale(0.96);
+        }
+    }
+
+    .PopupStack {
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        gap: 0.35rem;
+        width: fit-content;
+    }
+}

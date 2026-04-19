@@ -1,0 +1,124 @@
+@layer base {
+  :root,
+  [data-theme='light'] {
+    --color-blue: oklch(45% 50% 264deg);
+    --color-red: oklch(50% 55% 31deg);
+
+    --color-gray-50: oklch(98% 0.25% 264deg);
+    --color-gray-100: oklch(12% 9.5% 264deg / 5%);
+    --color-gray-200: oklch(12% 9% 264deg / 7%);
+    --color-gray-300: oklch(74.123% 0.00008 271.152 / 0.17);
+    --color-gray-400: oklch(12% 8% 264deg / 38%);
+    --color-gray-500: oklch(12% 7.5% 264deg / 50%);
+    --color-gray-600: oklch(12% 7% 264deg / 67%);
+    --color-gray-700: oklch(12% 6% 264deg / 77%);
+    --color-gray-800: oklch(12% 5% 264deg / 85%);
+    --color-gray-900: oklch(12% 5% 264deg / 90%);
+    --color-gray-950: oklch(12% 5% 264deg / 95%);
+
+    --color-background: #f6f8fb;
+    --color-border: #5479f71f;
+    --color-navbar-background: rgb(51, 61, 73);
+    --color-navbar-border: #4f5764;
+    --color-navbar-foreground: #eef1f5;
+    --color-navbar-foreground-muted: rgba(238, 241, 245, 0.55);
+    --color-header-separator: rgba(255, 255, 155, 0.3);
+
+    --color-text-primary: #121316;
+    --color-text-secondary: #75769a;
+    --color-text-muted: #535353;
+
+    --color-surface: #ffffff;
+    --color-surface-elevated: #fdfdff;
+    --color-surface-overlay: rgb(0 0 0 / 0.05);
+    --color-surface-hover: rgb(212, 219, 234);
+    --color-surface-selected: rgb(225, 246, 255);
+    --color-surface-divider: #e9edfe;
+
+    --color-popup-outline: var(--color-gray-200);
+    --color-popup-shadow: rgba(0, 0, 0, 0.12);
+    --color-backdrop: rgba(0, 0, 0, 0.4);
+
+    --color-datepicker-background: rgba(250, 250, 252, 0.95);
+    --color-datepicker-text: #121316;
+    --color-datepicker-border: rgba(0, 0, 0, 0.12);
+    --color-datepicker-shadow: rgba(0, 0, 0, 0.24);
+    --color-calendar-accent: #0a84ff;
+    --color-calendar-accent-soft: rgba(10, 132, 255, 0.12);
+    --color-calendar-surface: #f7f8fb;
+    --color-calendar-surface-strong: #e9edf4;
+    --color-calendar-text: #1c1f24;
+    --color-calendar-text-muted: #7a808a;
+    --color-calendar-border: rgba(17, 24, 39, 0.12);
+    --color-calendar-shadow: rgba(0, 0, 0, 0.1);
+    --color-calendar-outside: rgba(122, 128, 138, 0.55);
+    --color-calendar-disabled: rgba(122, 128, 138, 0.4);
+    --color-calendar-disabled-selected: rgba(255, 255, 255, 0.9);
+
+    --color-success-button-background: #6cc275;
+    --color-success-button-foreground: #ffffff;
+
+    --navbar-radius: 0.625rem;
+  }
+
+  [data-theme='dark'] {
+    --color-blue: #7bafff;
+    --color-red: #ff928d;
+
+    --color-gray-50: #1a2333;
+    --color-gray-100: rgba(132, 149, 184, 0.12);
+    --color-gray-200: rgba(148, 168, 196, 0.18);
+    --color-gray-300: rgba(188, 204, 227, 0.26);
+    --color-gray-400: rgba(201, 213, 234, 0.42);
+    --color-gray-500: #8e9bb1;
+    --color-gray-600: #aab6c9;
+    --color-gray-700: #c7d1e0;
+    --color-gray-800: #dce4f0;
+    --color-gray-900: #f3f7fb;
+    --color-gray-950: #f9fbff;
+
+    --color-background: #0f1624;
+    --color-border: rgba(122, 144, 182, 0.2);
+    --color-navbar-background: #1d2636;
+    --color-navbar-border: rgba(160, 177, 208, 0.18);
+    --color-navbar-foreground: #f4f7fb;
+    --color-navbar-foreground-muted: rgba(244, 247, 251, 0.56);
+    --color-header-separator: rgba(123, 175, 255, 0.22);
+
+    --color-text-primary: #f4f7fb;
+    --color-text-secondary: #98a7be;
+    --color-text-muted: #8e9bb1;
+
+    --color-surface: #182131;
+    --color-surface-elevated: #202b3d;
+    --color-surface-overlay: rgba(255, 255, 255, 0.04);
+    --color-surface-hover: rgba(123, 175, 255, 0.18);
+    --color-surface-selected: rgba(123, 175, 255, 0.24);
+    --color-surface-divider: rgba(128, 149, 186, 0.18);
+
+    --color-popup-outline: rgba(188, 204, 227, 0.2);
+    --color-popup-shadow: rgba(2, 6, 23, 0.42);
+    --color-backdrop: rgba(2, 6, 23, 0.6);
+
+    --color-datepicker-background: rgba(32, 43, 61, 0.95);
+    --color-datepicker-text: #f4f7fb;
+    --color-datepicker-border: rgba(188, 204, 227, 0.18);
+    --color-datepicker-shadow: rgba(2, 6, 23, 0.42);
+    --color-calendar-accent: #4ea0ff;
+    --color-calendar-accent-soft: rgba(78, 160, 255, 0.16);
+    --color-calendar-surface: #273349;
+    --color-calendar-surface-strong: #33415a;
+    --color-calendar-text: #f4f7fb;
+    --color-calendar-text-muted: #9caac0;
+    --color-calendar-border: rgba(188, 204, 227, 0.18);
+    --color-calendar-shadow: rgba(2, 6, 23, 0.28);
+    --color-calendar-outside: rgba(156, 170, 192, 0.55);
+    --color-calendar-disabled: rgba(156, 170, 192, 0.38);
+    --color-calendar-disabled-selected: rgba(244, 247, 251, 0.88);
+
+    --color-success-button-background: #9debe3;
+    --color-success-button-foreground: #102030;
+
+    --navbar-radius: 0.625rem;
+  }
+}

@@ -1,0 +1,50 @@
+@layer base {
+    .Button {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background-color: transparent;
+        border: none;
+        color: white;
+        cursor: pointer;
+        padding: 0;
+    }
+
+    .Positioner {
+        outline: 0;
+        z-index: 12000;
+    }
+
+    .Popup {
+        box-sizing: border-box;
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+        margin-top: 1rem;
+        color: var(--color-gray-900);
+        transform-origin: var(--transform-origin);
+        transition:
+            transform 150ms,
+            opacity 150ms;
+        z-index: 12000;
+        outline: none;
+        border: none;
+        background: transparent;
+
+        &[data-starting-style],
+        &[data-ending-style] {
+            opacity: 0;
+            transform: scale(0.9);
+        }
+    }
+
+    .Item {
+        display: flex;
+        border-radius: 50%;
+
+        &[data-highlighted] {
+            z-index: 0;
+            position: relative;
+        }
+    }
+}

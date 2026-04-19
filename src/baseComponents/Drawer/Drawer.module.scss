@@ -1,0 +1,88 @@
+@layer base {
+  .Trigger {
+    background-color: transparent;
+    border: none;
+    color: white;
+    padding: 0;
+    cursor: pointer;
+  }
+
+  .Backdrop {
+    position: fixed;
+    min-height: 100dvh;
+    inset: 0;
+    background-color: var(--color-backdrop);
+    opacity: 1;
+    transition: opacity 150ms cubic-bezier(0.45, 1.005, 0, 1.005);
+
+    &[data-starting-style],
+    &[data-ending-style] {
+      opacity: 0;
+    }
+  }
+
+  .Drawer {
+    position: fixed;
+    background: var(--color-surface-elevated);
+    color: var(--color-text-primary);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    transition: transform 0.25s ease-in-out;
+  }
+
+  .Drawer[data-open] {
+    transform: translate(0, 0);
+  }
+
+  .right {
+    top: 0;
+    right: 0;
+    transform: translateX(100%);
+    border-top-left-radius: 1rem;
+    border-bottom-left-radius: 1rem;
+  }
+
+  .left {
+    top: 0;
+    left: 0;
+    transform: translateX(-100%);
+    border-bottom-right-radius: 1rem;
+    border-top-right-radius: 1rem;
+  }
+
+  .top {
+    top: 0;
+    left: 0;
+    transform: translateY(-100%);
+    border-bottom-left-radius: 1rem;
+    border-bottom-right-radius: 1rem;
+  }
+
+  .bottom {
+    bottom: 0;
+    transform: translateY(100%);
+    border-top-left-radius: 1rem;
+    border-top-right-radius: 1rem;
+  }
+
+  .right[data-starting-style],
+  .right:not([data-open]) {
+    transform: translateX(100%);
+  }
+
+  .left[data-starting-style],
+  .left:not([data-open]) {
+    transform: translateX(-100%);
+  }
+
+  .top[data-starting-style],
+  .top:not([data-open]) {
+    transform: translateY(-100%);
+  }
+
+  .bottom[data-starting-style],
+  .bottom:not([data-open]) {
+    transform: translateY(100%);
+  }
+}

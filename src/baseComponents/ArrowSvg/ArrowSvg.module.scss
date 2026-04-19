@@ -1,0 +1,11 @@
+@layer base {
+    .ArrowFill {
+        fill: canvas;
+    }
+
+    .ArrowOuterStroke {
+        &[data-bold='Outline'] {
+            fill: var(--outline-color);
+        }
+    }
+}

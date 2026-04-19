@@ -1,0 +1,14 @@
+@layer base {
+    .Field {
+        display: flex;
+        flex-direction: column;
+        gap: 0.25rem;
+    }
+
+    .Label {
+        font-size: 0.875rem;
+        line-height: 1.25rem;
+        font-weight: 500;
+        color: var(--color-gray-900);
+    }
+}
