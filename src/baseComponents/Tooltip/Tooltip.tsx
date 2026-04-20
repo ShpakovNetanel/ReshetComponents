@@ -48,7 +48,7 @@ export const Tooltip = ({ title, children, slotProps, testId, ...props }: Toolti
                             collisionAvoidance={{
                                 side: 'flip',
                                 align: 'shift',
-                                fallbackAxisSide: 'none',
+                                fallbackAxisSide: 'end',
                             }}>
                             {isEmptyish(title)
                                 ? null
