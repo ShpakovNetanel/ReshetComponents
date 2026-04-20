@@ -25,9 +25,11 @@ type TooltipProps = {
 } & PropsWithChildren & BaseTooltip.Root.Props;
 
 export const Tooltip = ({ title, children, slotProps, testId, ...props }: TooltipProps) => {
+    const preferredSide = slotProps?.side ?? 'top';
+
     return (
         <BaseTooltip.Provider delay={100} {...slotProps?.provider}>
-                <div data-testid={buildTestId(testId, 'wrapper')} className={clsx(styles.Panel, slotProps?.classes?.Panel)}>
+            <div data-testid={buildTestId(testId, 'wrapper')} className={clsx(styles.Panel, slotProps?.classes?.Panel)}>
                 <BaseTooltip.Root {...props}>
                     <BaseTooltip.Trigger
                         render={<span />}
@@ -37,17 +39,26 @@ export const Tooltip = ({ title, children, slotProps, testId, ...props }: Toolti
                         {children}
                     </BaseTooltip.Trigger>
                     <BaseTooltip.Portal>
-                        <BaseTooltip.Positioner sideOffset={10} side={slotProps?.side ?? 'top'}>
+                        <BaseTooltip.Positioner
+                            className={clsx(styles.Positioner, slotProps?.classes?.Positioner)}
+                            side={preferredSide}
+                            sideOffset={10}
+                            arrowPadding={12}
+                            collisionPadding={12}
+                            collisionAvoidance={{
+                                side: 'flip',
+                                align: 'shift',
+                                fallbackAxisSide: 'none',
+                            }}>
                             {isEmptyish(title)
-                                ? <></>
+                                ? null
                                 : <BaseTooltip.Popup className={clsx(styles.Popup, slotProps?.classes?.Popup)}
                                     data-testid={buildTestId(testId, 'popup')}
                                     data-bold={slotProps?.boldType ?? 'BoxShadow'}
                                     style={{
                                         '--outline-color': slotProps?.outlineColor ?? 'black'
                                     } as React.CSSProperties}>
-                                    {!slotProps?.disableArrow && <BaseTooltip.Arrow data-testid={buildTestId(testId, 'arrow')} className={clsx(styles.Arrow, slotProps?.classes?.Arrow)}
-                                        data-side={slotProps?.side ?? 'bottom'}>
+                                    {!slotProps?.disableArrow && <BaseTooltip.Arrow data-testid={buildTestId(testId, 'arrow')} className={clsx(styles.Arrow, slotProps?.classes?.Arrow)}>
                                         <ArrowSvg outlineColor={slotProps?.outlineColor ?? 'black'}
                                             boldType={slotProps?.boldType ?? 'BoxShadow'} />
                                     </BaseTooltip.Arrow>}

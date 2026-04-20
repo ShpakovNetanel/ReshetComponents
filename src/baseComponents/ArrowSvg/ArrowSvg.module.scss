@@ -1,6 +1,6 @@
 @layer base {
     .ArrowFill {
-        fill: canvas;
+        fill: var(--tooltip-surface-color, var(--color-surface-elevated));
     }
 
     .ArrowOuterStroke {
