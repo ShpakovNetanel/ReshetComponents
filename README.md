@@ -12,17 +12,13 @@ npm install reshet-components
 
 ## Usage
 
-Import the package styles once in your app entry:
-
-```ts
-import 'reshet-components/styles.css';
-```
-
-Then import components from the package:
+Import components directly from the package:
 
 ```tsx
 import { Button, DatePicker, Tooltip } from 'reshet-components';
 ```
+
+The package entry loads its stylesheet automatically. `reshet-components/styles.css` is still exported if you want a direct style import for a custom setup.
 
 ## Notes
 

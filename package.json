@@ -37,7 +37,7 @@
   "scripts": {
     "clean": "rm -rf dist",
     "build:types": "tsc -p tsconfig.build.json",
-    "build:js": "vite build",
+    "build:js": "vite build && node ./scripts/inject-entry-css.mjs",
     "build": "npm run clean && npm run build:js && npm run build:types",
     "prepack": "npm run build",
     "pack:check": "npm pack --dry-run",
