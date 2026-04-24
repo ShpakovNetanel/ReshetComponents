@@ -5,7 +5,6 @@ import type { SlotProps as ToastButtonSlotProps } from './ToastButton/ToastButto
 import { ToastButton } from "./ToastButton/ToastButton";
 import type { SlotProps as ToastListSlotProps } from './ToastList/ToastList';
 import { ToastList } from "./ToastList/ToastList";
-import { buildTestId } from "../../../utils/testIds";
 
 type Classes = {
     ViewPort?: keyof typeof styles;
@@ -23,23 +22,27 @@ type ToastProps = {
     trigger?: ReactNode;
     title: string;
     description: string;
+    name?: string;
     testId?: string;
 }
 
-export const ToastBase = ({ slotProps, description, title, trigger, testId }: ToastProps) => {
+export const ToastBase = ({ slotProps, description, title, trigger, name, testId }: ToastProps) => {
     return (
         <>
             {trigger ?? <ToastButton
                 title={title}
                 description={description}
+                name={name}
+                testId={slotProps?.ToastButton?.testId ?? testId}
                 slotProps={{
-                    ...slotProps?.ToastButton,
-                    testId: buildTestId(testId, 'button')
+                    ...slotProps?.ToastButton
                 }} />}
             <BaseToast.Portal>
-                <ToastList slotProps={{
+                <ToastList
+                    name={name}
+                    testId={slotProps?.ToastList?.testId ?? testId}
+                    slotProps={{
                     ...slotProps?.ToastList,
-                    testId: buildTestId(testId, 'list')
                 }} />
             </BaseToast.Portal>
         </>

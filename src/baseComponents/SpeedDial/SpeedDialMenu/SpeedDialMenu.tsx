@@ -2,7 +2,7 @@ import { Menu as BaseMenu, Separator as BaseSeparator } from "@base-ui/react"
 import styles from "./SpeedDialMenu.module.scss"
 import clsx from "clsx";
 import React from "react";
-import { buildTestId } from "../../../utils/testIds";
+import { createTestIdBuilder } from "../../../utils/testIds";
 
 type Classes = {
     Button?: keyof typeof styles;
@@ -25,13 +25,16 @@ type SpeedDialMenuProps = {
     items: React.ReactNode[];
     trigger?: React.ReactNode;
     slotProps?: SlotProps;
+    name?: string;
     testId?: string;
 } & BaseMenu.SubmenuRoot.Props
 
-export const SpeedDialMenu = ({ items, trigger, slotProps, testId, ...props }: SpeedDialMenuProps) => {
+export const SpeedDialMenu = ({ items, trigger, slotProps, name, testId, ...props }: SpeedDialMenuProps) => {
+    const testIds = createTestIdBuilder('SpeedDialMenu', { name, testId });
+
     return (
         <BaseMenu.SubmenuRoot {...props}>
-            <BaseMenu.SubmenuTrigger data-testid={buildTestId(testId, 'trigger')}
+            <BaseMenu.SubmenuTrigger data-testid={testIds.part('Trigger')}
                 openOnHover={slotProps?.openOnHover ?? false}
                 className={clsx(styles.Button, slotProps?.classes?.Button)}>
                 {trigger}
@@ -39,15 +42,15 @@ export const SpeedDialMenu = ({ items, trigger, slotProps, testId, ...props }: S
             <BaseMenu.Portal>
                 <BaseMenu.Positioner className={styles.Positioner}>
                     <BaseMenu.Popup
-                        data-testid={buildTestId(testId, 'popup')}
+                        data-testid={testIds.part('Popup')}
                         className={clsx(styles.Popup, slotProps?.classes?.Popup)}>
                         {items.map((item, index) => (
                             <React.Fragment key={index}>
-                                <BaseMenu.Item data-testid={buildTestId(testId, 'item', index)} className={clsx(styles.Item, slotProps?.classes?.Item)}>
+                                <BaseMenu.Item data-testid={testIds.part('Item', index)} className={clsx(styles.Item, slotProps?.classes?.Item)}>
                                     {item}
                                 </BaseMenu.Item>
                                 {index !== items.length - 1 &&
-                                    <BaseSeparator data-testid={buildTestId(testId, 'separator', index)} className={clsx(styles.Separator, slotProps?.classes?.Separator)} />}
+                                    <BaseSeparator data-testid={testIds.part('Separator', index)} className={clsx(styles.Separator, slotProps?.classes?.Separator)} />}
                             </React.Fragment>
                         ))}
                     </BaseMenu.Popup>

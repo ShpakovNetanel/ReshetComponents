@@ -1,7 +1,7 @@
 import { Toast as BaseToast } from "@base-ui/react"
 import type { ReactNode } from "react";
 import styles from './ToastButton.module.scss';
-import { buildTestId } from "../../../../utils/testIds";
+import { createTestIdBuilder } from "../../../../utils/testIds";
 
 type Classes = {
     Button?: keyof typeof styles;
@@ -16,11 +16,14 @@ export type SlotProps = {
 type ToastButtonProps = {
     title: string;
     description: string;
+    name?: string;
+    testId?: string;
     slotProps?: SlotProps;
 }
 
-export const ToastButton = ({ description, title, slotProps }: ToastButtonProps) => {
+export const ToastButton = ({ description, title, name, testId, slotProps }: ToastButtonProps) => {
     const toastManager = BaseToast.useToastManager();
+    const testIds = createTestIdBuilder('ToastButton', { name, testId: testId ?? slotProps?.testId });
 
     const createToast = () => {
         toastManager.add({
@@ -30,7 +33,7 @@ export const ToastButton = ({ description, title, slotProps }: ToastButtonProps)
     }
 
     return <button
-        data-testid={buildTestId(slotProps?.testId, 'button')}
+        data-testid={testIds.self()}
         className={styles.Button}
         onClick={createToast}>
         {slotProps?.icon ?? 'Toast Me!'}

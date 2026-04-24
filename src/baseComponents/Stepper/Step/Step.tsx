@@ -3,7 +3,7 @@ import { type CSSProperties, type MouseEventHandler, type PropsWithChildren } fr
 import { useStepper } from "../StepperProvider/StepperProvider";
 import { StepProvider } from "../StepProvider/StepProvider";
 import styles from "./Step.module.scss";
-import { buildTestId } from "../../../utils/testIds";
+import { createTestIdBuilder } from "../../../utils/testIds";
 
 export type StepState = 'disabled' | 'active' | 'inactive' | 'completed';
 
@@ -22,12 +22,14 @@ export type StepProps = PropsWithChildren & {
     completed?: boolean;
     onStepClick?: MouseEventHandler<HTMLElement>;
     slotProps?: SlotProps;
+    name?: string;
     testId?: string;
 };
 
 export const Step = ({ index, disabled, children,
-    completed, onStepClick, slotProps, testId }: StepProps) => {
+    completed, onStepClick, slotProps, name, testId }: StepProps) => {
     const { active, setActive } = useStepper();
+    const testIds = createTestIdBuilder('Step', { name, testId });
 
     const state: StepState = disabled
         ? "disabled"
@@ -40,7 +42,7 @@ export const Step = ({ index, disabled, children,
     return (
         <StepProvider stepIndex={index} state={state}>
             <div
-                data-testid={buildTestId(testId, index)}
+                data-testid={testIds.self(index)}
                 className={clsx(styles.Step, slotProps?.classes?.Step)}
                 data-state={state}
                 data-disabled={disabled || undefined}

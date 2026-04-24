@@ -4,7 +4,7 @@ import type { PropsWithChildren } from "react";
 import { isEmptyish } from "remeda";
 import type { ClassNames } from "../../types/baseui";
 import type { Direction } from "../../types/types";
-import { buildTestId } from "../../utils/testIds";
+import { createTestIdBuilder } from "../../utils/testIds";
 import { ArrowSvg } from "../ArrowSvg/ArrowSvg";
 import styles from "./Tooltip.module.scss";
 
@@ -21,20 +21,22 @@ export type TooltipSlotProps = {
 type TooltipProps = {
     title: string;
     slotProps?: TooltipSlotProps
+    name?: string;
     testId?: string;
 } & PropsWithChildren & BaseTooltip.Root.Props;
 
-export const Tooltip = ({ title, children, slotProps, testId, ...props }: TooltipProps) => {
+export const Tooltip = ({ title, children, slotProps, name, testId, ...props }: TooltipProps) => {
+    const testIds = createTestIdBuilder('Tooltip', { name, testId });
     const preferredSide = slotProps?.side ?? 'top';
 
     return (
         <BaseTooltip.Provider delay={100} {...slotProps?.provider}>
-            <div data-testid={buildTestId(testId, 'wrapper')} className={clsx(styles.Panel, slotProps?.classes?.Panel)}>
+            <div data-testid={testIds.self()} className={clsx(styles.Panel, slotProps?.classes?.Panel)}>
                 <BaseTooltip.Root {...props}>
                     <BaseTooltip.Trigger
                         render={<span />}
                         className={clsx(styles.Button, slotProps?.classes?.Trigger)}
-                        data-testid={buildTestId(testId, 'trigger')}
+                        data-testid={testIds.part('Trigger')}
                         data-visible={!isEmptyish(title) || slotProps?.displayWhenEmpty}>
                         {children}
                     </BaseTooltip.Trigger>
@@ -53,12 +55,12 @@ export const Tooltip = ({ title, children, slotProps, testId, ...props }: Toolti
                             {isEmptyish(title)
                                 ? null
                                 : <BaseTooltip.Popup className={clsx(styles.Popup, slotProps?.classes?.Popup)}
-                                    data-testid={buildTestId(testId, 'popup')}
+                                    data-testid={testIds.part('Popup')}
                                     data-bold={slotProps?.boldType ?? 'BoxShadow'}
                                     style={{
                                         '--outline-color': slotProps?.outlineColor ?? 'black'
                                     } as React.CSSProperties}>
-                                    {!slotProps?.disableArrow && <BaseTooltip.Arrow data-testid={buildTestId(testId, 'arrow')} className={clsx(styles.Arrow, slotProps?.classes?.Arrow)}>
+                                    {!slotProps?.disableArrow && <BaseTooltip.Arrow data-testid={testIds.part('Arrow')} className={clsx(styles.Arrow, slotProps?.classes?.Arrow)}>
                                         <ArrowSvg outlineColor={slotProps?.outlineColor ?? 'black'}
                                             boldType={slotProps?.boldType ?? 'BoxShadow'} />
                                     </BaseTooltip.Arrow>}

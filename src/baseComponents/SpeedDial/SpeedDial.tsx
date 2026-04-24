@@ -1,7 +1,7 @@
 import { Menu as BaseMenu } from "@base-ui/react";
 import styles from "./SpeedDial.module.scss";
 import React from "react";
-import { buildTestId } from "../../utils/testIds";
+import { createTestIdBuilder } from "../../utils/testIds";
 
 export type SpeedDialItem = {
     component: React.ReactNode;
@@ -12,20 +12,23 @@ export type SpeedDialItem = {
 type SpeedDialProps = {
     items: SpeedDialItem[];
     trigger: React.ReactNode;
+    name?: string;
     testId?: string;
 } & BaseMenu.Root.Props;
 
-export const SpeedDial = ({ items, trigger, testId, ...props }: SpeedDialProps) => {
+export const SpeedDial = ({ items, trigger, name, testId, ...props }: SpeedDialProps) => {
+    const testIds = createTestIdBuilder('SpeedDial', { name, testId });
+
     return (
         <BaseMenu.Root {...props}>
-            <BaseMenu.Trigger data-testid={buildTestId(testId, 'trigger')} className={styles.Button} openOnHover>
+            <BaseMenu.Trigger data-testid={testIds.part('Trigger')} className={styles.Button} openOnHover>
                 {trigger}
             </BaseMenu.Trigger>
             <BaseMenu.Portal>
                 <BaseMenu.Positioner className={styles.Positioner} sideOffset={8}>
-                    <BaseMenu.Popup data-testid={buildTestId(testId, 'popup')} className={styles.Popup}>
+                    <BaseMenu.Popup data-testid={testIds.part('Popup')} className={styles.Popup}>
                         {items.filter(item => item.visible).map((item, index) =>
-                            <div key={index} data-testid={buildTestId(testId, 'item', index)}>
+                            <div key={index} data-testid={testIds.part('Item', index)}>
                                 {item.component}
                             </div>
                         )}

@@ -2,7 +2,7 @@ import { Popover as BasePopover } from '@base-ui/react'
 import { endOfMonth, format, isAfter, isValid, parse, startOfDay } from 'date-fns'
 import { CalendarIcon } from 'lucide-react'
 import { useEffect, useId, useMemo, useState, type ChangeEvent, type ReactNode } from 'react'
-import { buildTestId } from '../../utils/testIds'
+import { createTestIdBuilder } from '../../utils/testIds'
 import Calendar from '../Calendar/Calendar'
 import Input from '../Input/Input'
 import styles from './DatePicker.module.scss'
@@ -23,6 +23,7 @@ interface DatePickerProps {
     closeOnSelect?: boolean;
     popupFooter?: ReactNode;
     dateFormat?: string;
+    name?: string;
     testId?: string;
 }
 
@@ -36,9 +37,11 @@ export const DatePicker = ({
     closeOnSelect = true,
     popupFooter,
     dateFormat = DATE_FORMAT,
+    name,
     testId,
 }: DatePickerProps) => {
     const inputId = useId();
+    const testIds = createTestIdBuilder('DatePicker', { name, testId });
     const selectedDate = displayValue ?? value;
     const normalizedMaxDate = useMemo(
         () => (maxDate ? startOfDay(maxDate) : undefined),
@@ -124,10 +127,11 @@ export const DatePicker = ({
 
     return (
         <BasePopover.Root open={isDateOpened} onOpenChange={setDatePickerOpen}>
-            <div data-testid={buildTestId(testId, 'wrapper')} className={styles.InputWrapper}>
+            <div data-testid={testIds.self()} className={styles.InputWrapper}>
                 <Input
                     id={inputId}
-                    testId={buildTestId(testId, 'input')}
+                    name={name}
+                    testId={testIds.part('Input')}
                     value={inputValue}
                     onChange={handleInputChange}
                     type='text'
@@ -139,7 +143,7 @@ export const DatePicker = ({
                 />
                 <BasePopover.Trigger
                     render={(
-                        <button type="button" data-testid={buildTestId(testId, 'trigger')} className={styles.IconButton} aria-label="Open calendar">
+                        <button type="button" data-testid={testIds.part('Trigger')} className={styles.IconButton} aria-label="Open calendar">
                             <CalendarIcon className={styles.CalendarIcon} />
                         </button>
                     )}
@@ -149,10 +153,10 @@ export const DatePicker = ({
 
             <BasePopover.Portal>
                 <BasePopover.Positioner sideOffset={8} className={styles.Positioner}>
-                    <div data-testid={buildTestId(testId, 'popup-stack')} className={styles.PopupStack}>
-                        <BasePopover.Popup data-testid={buildTestId(testId, 'popup')} className={styles.Popup}>
+                    <div data-testid={testIds.part('PopupStack')} className={styles.PopupStack}>
+                        <BasePopover.Popup data-testid={testIds.part('Popup')} className={styles.Popup}>
                             <Calendar
-                                data-testid={buildTestId(testId, 'calendar')}
+                                testId={testIds.part('Calendar')}
                                 month={month}
                                 endMonth={endMonth}
                                 onMonthChange={setMonth}

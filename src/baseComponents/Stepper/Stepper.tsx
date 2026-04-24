@@ -2,7 +2,7 @@ import type { PropsWithChildren } from "react";
 import { StepperProvider } from "./StepperProvider/StepperProvider";
 import clsx from "clsx";
 import styles from "./Stepper.module.scss";
-import { buildTestId } from "../../utils/testIds";
+import { createTestIdBuilder } from "../../utils/testIds";
 
 type Classes = {
     Stepper?: keyof typeof styles;
@@ -18,6 +18,7 @@ export type StepperProps = PropsWithChildren & {
   defaultActive?: number;
   orientation?: "horizontal" | "vertical";
   slotProps?: SlotProps;
+  name?: string;
   testId?: string;
   
 };
@@ -25,13 +26,16 @@ export type StepperProps = PropsWithChildren & {
 export const Stepper= ({
   slotProps,
   children,
+  name,
   testId,
   ...providerProps
 }: StepperProps) => {
+  const testIds = createTestIdBuilder('Stepper', { name, testId });
+
   return (
     <StepperProvider {...providerProps}>
       <div
-        data-testid={buildTestId(testId, 'root')}
+        data-testid={testIds.self()}
         className={clsx(
           styles.Stepper,
           styles[providerProps.orientation || "horizontal"],

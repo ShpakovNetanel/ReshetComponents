@@ -2,7 +2,7 @@ import { Accordion as BaseAccordion } from "@base-ui/react";
 import clsx from "clsx";
 import { useState, type HTMLAttributes, type PropsWithChildren, type ReactNode } from "react";
 import type { ClassNames } from "../../types/baseui";
-import { buildTestId } from "../../utils/testIds";
+import { createTestIdBuilder } from "../../utils/testIds";
 import styles from './Accordion.module.scss';
 
 type HeaderProps = HTMLAttributes<HTMLDivElement> & {
@@ -20,6 +20,7 @@ type AccordionProps = {
     actions?: ReactNode;
     defaultOpen?: boolean;
     onOpenChange?: (open: boolean) => void;
+    name?: string;
     testId?: string;
 } & PropsWithChildren;
 
@@ -30,10 +31,12 @@ export const Accordion = ({
     slotProps,
     defaultOpen = true,
     onOpenChange: onOpenChangeProp,
+    name,
     testId,
     ...props
 }: AccordionProps) => {
     const [openState, setOpenState] = useState(defaultOpen);
+    const testIds = createTestIdBuilder('Accordion', { name, testId });
 
     const handleOpenChange = (open: boolean) => {
         setOpenState(open);
@@ -42,21 +45,21 @@ export const Accordion = ({
 
     return (
         <BaseAccordion.Root
-            data-testid={buildTestId(testId, 'root')}
+            data-testid={testIds.self()}
             value={openState ? ['item'] : []}
             className={clsx(styles.Accordion, slotProps?.classes?.Root)}
             {...props}>
-            <BaseAccordion.Item data-testid={buildTestId(testId, 'item')} onOpenChange={handleOpenChange} value="item" className={clsx(styles.Item, slotProps?.classes?.Item)}>
+            <BaseAccordion.Item data-testid={testIds.part('Item')} onOpenChange={handleOpenChange} value="item" className={clsx(styles.Item, slotProps?.classes?.Item)}>
                 <div
-                    data-testid={slotProps?.headerProps?.['data-testid'] ?? buildTestId(testId, 'header')}
+                    data-testid={slotProps?.headerProps?.['data-testid'] ?? testIds.part('Header')}
                     {...slotProps?.headerProps}
                     className={clsx(styles.Header, slotProps?.classes?.Header, slotProps?.headerProps?.className)}>
-                    <BaseAccordion.Trigger data-testid={buildTestId(testId, 'trigger')} className={clsx(styles.Trigger, slotProps?.classes?.Trigger)}>
+                    <BaseAccordion.Trigger data-testid={testIds.part('Trigger')} className={clsx(styles.Trigger, slotProps?.classes?.Trigger)}>
                         {title}
                     </BaseAccordion.Trigger>
                     {actions}
                 </div>
-                <BaseAccordion.Panel data-testid={buildTestId(testId, 'panel')} className={clsx(styles.Panel, slotProps?.classes?.Panel)}>
+                <BaseAccordion.Panel data-testid={testIds.part('Panel')} className={clsx(styles.Panel, slotProps?.classes?.Panel)}>
                     {children}
                 </BaseAccordion.Panel>
             </BaseAccordion.Item>

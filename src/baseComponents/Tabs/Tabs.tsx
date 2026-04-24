@@ -3,7 +3,7 @@ import styles from './Tabs.module.scss'
 import type { CSSProperties } from "react";
 import type { ClassNames } from "../../types/baseui";
 import clsx from "clsx";
-import { buildTestId } from "../../utils/testIds";
+import { createTestIdBuilder } from "../../utils/testIds";
 
 type SlotProps = {
     classes?: ClassNames<typeof BaseTabs>
@@ -18,17 +18,20 @@ type TabsProps = {
     slotProps?: SlotProps;
     activeTab: number;
     setActiveTab: (tab: number) => void;
+    name?: string;
     testId?: string;
 }
 
-export const Tabs = ({ tabs, activeTab, setActiveTab, slotProps, testId }: TabsProps) => {
+export const Tabs = ({ tabs, activeTab, setActiveTab, slotProps, name, testId }: TabsProps) => {
+    const testIds = createTestIdBuilder('Tabs', { name, testId });
+
     return (
-        <BaseTabs.Root data-testid={buildTestId(testId, 'root')} onValueChange={setActiveTab} value={activeTab} className={clsx(styles.Tabs, slotProps?.classes?.Root)} defaultValue="overview">
-            <BaseTabs.List data-testid={buildTestId(testId, 'list')} className={clsx(styles.List, slotProps?.classes?.List)}>
+        <BaseTabs.Root data-testid={testIds.self()} onValueChange={setActiveTab} value={activeTab} className={clsx(styles.Tabs, slotProps?.classes?.Root)} defaultValue="overview">
+            <BaseTabs.List data-testid={testIds.part('List')} className={clsx(styles.List, slotProps?.classes?.List)}>
                 {tabs.map(tab =>
                     <BaseTabs.Tab
                         key={tab.value}
-                        data-testid={buildTestId(testId, 'tab', tab.value)}
+                        data-testid={testIds.part('Tab', tab.value)}
                         id={tab.label}
                         className={clsx(styles.Tab, slotProps?.classes?.Tab)}
                         value={tab.value}
@@ -39,7 +42,7 @@ export const Tabs = ({ tabs, activeTab, setActiveTab, slotProps, testId }: TabsP
                         <span className={styles.TabLabel}>{tab.label}</span>
                     </BaseTabs.Tab>
                 )}
-                <BaseTabs.Indicator data-testid={buildTestId(testId, 'indicator')} className={clsx(styles.Indicator, slotProps?.classes?.Indicator)} />
+                <BaseTabs.Indicator data-testid={testIds.part('Indicator')} className={clsx(styles.Indicator, slotProps?.classes?.Indicator)} />
             </BaseTabs.List>
         </BaseTabs.Root>
     )

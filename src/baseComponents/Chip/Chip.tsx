@@ -1,6 +1,7 @@
 import clsx from 'clsx';
 import styles from './Chip.module.scss';
 import type { MouseEventHandler, ReactNode } from 'react';
+import { createTestIdBuilder } from '../../utils/testIds';
 
 type Classes = {
     Label?: string | undefined;
@@ -15,6 +16,7 @@ type ChipProps = {
     label: ReactNode;
     slotProps?: SlotProps;
     onChipClick?: MouseEventHandler<HTMLElement>;
+    name?: string;
     testId?: string;
 }
 
@@ -68,12 +70,13 @@ const getReadableForeground = (backgroundColor?: string) => {
     return luminance > 160 ? '#182131' : '#f8fbff';
 };
 
-export const Chip = ({ label, slotProps, onChipClick, testId }: ChipProps) => {
+export const Chip = ({ label, slotProps, onChipClick, name, testId }: ChipProps) => {
+    const testIds = createTestIdBuilder('Chip', { name, testId });
     const textColor = getReadableForeground(slotProps?.backgroundColor);
 
     return (
         <div className={clsx(styles.Label, slotProps?.classes?.Label)}
-            data-testid={testId}
+            data-testid={testIds.self()}
             style={{
                 background: slotProps?.backgroundColor,
                 ['--chip-foreground' as string]: textColor

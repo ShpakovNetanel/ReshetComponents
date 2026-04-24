@@ -123,14 +123,6 @@
     .DropdownRoot {
         position: relative;
         display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        height: var(--cell-size);
-        border-radius: 0.9rem;
-        box-shadow: 0 8px 18px rgba(0, 0, 0, 0.08);
-        border: 1px solid var(--border);
-        background: var(--surface);
-        padding-inline: 0.2rem;
         width: 100%;
     }
 
@@ -142,8 +134,69 @@
         width: var(--dropdown-year-width);
     }
 
-    .DropdownRoot[data-disabled="true"] .Chevron {
-        opacity: var(--rdp-disabled-opacity);
+    .DropdownTrigger {
+        box-sizing: border-box;
+        display: inline-flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 0.35rem;
+        width: 100%;
+        height: var(--cell-size);
+        min-width: 0;
+        padding-inline-start: 0.65rem;
+        padding-inline-end: 0.55rem;
+        border: 1px solid var(--border);
+        border-radius: 0.9rem;
+        background: var(--surface);
+        box-shadow: 0 8px 18px rgba(0, 0, 0, 0.08);
+        color: var(--text-strong);
+        font: inherit;
+        font-size: 0.92rem;
+        font-weight: 600;
+        transition: background-color 150ms ease, box-shadow 150ms ease, border-color 150ms ease;
+
+        &:hover {
+            background-color: var(--surface-strong);
+            box-shadow: 0 8px 16px var(--color-calendar-shadow);
+        }
+
+        &[data-popup-open] {
+            background-color: var(--surface-strong);
+        }
+
+        &[data-disabled] {
+            cursor: revert;
+            opacity: 0.4;
+            background: transparent;
+            box-shadow: none;
+        }
+    }
+
+    .DropdownValue {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        color: inherit;
+    }
+
+    .DropdownIcon {
+        display: inline-flex;
+        flex-shrink: 0;
+        color: var(--text-muted);
+    }
+
+    .DropdownPopup {
+        border: 1px solid var(--border);
+        background-color: var(--surface);
+        box-shadow: 0 12px 24px var(--color-calendar-shadow);
+    }
+
+    .DropdownItem {
+        color: var(--text-strong);
+    }
+
+    .DropdownTrigger[data-disabled] .Chevron {
+        opacity: 0.4;
     }
 
     .MonthCaption {

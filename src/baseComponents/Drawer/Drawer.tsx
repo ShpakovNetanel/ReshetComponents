@@ -2,7 +2,7 @@ import { Dialog as BaseDialog } from "@base-ui/react";
 import clsx from "clsx";
 import { Menu } from "lucide-react";
 import type { PropsWithChildren, ReactNode } from "react";
-import { buildTestId } from "../../utils/testIds";
+import { createTestIdBuilder } from "../../utils/testIds";
 import styles from "./Drawer.module.scss";
 
 type Direction = "left" | "right" | "top" | "bottom";
@@ -26,6 +26,7 @@ type SlotProps = {
 type DrawerProps = {
     triggerIcon?: ReactNode;
     slotProps?: SlotProps;
+    name?: string;
     testId?: string;
 } & PropsWithChildren
     & BaseDialog.Root.Props;
@@ -34,9 +35,11 @@ export const Drawer = ({
     children,
     triggerIcon,
     slotProps,
+    name,
     testId,
     ...props
 }: DrawerProps) => {
+    const testIds = createTestIdBuilder('Drawer', { name, testId });
     const direction = slotProps?.direction ?? 'right';
 
     const width: string = slotProps?.width ?
@@ -53,14 +56,14 @@ export const Drawer = ({
 
     return (
         <BaseDialog.Root {...props}>
-            <BaseDialog.Trigger data-testid={buildTestId(testId, 'trigger')} className={clsx(styles.Trigger, slotProps?.classes?.Trigger)}>
+            <BaseDialog.Trigger data-testid={testIds.part('Trigger')} className={clsx(styles.Trigger, slotProps?.classes?.Trigger)}>
                 {triggerIcon ?? <Menu className={clsx(slotProps?.classes?.Icon)}/>}
             </BaseDialog.Trigger>
             <BaseDialog.Portal>
                 {!slotProps?.disableBackdrop && <BaseDialog.Backdrop
-                    data-testid={buildTestId(testId, 'backdrop')}
+                    data-testid={testIds.part('Backdrop')}
                     className={styles.Backdrop} />}
-                <BaseDialog.Popup data-testid={buildTestId(testId, 'popup')} className={clsx(styles.Drawer, slotProps?.classes?.Drawer, styles[direction])}
+                <BaseDialog.Popup data-testid={testIds.part('Popup')} className={clsx(styles.Drawer, slotProps?.classes?.Drawer, styles[direction])}
                     style={{ width, height }}>
                     {children}
                 </BaseDialog.Popup>

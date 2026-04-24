@@ -3,7 +3,7 @@ import { Check } from "lucide-react";
 import type { ReactNode } from "react";
 import { useStep } from "../StepProvider/StepProvider";
 import styles from "./StepIndicator.module.scss";
-import { buildTestId } from "../../../utils/testIds";
+import { createTestIdBuilder } from "../../../utils/testIds";
 
 type Classes = {
     Indicator?: keyof typeof styles;
@@ -17,15 +17,17 @@ type SlotProps = {
 
 type StepIndicatorProps = {
     slotProps?: SlotProps;
+    name?: string;
     testId?: string;
 }
 
-export const StepIndicator = ({ slotProps, testId }: StepIndicatorProps) => {
+export const StepIndicator = ({ slotProps, name, testId }: StepIndicatorProps) => {
     const { stepIndex, state } = useStep();
+    const testIds = createTestIdBuilder('StepIndicator', { name, testId });
 
     return (
         <div
-            data-testid={buildTestId(testId, 'indicator')}
+            data-testid={testIds.self()}
             className={clsx(styles.Indicator, slotProps?.classes?.Indicator)}
             data-active={state === 'active' || undefined}
             data-completed={state === 'completed' || undefined}

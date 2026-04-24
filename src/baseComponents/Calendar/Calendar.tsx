@@ -1,15 +1,20 @@
+import clsx from 'clsx'
 import {
   ChevronDownIcon,
   ChevronLeftIcon,
   ChevronRightIcon,
 } from 'lucide-react'
+import type { ChangeEvent } from 'react'
 import {
   DayPicker,
   type ClassNames,
   type DayPickerProps,
+  type DropdownProps,
 } from 'react-day-picker'
 import { he } from 'react-day-picker/locale'
 import styles from './Calendar.module.scss'
+import Select from '../Select/Select'
+import { createTestIdBuilder } from '../../utils/testIds'
 
 const classNames: ClassNames = {
   // UI
@@ -63,10 +68,72 @@ const classNames: ClassNames = {
 }
 
 type CalendarProps = DayPickerProps & {
+  name?: string;
+  testId?: string;
   'data-testid'?: string;
 }
 
-function Calendar({ ...props }: CalendarProps) {
+const createDropdownChangeEvent = (
+  value: number
+): ChangeEvent<HTMLSelectElement> =>
+  ({
+    target: { value: String(value) },
+    currentTarget: { value: String(value) },
+  }) as ChangeEvent<HTMLSelectElement>
+
+function CalendarDropdown({
+  'aria-label': ariaLabel,
+  className,
+  disabled,
+  onChange,
+  options = [],
+  style,
+  value,
+}: DropdownProps) {
+  const selectedOption =
+    options.find((option) => option.value === Number(value)) ?? null
+
+  return (
+    <span className={clsx(styles.DropdownRoot, className)}>
+      <Select
+        items={options}
+        value={selectedOption}
+        disabled={disabled}
+        modal={false}
+        itemDisabled={(item) => item.disabled}
+        isItemEqualToValue={(item, selected) => item.value === selected.value}
+        onValueChange={(nextValue) => {
+          if (!nextValue) {
+            return
+          }
+
+          onChange?.(createDropdownChangeEvent(nextValue.value))
+        }}
+        slotProps={{
+          classes: {
+            Trigger: styles.DropdownTrigger,
+            Value: styles.DropdownValue,
+            Icon: styles.DropdownIcon,
+            TriggerIcon: styles.Chevron,
+            Popup: styles.DropdownPopup,
+            Item: styles.DropdownItem,
+          },
+          triggerProps: {
+            'aria-label': ariaLabel,
+            style,
+          },
+          popupProps: {
+            dir: 'rtl',
+          },
+        }}
+      />
+    </span>
+  )
+}
+
+function Calendar({ name, testId, 'data-testid': dataTestId, ...props }: CalendarProps) {
+  const testIds = createTestIdBuilder('Calendar', { name, testId })
+
   return (
     <DayPicker
       animate
@@ -75,9 +142,11 @@ function Calendar({ ...props }: CalendarProps) {
       captionLayout='dropdown'
       locale={he}
       dir='rtl'
+      data-testid={dataTestId ?? testIds.self()}
       {...props}
       classNames={classNames}
       components={{
+        Dropdown: CalendarDropdown,
         Chevron: ({ className, orientation, ...props }) => {
           if (orientation === 'left') {
             return (

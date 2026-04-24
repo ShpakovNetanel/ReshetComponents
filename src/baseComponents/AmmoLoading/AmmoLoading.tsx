@@ -1,5 +1,5 @@
 import styles from './AmmoLoading.module.scss'
-import { buildTestId } from '../../utils/testIds'
+import { createTestIdBuilder } from '../../utils/testIds'
 
 export type LoaderVariant =
   | 'radar'
@@ -12,6 +12,7 @@ export type LoaderVariant =
 type AmmoLoadingProps = {
   variant?: LoaderVariant
   label?: string
+  name?: string
   testId?: string
 }
 
@@ -194,14 +195,15 @@ const renderLoader = (variant: LoaderVariant) => {
   }
 }
 
-export const AmmoLoading = ({ variant = 'radar', label, testId }: AmmoLoadingProps) => {
+export const AmmoLoading = ({ variant = 'radar', label, name, testId }: AmmoLoadingProps) => {
+  const testIds = createTestIdBuilder('AmmoLoading', { name, testId })
   const resolvedLabel = label ?? defaultLabels[variant]
 
   return (
-    <div data-testid={buildTestId(testId, 'screen')} className={styles.Screen} role="status" aria-live="polite" aria-busy="true">
-      <div data-testid={buildTestId(testId, 'content')} className={styles.Content}>
+    <div data-testid={testIds.self()} className={styles.Screen} role="status" aria-live="polite" aria-busy="true">
+      <div data-testid={testIds.part('Content')} className={styles.Content}>
         {renderLoader(variant)}
-        <span data-testid={buildTestId(testId, 'label')} className={styles.Label}>{resolvedLabel}</span>
+        <span data-testid={testIds.part('Label')} className={styles.Label}>{resolvedLabel}</span>
       </div>
     </div>
   )

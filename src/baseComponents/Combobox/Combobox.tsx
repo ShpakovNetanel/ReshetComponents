@@ -3,7 +3,7 @@ import clsx from "clsx"
 import { Check, ChevronDown, X } from "lucide-react"
 import { useId, useRef, type MouseEvent, type ReactNode } from "react"
 import type { ClassNames } from "../../types/baseui"
-import { buildTestId } from "../../utils/testIds"
+import { createTestIdBuilder } from "../../utils/testIds"
 import styles from './Combobox.module.scss'
 import { isEmptyish, isPlainObject } from "remeda"
 
@@ -39,6 +39,7 @@ type ComboboxProps<Value, Multiple extends boolean | undefined = false> = {
 	onInputFocus?: React.FocusEventHandler<HTMLInputElement>;
 	onInputBlur?: React.FocusEventHandler<HTMLInputElement>;
 	itemSelectedNoIndicatorClassName?: string;
+	name?: string;
 	testId?: string;
 
 } & BaseCombobox.Root.Props<Value, Multiple>;
@@ -67,6 +68,7 @@ export const Combobox = <Value, Multiple extends boolean | undefined = false>({
 	onInputFocus,
 	onInputBlur,
 	itemSelectedNoIndicatorClassName,
+	name,
 	testId,
 	disabled,
 	...props
@@ -74,6 +76,7 @@ export const Combobox = <Value, Multiple extends boolean | undefined = false>({
 	const id = useId();
 	const inputRef = useRef<HTMLInputElement | null>(null);
 	const containerRef = useRef<HTMLDivElement | null>(null);
+	const testIds = createTestIdBuilder('Combobox', { name, testId });
 	const hasSingleValue = !props.multiple && props.value != null;
 	const isIndicatorEnabled = !slotProps?.disable?.checkIndicator;
 
@@ -122,19 +125,19 @@ export const Combobox = <Value, Multiple extends boolean | undefined = false>({
 	return (
 		<BaseCombobox.Root items={items} {...props} disabled={disabled}>
 			<div className={clsx(styles.Container, slotProps?.classes?.Container)}
-				data-testid={buildTestId(testId, 'container')}
+				data-testid={testIds.self()}
 				data-disabled={disabled}>
 				{props.multiple
 					?
 					<BaseCombobox.Chips
-						data-testid={buildTestId(testId, 'chips')}
+						data-testid={testIds.part('Chips')}
 						className={clsx(styles.Chips, slotProps?.classes?.Chips)}
 						ref={containerRef}
 						onClick={focusInput}
 						onPasteCapture={onPaste}>
 						{startAdornment &&
 							<button type="button"
-								data-testid={buildTestId(testId, 'start-adornment')}
+								data-testid={testIds.part('StartAdornment')}
 								data-disabled={disabled}
 								className={clsx(styles.StartAdornment, slotProps?.classes?.StartAdornment)}
 								onClick={handleAdornmentClick}>
@@ -148,11 +151,11 @@ export const Combobox = <Value, Multiple extends boolean | undefined = false>({
 										: values.map((value) => (
 											<BaseCombobox.Chip
 												key={getItemValue(value)}
-												data-testid={buildTestId(testId, 'chip', getItemValue(value))}
+												data-testid={testIds.part('Chip', getItemValue(value))}
 												className={styles.Chip}
 											>
 												{getItemValue(value)}
-												<BaseCombobox.ChipRemove data-testid={buildTestId(testId, 'chip-remove', getItemValue(value))} className={styles.ChipRemove} aria-label="Remove">
+												<BaseCombobox.ChipRemove data-testid={testIds.part('ChipRemove', getItemValue(value))} className={styles.ChipRemove} aria-label="Remove">
 													<X />
 												</BaseCombobox.ChipRemove>
 											</BaseCombobox.Chip>
@@ -160,7 +163,7 @@ export const Combobox = <Value, Multiple extends boolean | undefined = false>({
 
 									<BaseCombobox.Input
 										ref={inputRef}
-										data-testid={buildTestId(testId, 'input')}
+										data-testid={testIds.part('Input')}
 										placeholder={isEmptyish(values) ? placeholder : ''}
 										id={id}
 										onKeyDownCapture={onInputKeyDownCapture}
@@ -172,19 +175,19 @@ export const Combobox = <Value, Multiple extends boolean | undefined = false>({
 							}
 						</BaseCombobox.Value>
 						{!slotProps?.disable?.trigger &&
-							<BaseCombobox.Trigger data-testid={buildTestId(testId, 'trigger')} className={clsx(styles.Trigger, slotProps?.classes?.Trigger)}>
+							<BaseCombobox.Trigger data-testid={testIds.part('Trigger')} className={clsx(styles.Trigger, slotProps?.classes?.Trigger)}>
 								<ChevronDown className={clsx(styles.TriggerIcon, slotProps?.classes?.TriggerIcon)} />
 							</BaseCombobox.Trigger>}
 					</BaseCombobox.Chips>
 					:
 					<div
-						data-testid={buildTestId(testId, 'input-wrapper')}
+						data-testid={testIds.part('InputWrapper')}
 						className={clsx(styles.InputWrapper, slotProps?.classes?.InputWrapper)}
 						onClick={focusInput}
 						onPasteCapture={onPaste}>
 						<BaseCombobox.Input
 							ref={inputRef}
-							data-testid={buildTestId(testId, 'input')}
+							data-testid={testIds.part('Input')}
 							placeholder={placeholder}
 							id={id}
 							onKeyDownCapture={onInputKeyDownCapture}
@@ -192,13 +195,13 @@ export const Combobox = <Value, Multiple extends boolean | undefined = false>({
 							onFocus={onInputFocus}
 							onBlur={onInputBlur}
 							className={clsx(styles.Input, slotProps?.classes?.Input)} />
-						<div data-testid={buildTestId(testId, 'action-buttons')} className={clsx(styles.ActionButtons, slotProps?.classes?.ActionButtons)}>
-							{startAdornment && <button type="button" data-testid={buildTestId(testId, 'start-adornment')} className={clsx(styles.StartAdornment, slotProps?.classes?.StartAdornment)} onClick={handleAdornmentClick}>
+						<div data-testid={testIds.part('ActionButtons')} className={clsx(styles.ActionButtons, slotProps?.classes?.ActionButtons)}>
+							{startAdornment && <button type="button" data-testid={testIds.part('StartAdornment')} className={clsx(styles.StartAdornment, slotProps?.classes?.StartAdornment)} onClick={handleAdornmentClick}>
 								{startAdornment}
 							</button>}
 							{!slotProps?.disable?.trigger &&
 								<BaseCombobox.Trigger
-									data-testid={buildTestId(testId, 'trigger')}
+									data-testid={testIds.part('Trigger')}
 									className={clsx(styles.Trigger, slotProps?.classes?.Trigger)}
 									data-selected={hasSingleValue}
 									aria-label="Open popup">
@@ -210,21 +213,21 @@ export const Combobox = <Value, Multiple extends boolean | undefined = false>({
 			</div>
 			<BaseCombobox.Portal>
 				<BaseCombobox.Positioner
-					data-testid={buildTestId(testId, 'positioner')}
+					data-testid={testIds.part('Positioner')}
 					className={clsx(styles.Positioner, slotProps?.classes?.Positioner)}
 					sideOffset={4}
 					anchor={containerRef}>
-					<BaseCombobox.Popup data-testid={buildTestId(testId, 'popup')} 
+					<BaseCombobox.Popup data-testid={testIds.part('Popup')} 
 					className={clsx(styles.Popup, slotProps?.classes?.Popup)}>
 						{!slotProps?.disable?.emptyLabel &&
-							<BaseCombobox.Empty data-testid={buildTestId(testId, 'empty')} className={clsx(styles.Empty, slotProps?.classes?.Empty)}>
+							<BaseCombobox.Empty data-testid={testIds.part('Empty')} className={clsx(styles.Empty, slotProps?.classes?.Empty)}>
 								{emptyLabel}
 							</BaseCombobox.Empty>}
-						<BaseCombobox.List data-testid={buildTestId(testId, 'list')} className={clsx(styles.List, slotProps?.classes?.List)}>
+						<BaseCombobox.List data-testid={testIds.part('List')} className={clsx(styles.List, slotProps?.classes?.List)}>
 							{(item: Value, index) => (
 								<BaseCombobox.Item
 									key={index}
-									data-testid={buildTestId(testId, 'item', getItemValue(item))}
+									data-testid={testIds.part('Item', getItemValue(item))}
 									value={item}
 									data-has-indicator={isIndicatorEnabled}
 									className={clsx(
@@ -235,7 +238,7 @@ export const Combobox = <Value, Multiple extends boolean | undefined = false>({
 									)}>
 									{isIndicatorEnabled &&
 										<BaseCombobox.ItemIndicator
-											data-testid={buildTestId(testId, 'item-indicator', getItemValue(item))}
+											data-testid={testIds.part('ItemIndicator', getItemValue(item))}
 											className={clsx(styles.ItemIndicator, slotProps?.classes?.ItemIndicator)}>
 											<Check className={clsx(styles.ItemIndicatorIcon, slotProps?.classes?.ItemIndicatorIcon)} />
 										</BaseCombobox.ItemIndicator>}

@@ -13,14 +13,18 @@ type ToastProps = {
     icon?: ReactNode;
     slotProps?: SlotProps;
     trigger?: ReactNode;
+    name?: string;
+    testId?: string;
 }
 
 export const Toast = {
-    Success: ({ slotProps, description = 'הפעולה הושלמה בהצלחה', title = 'הודעת הצלחה', icon, trigger }: ToastProps) =>
+    Success: ({ slotProps, description = 'הפעולה הושלמה בהצלחה', title = 'הודעת הצלחה', icon, trigger, name, testId }: ToastProps) =>
         <ToastBase
             title={title}
             description={description}
             trigger={trigger}
+            name={name}
+            testId={testId}
             slotProps={{
                 ToastList: {
                     ...slotProps,
@@ -31,11 +35,13 @@ export const Toast = {
                 }
             }}
         />,
-    Error: ({ slotProps, description = 'הפעולה נכשלה', title = 'הודעת שגיאה', icon, trigger }: ToastProps) =>
+    Error: ({ slotProps, description = 'הפעולה נכשלה', title = 'הודעת שגיאה', icon, trigger, name, testId }: ToastProps) =>
         <ToastBase
             title={title}
             description={description}
             trigger={trigger}
+            name={name}
+            testId={testId}
             slotProps={{
                 ToastList: {
                     ...slotProps?.ToastList,
@@ -46,11 +52,13 @@ export const Toast = {
                 }
             }}
         />,
-    Info: ({ slotProps, description = 'הפעולה חזרה עם התראה', title = 'פעולת אזהרה', icon, trigger }: ToastProps) =>
+    Info: ({ slotProps, description = 'הפעולה חזרה עם התראה', title = 'פעולת אזהרה', icon, trigger, name, testId }: ToastProps) =>
         <ToastBase
             title={title}
             description={description}
             trigger={trigger}
+            name={name}
+            testId={testId}
             slotProps={{
                 ToastList: {
                     ...slotProps?.ToastList,

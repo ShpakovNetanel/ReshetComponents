@@ -38,6 +38,7 @@
   .Popup {
     --tooltip-surface-color: var(--color-surface-elevated);
 
+    position: relative;
     box-sizing: border-box;
     font-size: 0.875rem;
     line-height: 1.25rem;
@@ -76,25 +77,30 @@
 
   .Arrow {
     display: flex;
+    pointer-events: none;
 
     &[data-side='top'] {
-      bottom: -8px;
-      rotate: 180deg;
+      top: auto;
+      bottom: 0;
+      transform: translateY(100%) rotate(180deg);
     }
 
     &[data-side='bottom'] {
-      top: -8px;
-      rotate: 0deg;
+      bottom: auto;
+      top: 0;
+      transform: translateY(-100%);
     }
 
     &[data-side='left'] {
-      right: -13px;
-      rotate: 90deg;
+      left: auto;
+      right: 0;
+      transform: translateX(100%) rotate(90deg);
     }
 
     &[data-side='right'] {
-      left: -13px;
-      rotate: -90deg;
+      right: auto;
+      left: 0;
+      transform: translateX(-100%) rotate(-90deg);
     }
   }
 }
