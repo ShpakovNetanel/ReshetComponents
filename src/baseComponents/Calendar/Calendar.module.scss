@@ -134,7 +134,7 @@
         width: var(--dropdown-year-width);
     }
 
-    .DropdownTrigger {
+    .DropdownRoot .DropdownTrigger {
         box-sizing: border-box;
         display: inline-flex;
         align-items: center;
@@ -172,30 +172,30 @@
         }
     }
 
-    .DropdownValue {
+    .DropdownRoot .DropdownValue {
         overflow: hidden;
         text-overflow: ellipsis;
         white-space: nowrap;
         color: inherit;
     }
 
-    .DropdownIcon {
+    .DropdownRoot .DropdownIcon {
         display: inline-flex;
         flex-shrink: 0;
         color: var(--text-muted);
     }
 
-    .DropdownPopup {
+    .DropdownPopup.DropdownPopup {
         border: 1px solid var(--border);
         background-color: var(--surface);
         box-shadow: 0 12px 24px var(--color-calendar-shadow);
     }
 
-    .DropdownItem {
+    .DropdownItem.DropdownItem {
         color: var(--text-strong);
     }
 
-    .DropdownTrigger[data-disabled] .Chevron {
+    .DropdownRoot .DropdownTrigger[data-disabled] .Chevron {
         opacity: 0.4;
     }
 
