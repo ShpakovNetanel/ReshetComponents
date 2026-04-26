@@ -45,12 +45,12 @@ export const NumberField = ({ onValueChange, onValueCommitted, value, slotProps,
             </BaseNumberField.ScrubArea>
             <BaseNumberField.Group data-testid={testIds.part('Group')} className={clsx(styles.Group, slotProps?.classes?.Group)}>
                 {!props.disabled && <BaseNumberField.Increment data-testid={testIds.part('Increment')} className={clsx(styles.Increment, slotProps?.classes?.Increment)}>
-                    <Plus className={clsx(slotProps?.classes?.Icon)} />
+                    <Plus className={clsx(styles.Icon, slotProps?.classes?.Icon)} />
                 </BaseNumberField.Increment>}
                 <BaseNumberField.Input data-testid={testIds.part('Input')} disabled={props.disabled} className={clsx(styles.Input, slotProps?.classes?.Input)}
                     maxLength={String(props.max).length} />
                 {!props.disabled && <BaseNumberField.Decrement data-testid={testIds.part('Decrement')} className={clsx(styles.Decrement, slotProps?.classes?.Decrement)}>
-                    <Minus className={clsx(slotProps?.classes?.Icon)} />
+                    <Minus className={clsx(styles.Icon, slotProps?.classes?.Icon)} />
                 </BaseNumberField.Decrement>}
             </BaseNumberField.Group>
         </BaseNumberField.Root>

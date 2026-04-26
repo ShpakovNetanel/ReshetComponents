@@ -20,6 +20,16 @@ import { Button, DatePicker, Tooltip } from 'reshet-components';
 
 The package entry loads its stylesheet automatically. `reshet-components/styles.css` is still exported if you want a direct style import for a custom setup.
 
+## Testing components locally
+
+Run the Vite playground:
+
+```bash
+npm run dev
+```
+
+Then open the local URL printed by Vite. The playground lives in `playground/main.tsx` and imports components from `src`, so changes update immediately during development.
+
 ## Notes
 
 - `react` and `react-dom` are peer dependencies.

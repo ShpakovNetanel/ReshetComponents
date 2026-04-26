@@ -144,6 +144,11 @@
             background-color: var(--color-surface-selected);
         }
 
+        &[data-disabled] {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
         @media (hover: hover) {
             &[data-highlighted]::before {
                 background-color: var(--color-surface-hover);

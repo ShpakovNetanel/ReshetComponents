@@ -185,7 +185,7 @@
         color: var(--text-muted);
     }
 
-    .DropdownPopup.DropdownPopup {
+    .DropdownPopup {
         border: 1px solid var(--border);
         background-color: var(--surface);
         box-shadow: 0 12px 24px var(--color-calendar-shadow);
@@ -257,7 +257,6 @@
     .Weekdays {
         display: flex;
         width: 100%;
-        justify-content: flex-end;
     }
 
     .Week {

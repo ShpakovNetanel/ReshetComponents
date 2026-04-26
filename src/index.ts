@@ -7,7 +7,15 @@ export { Button } from './baseComponents/Button/Button';
 export { default as Calendar } from './baseComponents/Calendar/Calendar';
 export { Chip } from './baseComponents/Chip/Chip';
 export { Combobox, type Primitive as ComboboxPrimitive, type ValueLabelPair as ComboboxValueLabelPair } from './baseComponents/Combobox/Combobox';
-export { DatePicker, type DatePickerChangeDetails } from './baseComponents/DatePicker/DatePicker';
+export {
+    DatePicker,
+    type DatePickerChangeDetails,
+    type DatePickerMode,
+    type DatePickerMultipleProps,
+    type DatePickerProps,
+    type DatePickerRangeProps,
+    type DatePickerSingleProps,
+} from './baseComponents/DatePicker/DatePicker';
 export { default as Dialog } from './baseComponents/Dialog/Dialog';
 export { Drawer } from './baseComponents/Drawer/Drawer';
 export { default as Input } from './baseComponents/Input/Input';

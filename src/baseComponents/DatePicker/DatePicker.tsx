@@ -2,6 +2,7 @@ import { Popover as BasePopover } from '@base-ui/react'
 import { endOfMonth, format, isAfter, isValid, parse, startOfDay } from 'date-fns'
 import { CalendarIcon } from 'lucide-react'
 import { useEffect, useId, useMemo, useState, type ChangeEvent, type ReactNode } from 'react'
+import type { DateRange } from 'react-day-picker'
 import { createTestIdBuilder } from '../../utils/testIds'
 import Calendar from '../Calendar/Calendar'
 import Input from '../Input/Input'
@@ -12,13 +13,21 @@ export type DatePickerChangeDetails = {
 }
 
 const DATE_FORMAT = 'dd.MM.yyyy';
+const MULTIPLE_DATE_SEPARATOR = ', ';
+const RANGE_DATE_SEPARATOR = ' - ';
 
-interface DatePickerProps {
-    value: Date;
-    onValueChange: (date: Date, details: DatePickerChangeDetails) => void;
-    displayValue?: Date;
+export type DatePickerMode = 'single' | 'multiple' | 'range';
+
+type DatePickerValueByMode = {
+    single: Date;
+    multiple: Date[];
+    range: DateRange;
+}
+
+type DatePickerCommonProps = {
     maxDate?: Date;
     open?: boolean;
+    disabled?: boolean;
     onOpenChange?: (open: boolean) => void;
     closeOnSelect?: boolean;
     popupFooter?: ReactNode;
@@ -27,22 +36,106 @@ interface DatePickerProps {
     testId?: string;
 }
 
-export const DatePicker = ({
-    value,
-    onValueChange,
-    displayValue,
-    maxDate,
-    open,
-    onOpenChange,
-    closeOnSelect = true,
-    popupFooter,
-    dateFormat = DATE_FORMAT,
-    name,
-    testId,
-}: DatePickerProps) => {
+type DatePickerModeProps<Mode extends DatePickerMode> = DatePickerCommonProps & {
+    mode: Mode;
+    value: DatePickerValueByMode[Mode];
+    onValueChange: (value: DatePickerValueByMode[Mode], details: DatePickerChangeDetails) => void;
+    displayValue?: DatePickerValueByMode[Mode];
+}
+
+export type DatePickerSingleProps = DatePickerCommonProps & {
+    mode?: 'single';
+    value: Date;
+    onValueChange: (date: Date, details: DatePickerChangeDetails) => void;
+    displayValue?: Date;
+}
+
+export type DatePickerMultipleProps = DatePickerModeProps<'multiple'>;
+export type DatePickerRangeProps = DatePickerModeProps<'range'>;
+export type DatePickerProps = DatePickerSingleProps | DatePickerMultipleProps | DatePickerRangeProps;
+
+const isValidDate = (date: Date | undefined): date is Date =>
+    date instanceof Date && isValid(date);
+
+const formatDate = (date: Date | undefined, dateFormat: string) =>
+    isValidDate(date) ? format(date, dateFormat) : '';
+
+const formatSelection = (
+    value: Date | Date[] | DateRange,
+    mode: DatePickerMode,
+    dateFormat: string
+) => {
+    if (mode === 'multiple') {
+        return (value as Date[])
+            .filter(isValidDate)
+            .map((date) => format(date, dateFormat))
+            .join(MULTIPLE_DATE_SEPARATOR);
+    }
+
+    if (mode === 'range') {
+        const range = value as DateRange;
+        const from = formatDate(range.from, dateFormat);
+        const to = formatDate(range.to, dateFormat);
+
+        if (!from) {
+            return '';
+        }
+
+        return to ? `${from}${RANGE_DATE_SEPARATOR}${to}` : from;
+    }
+
+    return formatDate(value as Date, dateFormat);
+};
+
+const getSelectionMonth = (
+    value: Date | Date[] | DateRange,
+    mode: DatePickerMode
+) => {
+    if (mode === 'multiple') {
+        return (value as Date[]).find(isValidDate);
+    }
+
+    if (mode === 'range') {
+        const range = value as DateRange;
+        return isValidDate(range.from) ? range.from : range.to;
+    }
+
+    return isValidDate(value as Date) ? (value as Date) : undefined;
+};
+
+const parseDateValue = (value: string, dateFormat: string) => {
+    const parsedDate = parse(value.trim(), dateFormat, new Date());
+
+    if (isValid(parsedDate) && format(parsedDate, dateFormat) === value.trim()) {
+        return parsedDate;
+    }
+
+    return undefined;
+};
+
+const isMultipleDatePickerProps = (props: DatePickerProps): props is DatePickerMultipleProps =>
+    props.mode === 'multiple';
+
+const isRangeDatePickerProps = (props: DatePickerProps): props is DatePickerRangeProps =>
+    props.mode === 'range';
+
+export const DatePicker = (props: DatePickerProps) => {
+    const {
+        maxDate,
+        open,
+        disabled,
+        onOpenChange,
+        closeOnSelect = true,
+        popupFooter,
+        dateFormat = DATE_FORMAT,
+        name,
+        testId,
+    } = props;
+    const mode = props.mode ?? 'single';
     const inputId = useId();
     const testIds = createTestIdBuilder('DatePicker', { name, testId });
-    const selectedDate = displayValue ?? value;
+    const selectedValue = props.displayValue ?? props.value;
+    const selectedMonth = getSelectionMonth(selectedValue, mode);
     const normalizedMaxDate = useMemo(
         () => (maxDate ? startOfDay(maxDate) : undefined),
         [maxDate]
@@ -51,28 +144,27 @@ export const DatePicker = ({
         () => (normalizedMaxDate ? endOfMonth(normalizedMaxDate) : undefined),
         [normalizedMaxDate]
     );
-    const [month, setMonth] = useState(selectedDate);
+    const disabledDays = disabled || (normalizedMaxDate ? { after: normalizedMaxDate } : undefined);
+    const [month, setMonth] = useState(selectedMonth);
     const [internalOpen, setInternalOpen] = useState(false);
     const [inputValue, setInputValue] = useState(
-        isValid(selectedDate) ? format(selectedDate, dateFormat) : ''
+        formatSelection(selectedValue, mode, dateFormat)
     );
     const isDateOpened = open ?? internalOpen;
 
     useEffect(() => {
-        if (!isValid(selectedDate)) {
-            setInputValue('');
-            return;
+        if (selectedMonth) {
+            setMonth(selectedMonth);
         }
 
-        setMonth(selectedDate);
-        setInputValue(format(selectedDate, dateFormat));
-    }, [selectedDate, dateFormat]);
+        setInputValue(formatSelection(selectedValue, mode, dateFormat));
+    }, [selectedValue, selectedMonth, mode, dateFormat]);
 
     useEffect(() => {
-        if (!isDateOpened && isValid(selectedDate)) {
-            setInputValue(format(selectedDate, dateFormat));
+        if (!isDateOpened) {
+            setInputValue(formatSelection(selectedValue, mode, dateFormat));
         }
-    }, [isDateOpened, selectedDate, dateFormat]);
+    }, [isDateOpened, selectedValue, mode, dateFormat]);
 
     const setDatePickerOpen = (nextOpen: boolean) => {
         if (open === undefined) {
@@ -92,7 +184,27 @@ export const DatePicker = ({
         return normalizedDate;
     };
 
-    const handleDayPickerSelect = (date: Date | undefined) => {
+    const clampDates = (dates: Date[]) =>
+        dates.map(clampDate).filter((date, index, clampedDates) =>
+            clampedDates.findIndex((clampedDate) => clampedDate.getTime() === date.getTime()) === index
+        );
+
+    const clampRange = (range: DateRange) => ({
+        from: range.from ? clampDate(range.from) : undefined,
+        to: range.to ? clampDate(range.to) : undefined,
+    });
+
+    const closeAfterCalendarSelect = () => {
+        if (closeOnSelect) {
+            setDatePickerOpen(false);
+        }
+    };
+
+    const handleSingleSelect = (date: Date | undefined) => {
+        if (isMultipleDatePickerProps(props) || isRangeDatePickerProps(props)) {
+            return;
+        }
+
         if (!date) {
             return;
         }
@@ -103,10 +215,34 @@ export const DatePicker = ({
             return;
         }
 
-        onValueChange(clampDate(normalizedDate), { source: 'calendar' });
+        props.onValueChange(clampDate(normalizedDate), { source: 'calendar' });
+        closeAfterCalendarSelect();
+    };
 
-        if (closeOnSelect) {
-            setDatePickerOpen(false);
+    const handleMultipleSelect = (dates: Date[] | undefined) => {
+        if (!isMultipleDatePickerProps(props)) {
+            return;
+        }
+
+        props.onValueChange(clampDates(dates ?? []), { source: 'calendar' });
+        closeAfterCalendarSelect();
+    };
+
+    const handleRangeSelect = (range: DateRange | undefined) => {
+        if (!isRangeDatePickerProps(props)) {
+            return;
+        }
+
+        if (!range) {
+            props.onValueChange({ from: undefined }, { source: 'calendar' });
+            closeAfterCalendarSelect();
+            return;
+        }
+
+        props.onValueChange(clampRange(range), { source: 'calendar' });
+
+        if (range.to) {
+            closeAfterCalendarSelect();
         }
     };
 
@@ -118,11 +254,74 @@ export const DatePicker = ({
             return;
         }
 
-        const parsedDate = parse(nextValue, dateFormat, new Date());
+        if (isMultipleDatePickerProps(props)) {
+            const dates = nextValue
+                .split(MULTIPLE_DATE_SEPARATOR)
+                .map((value) => parseDateValue(value, dateFormat));
 
-        if (isValid(parsedDate) && format(parsedDate, dateFormat) === nextValue) {
-            onValueChange(clampDate(parsedDate), { source: 'input' });
+            if (dates.every(isValidDate)) {
+                props.onValueChange(clampDates(dates), { source: 'input' });
+            }
+            return;
         }
+
+        if (isRangeDatePickerProps(props)) {
+            const [fromValue, toValue] = nextValue.split(RANGE_DATE_SEPARATOR);
+            const from = parseDateValue(fromValue ?? '', dateFormat);
+            const to = parseDateValue(toValue ?? '', dateFormat);
+
+            if (from && (!toValue || to)) {
+                props.onValueChange(clampRange({ from, to }), { source: 'input' });
+            }
+            return;
+        }
+
+        const parsedDate = parseDateValue(nextValue, dateFormat);
+
+        if (parsedDate) {
+            props.onValueChange(clampDate(parsedDate), { source: 'input' });
+        }
+    };
+
+    const calendarProps = {
+        testId: testIds.part('Calendar'),
+        month,
+        endMonth,
+        onMonthChange: setMonth,
+        disabled: disabledDays,
+    };
+
+    const renderCalendar = () => {
+        if (isMultipleDatePickerProps(props)) {
+            return (
+                <Calendar
+                    {...calendarProps}
+                    mode='multiple'
+                    selected={props.value}
+                    onSelect={handleMultipleSelect}
+                />
+            );
+        }
+
+        if (isRangeDatePickerProps(props)) {
+            return (
+                <Calendar
+                    {...calendarProps}
+                    mode='range'
+                    selected={props.value}
+                    onSelect={handleRangeSelect}
+                />
+            );
+        }
+
+        return (
+            <Calendar
+                {...calendarProps}
+                mode='single'
+                selected={isValidDate(props.value) ? props.value : undefined}
+                onSelect={handleSingleSelect}
+            />
+        );
     };
 
     return (
@@ -155,16 +354,7 @@ export const DatePicker = ({
                 <BasePopover.Positioner sideOffset={8} className={styles.Positioner}>
                     <div data-testid={testIds.part('PopupStack')} className={styles.PopupStack}>
                         <BasePopover.Popup data-testid={testIds.part('Popup')} className={styles.Popup}>
-                            <Calendar
-                                testId={testIds.part('Calendar')}
-                                month={month}
-                                endMonth={endMonth}
-                                onMonthChange={setMonth}
-                                mode='single'
-                                selected={isValid(selectedDate) ? selectedDate : undefined}
-                                disabled={normalizedMaxDate ? { after: normalizedMaxDate } : undefined}
-                                onSelect={handleDayPickerSelect}
-                            />
+                            {renderCalendar()}
                         </BasePopover.Popup>
                         {popupFooter}
                     </div>
