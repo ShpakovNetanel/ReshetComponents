@@ -37,6 +37,8 @@ export { ToastButton, type SlotProps as ToastButtonSlotProps } from './baseCompo
 export { ToastList, type SlotProps as ToastListSlotProps } from './baseComponents/Toast/ToastBase/ToastList/ToastList';
 export { Tooltip, type TooltipSlotProps } from './baseComponents/Tooltip/Tooltip';
 export { Typography } from './baseComponents/Typography/Typography';
+export { MaterialSearch } from './MaterialSearch/MaterialSearch';
+export type { Material } from './MaterialSearch/types';
 export { buildTestId, testIdProps } from './utils/testIds';
 export type { ClassNames } from './types/baseui';
 export type { Direction } from './types/types';

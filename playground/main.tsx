@@ -11,6 +11,8 @@ import {
   DatePicker,
   Drawer,
   Input,
+  MaterialSearch,
+  type Material,
   NumberField,
   Select,
   type SelectValueLabelPair,
@@ -45,6 +47,38 @@ const comboboxOptions: ComboboxValueLabelPair[] = [
   { value: 'echo', label: 'Echo' },
 ];
 
+const materialOptions: Material[] = [
+  {
+    id: '100421',
+    category: 'Medical',
+    nickname: 'Trauma kit',
+    description: 'Advanced field trauma kit',
+    type: 'equipment',
+    favorite: true,
+  },
+  {
+    id: '100884',
+    category: 'Comms',
+    nickname: 'Radio set',
+    description: 'Encrypted handheld radio',
+    type: 'equipment',
+  },
+  {
+    id: '101204',
+    category: 'Logistics',
+    nickname: 'Water pack',
+    description: 'Portable water resupply pack',
+    type: 'supply',
+  },
+  {
+    id: '102018',
+    category: 'Tools',
+    nickname: 'Repair tool',
+    description: 'Compact field repair tool',
+    type: 'tool',
+  },
+];
+
 const tabOptions = [
   { value: 0, label: 'Overview', color: '#2563eb' },
   { value: 1, label: 'Details', color: '#16a34a' },
@@ -76,6 +110,9 @@ function Playground() {
   const [comboMulti, setComboMulti] = useState<ComboboxValueLabelPair[]>([
     comboboxOptions[1],
     comboboxOptions[2],
+  ]);
+  const [selectedMaterials, setSelectedMaterials] = useState<Material[]>([
+    materialOptions[0],
   ]);
   const [singleDate, setSingleDate] = useState(new Date());
   const [multipleDates, setMultipleDates] = useState<Date[]>([new Date()]);
@@ -174,6 +211,25 @@ function Playground() {
                   onValueChange={setComboMulti}
                 />
                 <output>{comboMulti.map((item) => item.label).join(', ') || 'No items selected'}</output>
+              </div>
+            </div>
+          </section>
+
+          <section className="Section">
+            <h2>Material Search</h2>
+            <div className="Grid">
+              <div className="Field FieldWide">
+                <label>MaterialSearch</label>
+                <MaterialSearch
+                  name="playground-material-search"
+                  materials={materialOptions}
+                  value={selectedMaterials}
+                  onValueChange={setSelectedMaterials}
+                  onAddMaterials={(materials) => setSelectedMaterials(materials)}
+                />
+                <output>
+                  {selectedMaterials.map((material) => material.id).join(', ') || 'No materials selected'}
+                </output>
               </div>
             </div>
           </section>

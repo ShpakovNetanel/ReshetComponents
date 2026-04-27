@@ -37,6 +37,10 @@
 
   .Popup {
     --tooltip-surface-color: var(--color-surface-elevated);
+    --tooltip-shadow-x: 0;
+    --tooltip-shadow-y: 10px;
+    --tooltip-shadow-small-x: 0;
+    --tooltip-shadow-small-y: 4px;
 
     position: relative;
     box-sizing: border-box;
@@ -57,8 +61,36 @@
       transform 150ms,
       opacity 150ms;
     box-shadow:
-      0 10px 15px -3px var(--color-popup-shadow),
-      0 4px 6px -4px var(--color-popup-shadow);
+      var(--tooltip-shadow-x) var(--tooltip-shadow-y) 15px -3px var(--color-popup-shadow),
+      var(--tooltip-shadow-small-x) var(--tooltip-shadow-small-y) 6px -4px var(--color-popup-shadow);
+
+    &:has(.Arrow[data-side='top']) {
+      --tooltip-shadow-x: 0;
+      --tooltip-shadow-y: 10px;
+      --tooltip-shadow-small-x: 0;
+      --tooltip-shadow-small-y: 4px;
+    }
+
+    &:has(.Arrow[data-side='bottom']) {
+      --tooltip-shadow-x: 0;
+      --tooltip-shadow-y: -10px;
+      --tooltip-shadow-small-x: 0;
+      --tooltip-shadow-small-y: -4px;
+    }
+
+    &:has(.Arrow[data-side='left']) {
+      --tooltip-shadow-x: 10px;
+      --tooltip-shadow-y: 0;
+      --tooltip-shadow-small-x: 4px;
+      --tooltip-shadow-small-y: 0;
+    }
+
+    &:has(.Arrow[data-side='right']) {
+      --tooltip-shadow-x: -10px;
+      --tooltip-shadow-y: 0;
+      --tooltip-shadow-small-x: -4px;
+      --tooltip-shadow-small-y: 0;
+    }
 
     &[data-starting-style],
     &[data-ending-style] {
@@ -81,26 +113,26 @@
 
     &[data-side='top'] {
       top: auto;
-      bottom: 0;
-      transform: translateY(100%) rotate(180deg);
+      bottom: -8px;
+      rotate: 180deg;
     }
 
     &[data-side='bottom'] {
       bottom: auto;
-      top: 0;
-      transform: translateY(-100%);
+      top: -8px;
+      rotate: 0deg;
     }
 
     &[data-side='left'] {
       left: auto;
-      right: 0;
-      transform: translateX(100%) rotate(90deg);
+      right: -13px;
+      rotate: 90deg;
     }
 
     &[data-side='right'] {
       right: auto;
-      left: 0;
-      transform: translateX(-100%) rotate(-90deg);
+      left: -13px;
+      rotate: -90deg;
     }
   }
 }

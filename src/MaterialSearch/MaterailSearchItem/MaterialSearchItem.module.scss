@@ -1,0 +1,84 @@
+@layer custom {
+    .Item {
+        width: 100%;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        grid-column-start: 2;
+        padding-left: 0;
+
+        &[data-selected] {
+            padding-right: 2rem;
+        }
+    }
+
+    .A {
+        display: flex;
+        gap: 0.5rem;
+    }
+
+    .Material {
+        display: flex;
+        align-items: center;
+        width: 100%;
+        justify-content: space-between;
+    }
+
+    .MaterialTexts {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .MaterialTitle {
+        font-size: 0.8rem;
+    }
+
+    .MaterialDescription {
+        font-size: 0.7rem;
+    }
+
+    .Button {
+        background-color: transparent;
+        border: none;
+        padding: 0 0.3rem;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+    }
+
+    .Toggle {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .CheckedBookmark {
+        display: block;
+        width: 1.2rem;
+        height: 1.2rem;
+        object-fit: contain;
+    }
+
+    .Icon{
+        width: 1.2rem;
+        stroke-width: 2px;
+        cursor: pointer;
+        transition: color 0.18s ease, fill 0.18s ease, transform 0.18s ease;
+        color: var(--color-gray-600);
+
+        &[data-filled] {
+            color: var(--color-blue);
+            fill: currentColor;
+        }
+    }
+
+    .Label {
+        font-size: 0.6rem;
+        color: var(--category-color);
+        text-align: center;
+        padding: 0.1rem 0.35rem;
+        border: 1px solid var(--category-color);
+        font-weight: 600;
+    }
+}

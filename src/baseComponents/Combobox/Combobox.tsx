@@ -6,6 +6,7 @@ import type { ClassNames } from "../../types/baseui"
 import { createTestIdBuilder } from "../../utils/testIds"
 import styles from './Combobox.module.scss'
 import { isEmptyish, isPlainObject } from "remeda"
+import { Button } from "../Button/Button"
 
 export type Primitive = string | number;
 export type ValueLabelPair = { value: any; label: string };
@@ -136,13 +137,13 @@ export const Combobox = <Value, Multiple extends boolean | undefined = false>({
 						onClick={focusInput}
 						onPasteCapture={onPaste}>
 						{startAdornment &&
-							<button type="button"
+							<Button type="button"
 								data-testid={testIds.part('StartAdornment')}
 								data-disabled={disabled}
 								className={clsx(styles.StartAdornment, slotProps?.classes?.StartAdornment)}
 								onClick={handleAdornmentClick}>
 								{startAdornment}
-							</button>}
+							</Button>}
 						<BaseCombobox.Value>
 							{(values: Value[]) =>
 								<>
