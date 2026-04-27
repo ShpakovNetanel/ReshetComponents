@@ -9,6 +9,11 @@
         border-radius: var(--navbar-radius);
         padding: 0 0.5rem;
         height: 2rem;
+
+        &[data-disabled] {
+            opacity: 0.55;
+            cursor: not-allowed;
+        }
     }
 
     .Date {
@@ -20,6 +25,10 @@
         height: fit-content;
         font-size: 0.8rem;
         text-align: right;
+
+        &:disabled {
+            cursor: not-allowed;
+        }
     }
 
     .Date:focus {
@@ -45,6 +54,10 @@
         transition:
             color 150ms ease,
             transform 150ms ease;
+
+        &:disabled {
+            cursor: not-allowed;
+        }
     }
 
     .CalendarIcon {

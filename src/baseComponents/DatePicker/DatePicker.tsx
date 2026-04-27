@@ -1,4 +1,5 @@
 import { Popover as BasePopover } from '@base-ui/react'
+import clsx from 'clsx'
 import { endOfMonth, format, isAfter, isValid, parse, startOfDay } from 'date-fns'
 import { CalendarIcon } from 'lucide-react'
 import { useEffect, useId, useMemo, useState, type ChangeEvent, type ReactNode } from 'react'
@@ -7,6 +8,7 @@ import { createTestIdBuilder } from '../../utils/testIds'
 import Calendar from '../Calendar/Calendar'
 import Input from '../Input/Input'
 import styles from './DatePicker.module.scss'
+import { Button } from '../Button/Button'
 
 export type DatePickerChangeDetails = {
     source: 'calendar' | 'input';
@@ -32,6 +34,17 @@ type DatePickerCommonProps = {
     closeOnSelect?: boolean;
     popupFooter?: ReactNode;
     dateFormat?: string;
+    slotProps?: {
+        classes?: {
+            InputWrapper?: string;
+            Input?: string;
+            Trigger?: string;
+            CalendarIcon?: string;
+            Positioner?: string;
+            PopupStack?: string;
+            Popup?: string;
+        }
+    };
     name?: string;
     testId?: string;
 }
@@ -128,6 +141,7 @@ export const DatePicker = (props: DatePickerProps) => {
         closeOnSelect = true,
         popupFooter,
         dateFormat = DATE_FORMAT,
+        slotProps,
         name,
         testId,
     } = props;
@@ -150,7 +164,7 @@ export const DatePicker = (props: DatePickerProps) => {
     const [inputValue, setInputValue] = useState(
         formatSelection(selectedValue, mode, dateFormat)
     );
-    const isDateOpened = open ?? internalOpen;
+    const isDateOpened = !disabled && (open ?? internalOpen);
 
     useEffect(() => {
         if (selectedMonth) {
@@ -167,6 +181,15 @@ export const DatePicker = (props: DatePickerProps) => {
     }, [isDateOpened, selectedValue, mode, dateFormat]);
 
     const setDatePickerOpen = (nextOpen: boolean) => {
+        if (disabled) {
+            if (open === undefined) {
+                setInternalOpen(false);
+            }
+
+            onOpenChange?.(false);
+            return;
+        }
+
         if (open === undefined) {
             setInternalOpen(nextOpen);
         }
@@ -201,6 +224,10 @@ export const DatePicker = (props: DatePickerProps) => {
     };
 
     const handleSingleSelect = (date: Date | undefined) => {
+        if (disabled) {
+            return;
+        }
+
         if (isMultipleDatePickerProps(props) || isRangeDatePickerProps(props)) {
             return;
         }
@@ -220,6 +247,10 @@ export const DatePicker = (props: DatePickerProps) => {
     };
 
     const handleMultipleSelect = (dates: Date[] | undefined) => {
+        if (disabled) {
+            return;
+        }
+
         if (!isMultipleDatePickerProps(props)) {
             return;
         }
@@ -229,6 +260,10 @@ export const DatePicker = (props: DatePickerProps) => {
     };
 
     const handleRangeSelect = (range: DateRange | undefined) => {
+        if (disabled) {
+            return;
+        }
+
         if (!isRangeDatePickerProps(props)) {
             return;
         }
@@ -247,6 +282,10 @@ export const DatePicker = (props: DatePickerProps) => {
     };
 
     const handleInputChange = (event: ChangeEvent<HTMLInputElement>) => {
+        if (disabled) {
+            return;
+        }
+
         const nextValue = event.target.value;
         setInputValue(nextValue);
 
@@ -326,7 +365,10 @@ export const DatePicker = (props: DatePickerProps) => {
 
     return (
         <BasePopover.Root open={isDateOpened} onOpenChange={setDatePickerOpen}>
-            <div data-testid={testIds.self()} className={styles.InputWrapper}>
+            <div
+                data-testid={testIds.self()}
+                className={clsx(styles.InputWrapper, slotProps?.classes?.InputWrapper)}
+                data-disabled={disabled || undefined}>
                 <Input
                     id={inputId}
                     name={name}
@@ -334,26 +376,37 @@ export const DatePicker = (props: DatePickerProps) => {
                     value={inputValue}
                     onChange={handleInputChange}
                     type='text'
+                    disabled={disabled}
                     placeholder={dateFormat}
-                    className={styles.Date}
+                    className={clsx(styles.Date, slotProps?.classes?.Input)}
                     onClick={() => {
                         setDatePickerOpen(true);
                     }}
                 />
                 <BasePopover.Trigger
                     render={(
-                        <button type="button" data-testid={testIds.part('Trigger')} className={styles.IconButton} aria-label="Open calendar">
-                            <CalendarIcon className={styles.CalendarIcon} />
-                        </button>
+                        <Button
+                            data-testid={testIds.part('Trigger')}
+                            className={clsx(styles.IconButton, slotProps?.classes?.Trigger)}
+                            aria-label="Open calendar"
+                            disabled={disabled}>
+                            <CalendarIcon className={clsx(styles.CalendarIcon, slotProps?.classes?.CalendarIcon)} />
+                        </Button>
                     )}
                     nativeButton
                 />
             </div>
 
             <BasePopover.Portal>
-                <BasePopover.Positioner sideOffset={8} className={styles.Positioner}>
-                    <div data-testid={testIds.part('PopupStack')} className={styles.PopupStack}>
-                        <BasePopover.Popup data-testid={testIds.part('Popup')} className={styles.Popup}>
+                <BasePopover.Positioner
+                    sideOffset={8}
+                    className={clsx(styles.Positioner, slotProps?.classes?.Positioner)}>
+                    <div
+                        data-testid={testIds.part('PopupStack')}
+                        className={clsx(styles.PopupStack, slotProps?.classes?.PopupStack)}>
+                        <BasePopover.Popup
+                            data-testid={testIds.part('Popup')}
+                            className={clsx(styles.Popup, slotProps?.classes?.Popup)}>
                             {renderCalendar()}
                         </BasePopover.Popup>
                         {popupFooter}
