@@ -15,12 +15,17 @@ type Classes = {
     Icon?: keyof typeof styles;
 }
 
+type Disable = {
+    trigger: boolean;
+}
+
 type SlotProps = {
     height?: string;
     width?: string;
     direction?: Direction;
     disableBackdrop?: boolean;
     classes?: Classes;
+    disable: Disable;
 }
 
 type DrawerProps = {
@@ -56,8 +61,10 @@ export const Drawer = ({
 
     return (
         <BaseDialog.Root {...props}>
-            <BaseDialog.Trigger data-testid={testIds.part('Trigger')} className={clsx(styles.Trigger, slotProps?.classes?.Trigger)}>
-                {triggerIcon ?? <Menu className={clsx(slotProps?.classes?.Icon)}/>}
+            <BaseDialog.Trigger data-testid={testIds.part('Trigger')}
+                className={clsx(styles.Trigger, slotProps?.classes?.Trigger)}
+                disabled={slotProps?.disable?.trigger}>
+                {triggerIcon ?? <Menu className={clsx(slotProps?.classes?.Icon)} />}
             </BaseDialog.Trigger>
             <BaseDialog.Portal>
                 {!slotProps?.disableBackdrop && <BaseDialog.Backdrop
