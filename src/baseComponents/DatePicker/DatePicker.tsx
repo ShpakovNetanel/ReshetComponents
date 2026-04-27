@@ -375,7 +375,6 @@ export const DatePicker = (props: DatePickerProps) => {
                     testId={testIds.part('Input')}
                     value={inputValue}
                     onChange={handleInputChange}
-                    type='text'
                     disabled={disabled}
                     placeholder={dateFormat}
                     className={clsx(styles.Date, slotProps?.classes?.Input)}
