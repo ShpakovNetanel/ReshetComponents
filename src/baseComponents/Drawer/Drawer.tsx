@@ -16,7 +16,7 @@ type Classes = {
 }
 
 type Disable = {
-    trigger: boolean;
+    trigger?: boolean;
 }
 
 type SlotProps = {
@@ -25,7 +25,7 @@ type SlotProps = {
     direction?: Direction;
     disableBackdrop?: boolean;
     classes?: Classes;
-    disable: Disable;
+    disable?: Disable;
 }
 
 type DrawerProps = {

@@ -90,6 +90,51 @@ input {
   align-items: center;
 }
 
+.DrawerContent {
+  display: grid;
+  gap: 12px;
+  padding: 24px;
+}
+
+.DrawerContent h3,
+.DrawerContent p {
+  margin: 0;
+}
+
+.DrawerContent p {
+  color: #5d6676;
+}
+
+.SpeedDialTrigger,
+.SpeedDialAction {
+  display: inline-flex;
+  width: 44px;
+  height: 44px;
+  align-items: center;
+  justify-content: center;
+  border: 0;
+  border-radius: 999px;
+  background: #2563eb;
+  color: #ffffff;
+  box-shadow: 0 10px 24px rgb(37 99 235 / 24%);
+  cursor: pointer;
+}
+
+.SpeedDialAction {
+  background: #ffffff;
+  color: #1d2433;
+  box-shadow: 0 8px 18px rgb(29 36 51 / 14%);
+}
+
+.TooltipGrid {
+  display: flex;
+  min-height: 160px;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: center;
+  justify-content: center;
+}
+
 output {
   min-height: 20px;
   color: #6b7280;

@@ -27,5 +27,8 @@ export default defineConfig({
         'remeda'
       ]
     }
+  },
+  server: {
+    port: 1574
   }
 });

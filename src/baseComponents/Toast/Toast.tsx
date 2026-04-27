@@ -4,7 +4,7 @@ import { ToastBase } from "./ToastBase/ToastBase";
 import type { SlotProps as ToastListSlotProps } from './ToastBase/ToastList/ToastList';
 
 type SlotProps = {
-    ToastList: ToastListSlotProps;
+    ToastList?: ToastListSlotProps;
 }
 
 type ToastProps = {
@@ -27,7 +27,7 @@ export const Toast = {
             testId={testId}
             slotProps={{
                 ToastList: {
-                    ...slotProps,
+                    ...slotProps?.ToastList,
                     icon: slotProps?.ToastList?.icon ?? <Check size='2rem' color='green' />
                 },
                 ToastButton: {

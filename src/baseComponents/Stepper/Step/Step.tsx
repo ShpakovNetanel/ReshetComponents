@@ -28,7 +28,7 @@ export type StepProps = PropsWithChildren & {
 
 export const Step = ({ index, disabled, children,
     completed, onStepClick, slotProps, name, testId }: StepProps) => {
-    const { active, setActive } = useStepper();
+    const { active, setActive, orientation } = useStepper();
     const testIds = createTestIdBuilder('Step', { name, testId });
 
     const state: StepState = disabled
@@ -45,6 +45,7 @@ export const Step = ({ index, disabled, children,
                 data-testid={testIds.self(index)}
                 className={clsx(styles.Step, slotProps?.classes?.Step)}
                 data-state={state}
+                data-orientation={orientation}
                 data-disabled={disabled || undefined}
                 onClick={onStepClick
                     ? onStepClick

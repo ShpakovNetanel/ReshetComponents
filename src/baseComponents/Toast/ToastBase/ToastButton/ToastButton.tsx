@@ -10,6 +10,7 @@ type Classes = {
 export type SlotProps = {
     classes?: Classes;
     icon?: ReactNode;
+    toastIcon?: ReactNode;
     testId?: string;
 }
 
@@ -29,6 +30,10 @@ export const ToastButton = ({ description, title, name, testId, slotProps }: Toa
         toastManager.add({
             title,
             description,
+            data: {
+                owner: name,
+                icon: slotProps?.toastIcon,
+            },
         })
     }
 

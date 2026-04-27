@@ -4,19 +4,36 @@
     flex-direction: column;
     justify-content: center;
     gap: 0.25rem;
+    width: 100%;
   }
 
   .Chips {
     box-sizing: border-box;
+    position: relative;
     display: flex;
     align-items: center;
-    gap: 0.125rem;
-    padding: 0;
+    flex-wrap: wrap;
+    gap: 0.25rem;
+    width: 100%;
+    min-height: 2.5rem;
+    min-width: 10rem;
+    padding: 0.25rem 2.5rem 0.25rem 0.5rem;
+    border: 1px solid var(--color-gray-200);
+    border-radius: 0.375rem;
+    background-color: transparent;
+    cursor: text;
+
+    &:focus-within {
+      outline: 2px solid var(--color-gray-300);
+      outline-offset: 2px;
+    }
   }
 
   .Chip {
     display: flex;
     align-items: center;
+    min-height: 1.75rem;
+    padding-left: 0.5rem;
     background-color: var(--color-gray-100);
     color: var(--color-gray-900);
     border-radius: 0.375rem;
@@ -55,7 +72,8 @@
     font-size: 1rem;
     background-color: transparent;
     min-width: 3rem;
-    color: white;
+    height: 2rem;
+    color: var(--color-gray-900);
 
     &:focus {
       outline: none;
@@ -64,12 +82,28 @@
 
   .InputWrapper {
     position: relative;
+    box-sizing: border-box;
+    display: flex;
+    align-items: center;
+    width: 100%;
+    min-width: 10rem;
+    height: 2.5rem;
+    padding-left: 0.375rem;
+    padding-right: 0.5rem;
+    border: 1px solid var(--color-gray-200);
+    border-radius: 0.375rem;
+    background-color: transparent;
+    cursor: text;
+
+    &:focus-within {
+      outline: 2px solid var(--color-gray-300);
+      outline-offset: 2px;
+    }
   }
 
   .Trigger {
     box-sizing: border-box;
-    position: absolute;
-    right: 0.75rem;
+    flex: 0 0 1.5rem;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -111,6 +145,7 @@
 
   .Positioner {
     outline: 0;
+    z-index: 12000;
   }
 
   .Popup {
@@ -224,12 +259,11 @@
 
   .ActionButtons {
     box-sizing: border-box;
-    position: absolute;
+    position: static;
     display: flex;
     align-items: center;
     justify-content: center;
-    bottom: 0;
-    height: 2.5rem;
+    height: 100%;
     border-radius: 0.25rem;
     border: none;
     padding: 0;

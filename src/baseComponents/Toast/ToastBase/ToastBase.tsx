@@ -35,7 +35,8 @@ export const ToastBase = ({ slotProps, description, title, trigger, name, testId
                 name={name}
                 testId={slotProps?.ToastButton?.testId ?? testId}
                 slotProps={{
-                    ...slotProps?.ToastButton
+                    ...slotProps?.ToastButton,
+                    toastIcon: slotProps?.ToastButton?.toastIcon ?? slotProps?.ToastList?.icon,
                 }} />}
             <BaseToast.Portal>
                 <ToastList

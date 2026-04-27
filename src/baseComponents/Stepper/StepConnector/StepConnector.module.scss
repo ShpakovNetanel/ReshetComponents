@@ -3,5 +3,13 @@
     width: 1rem;
     height: 1.5px;
     background: #ddd;
+
+    :global([data-orientation="vertical"]) & {
+      width: 1.5px;
+      height: 1.5rem;
+      justify-self: center;
+      grid-column: 1;
+      grid-row: 2;
+    }
   } 
 }
