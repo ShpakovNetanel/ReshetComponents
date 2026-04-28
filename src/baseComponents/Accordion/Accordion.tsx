@@ -20,6 +20,7 @@ type AccordionProps = {
     title?: ReactNode;
     actions?: ReactNode;
     defaultOpen?: boolean;
+    disableChevron?: boolean;
     onOpenChange?: (open: boolean) => void;
     name?: string;
     testId?: string;
@@ -31,6 +32,7 @@ export const Accordion = ({
     children,
     slotProps,
     defaultOpen = true,
+    disableChevron = false,
     onOpenChange: onOpenChangeProp,
     name,
     testId,
@@ -56,7 +58,7 @@ export const Accordion = ({
                     {...slotProps?.headerProps}
                     className={clsx(styles.Header, slotProps?.classes?.Header, slotProps?.headerProps?.className)}>
                     <BaseAccordion.Trigger data-testid={testIds.part('Trigger')} className={clsx(styles.Trigger, slotProps?.classes?.Trigger)}>
-                        <ChevronRight aria-hidden="true" className={styles.TriggerIcon} />
+                        {!disableChevron && <ChevronRight aria-hidden="true" className={styles.TriggerIcon} />}
                         {title}
                     </BaseAccordion.Trigger>
                     {actions}

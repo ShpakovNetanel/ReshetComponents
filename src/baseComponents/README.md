@@ -58,6 +58,18 @@ Utility exports:
 import { Button, DatePicker, Select, SpeedDial, ToastList } from 'reshet-components';
 ```
 
+## Accordion Chevron
+
+`Accordion` renders a chevron in the trigger by default. The chevron points right when closed and rotates down when open.
+
+Disable it when you need a custom trigger layout or when another visual already communicates the open state:
+
+```tsx
+<Accordion title="Details" disableChevron>
+  <p>Content without the default chevron.</p>
+</Accordion>
+```
+
 ## Theme Provider
 
 The library exports both `ThemeProvider` and `DarkModeProvider`. They are the same component; `ThemeProvider` is the preferred application-facing name.

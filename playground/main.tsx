@@ -289,21 +289,33 @@ function Documentation() {
           { name: 'title', type: 'ReactNode', description: 'Rendered inside the accordion trigger.' },
           { name: 'actions', type: 'ReactNode', description: 'Optional controls rendered on the header row beside the trigger.' },
           { name: 'defaultOpen', type: 'boolean', description: 'Initial open state. Defaults to true.' },
+          { name: 'disableChevron', type: 'boolean', description: 'When true, the chevron icon is not rendered in the trigger.' },
           { name: 'onOpenChange', type: '(open: boolean) => void', description: 'Called whenever the panel opens or closes.' },
           { name: 'slotProps', type: '{ classes?, headerProps? }', description: 'Pass class names or header data attributes for styling and tests.' },
           { name: 'name / testId', type: 'string', description: 'Customize generated test IDs.' },
         ],
-        usage: `<Accordion title="Advanced settings" defaultOpen={false}>
+        usage: `<Accordion
+  title="Advanced settings"
+  defaultOpen={false}
+  disableChevron={false}>
   <p>Panel content</p>
 </Accordion>`,
         preview: (
-          <Accordion
-            name="docs-accordion"
-            title={<strong>Advanced settings</strong>}
-            actions={<Chip label="Optional" slotProps={{ backgroundColor: '#e6f4ff' }} />}
-            defaultOpen={false}>
-            <p className="PreviewText">Use the panel for grouped content that can be hidden until needed.</p>
-          </Accordion>
+          <div className="PreviewStack">
+            <Accordion
+              name="docs-accordion"
+              title={<strong>Advanced settings</strong>}
+              actions={<Chip label="Optional" slotProps={{ backgroundColor: '#e6f4ff' }} />}
+              defaultOpen={false}>
+              <p className="PreviewText">Use the panel for grouped content that can be hidden until needed.</p>
+            </Accordion>
+            <Accordion
+              name="docs-accordion-no-chevron"
+              title={<strong>No chevron</strong>}
+              disableChevron>
+              <p className="PreviewText">Set disableChevron when the title or layout already communicates expansion.</p>
+            </Accordion>
+          </div>
         ),
       },
       {
