@@ -23,6 +23,7 @@ Main component exports:
 - `Chip`
 - `Combobox`
 - `DatePicker`
+- `DarkModeProvider`
 - `Dialog`
 - `Drawer`
 - `Input`
@@ -43,17 +44,66 @@ Main component exports:
 - `ToastList`
 - `Tooltip`
 - `Typography`
+- `ThemeProvider`
 
 Utility exports:
 
 - `buildTestId`
 - `testIdProps`
+- `useReshetTheme`
 
 ## Basic Import Pattern
 
 ```tsx
 import { Button, DatePicker, Select, SpeedDial, ToastList } from 'reshet-components';
 ```
+
+## Theme Provider
+
+The library exports both `ThemeProvider` and `DarkModeProvider`. They are the same component; `ThemeProvider` is the preferred application-facing name.
+
+Use controlled mode when the consuming application already has dark-mode state:
+
+```tsx
+import { ThemeProvider } from 'reshet-components';
+
+function AppShell() {
+  const [theme, setTheme] = useState<'light' | 'dark'>('light');
+
+  return (
+    <ThemeProvider theme={theme} onThemeChange={setTheme}>
+      <App />
+    </ThemeProvider>
+  );
+}
+```
+
+Use uncontrolled mode when the component library can choose the initial mode:
+
+```tsx
+<ThemeProvider defaultTheme="system">
+  <App />
+</ThemeProvider>
+```
+
+Supported modes:
+
+- `light`
+- `dark`
+- `system`
+
+Important popup note:
+
+- `syncDocumentTheme` defaults to `true`.
+- Keep it enabled when using portaled components such as `Select`, `Combobox`, `DatePicker`, `Menu`, `Dialog`, `Drawer`, `Tooltip`, and `Toast`.
+- It mirrors `data-theme` to `document.documentElement`, so popup surfaces inherit the same light/dark tokens as the provider subtree.
+
+Inside a provider, `useReshetTheme()` returns:
+
+- `theme`
+- `resolvedTheme`
+- `isDark`
+- `setTheme`
 
 ## Test ID System
 

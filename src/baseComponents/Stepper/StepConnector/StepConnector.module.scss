@@ -2,7 +2,16 @@
   .Connector {
     width: 1rem;
     height: 1.5px;
-    background: #ddd;
+    background: var(--color-surface-divider);
+
+    &[data-active],
+    &[data-completed] {
+      background: var(--color-blue);
+    }
+
+    &[data-disabled] {
+      background: var(--color-surface-overlay);
+    }
 
     :global([data-orientation="vertical"]) & {
       width: 1.5px;

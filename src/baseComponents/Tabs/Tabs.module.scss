@@ -13,7 +13,7 @@
         justify-content: center;
         border: none;
         background: none;
-        color: black;
+        color: var(--color-text-primary);
         font-family: inherit;
         font-size: 0.875rem;
         font-weight: 300;
@@ -30,6 +30,15 @@
             color: var(--tab-color);
             border-bottom: 2px solid var(--tab-color);
             font-weight: 600;
+        }
+
+        :global([data-theme='dark']) & {
+            color: var(--color-text-primary);
+        }
+
+        :global([data-theme='dark']) &[data-active] {
+            color: var(--color-gray-950);
+            border-bottom-color: var(--color-gray-950);
         }
 
         .TabLabel {

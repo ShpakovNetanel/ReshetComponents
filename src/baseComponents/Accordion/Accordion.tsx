@@ -1,5 +1,6 @@
 import { Accordion as BaseAccordion } from "@base-ui/react";
 import clsx from "clsx";
+import { ChevronRight } from "lucide-react";
 import { useState, type HTMLAttributes, type PropsWithChildren, type ReactNode } from "react";
 import type { ClassNames } from "../../types/baseui";
 import { createTestIdBuilder } from "../../utils/testIds";
@@ -55,6 +56,7 @@ export const Accordion = ({
                     {...slotProps?.headerProps}
                     className={clsx(styles.Header, slotProps?.classes?.Header, slotProps?.headerProps?.className)}>
                     <BaseAccordion.Trigger data-testid={testIds.part('Trigger')} className={clsx(styles.Trigger, slotProps?.classes?.Trigger)}>
+                        <ChevronRight aria-hidden="true" className={styles.TriggerIcon} />
                         {title}
                     </BaseAccordion.Trigger>
                     {actions}

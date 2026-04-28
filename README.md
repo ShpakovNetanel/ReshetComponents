@@ -20,6 +20,39 @@ import { Button, DatePicker, Tooltip } from 'reshet-components';
 
 The package entry loads its stylesheet automatically. `reshet-components/styles.css` is still exported if you want a direct style import for a custom setup.
 
+## ThemeProvider and dark mode
+
+The package ships light and dark CSS tokens in `styles.css`. Wrap the part of your app that uses Reshet components with `ThemeProvider` or `DarkModeProvider` to choose which token set is active.
+
+Use controlled mode when your application already owns dark-mode state:
+
+```tsx
+import { ThemeProvider, Button, DatePicker } from 'reshet-components';
+
+function App() {
+  const [theme, setTheme] = useState<'light' | 'dark'>('light');
+
+  return (
+    <ThemeProvider theme={theme} onThemeChange={setTheme}>
+      <Button onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}>
+        Toggle theme
+      </Button>
+      <DatePicker value={date} onValueChange={setDate} />
+    </ThemeProvider>
+  );
+}
+```
+
+Use uncontrolled mode when Reshet can own the local theme:
+
+```tsx
+<ThemeProvider defaultTheme="system">
+  <App />
+</ThemeProvider>
+```
+
+`theme` and `defaultTheme` accept `'light'`, `'dark'`, or `'system'`. By default, the provider also mirrors `data-theme` to `document.documentElement` with `syncDocumentTheme={true}`. Keep that enabled for popup components such as `Select`, `Combobox`, `DatePicker`, `Menu`, `Dialog`, `Drawer`, `Tooltip`, and `Toast`, because they render through portals and need the document-level theme to inherit the same dark-mode tokens.
+
 ## Testing components locally
 
 Run the Vite playground:

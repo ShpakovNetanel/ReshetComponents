@@ -7,17 +7,27 @@
         display: flex;
         align-items: center;
         justify-content: center;
-        background: white;
+        background: var(--color-surface-elevated);
+        border: 1px solid var(--color-surface-divider);
+        color: var(--color-text-secondary);
         transition: all 0.2s;
 
         &[data-active] {
-            background-color: blue;
-            color: white;
+            background-color: var(--color-blue);
+            border-color: var(--color-blue);
+            color: var(--color-surface);
         }
 
         &[data-completed] {
-            background: #2ecc71;
-            color: white;
+            background: var(--color-success-button-background);
+            border-color: var(--color-success-button-background);
+            color: var(--color-success-button-foreground);
+        }
+
+        &[data-disabled] {
+            background: var(--color-surface-overlay);
+            border-color: var(--color-surface-divider);
+            color: var(--color-text-muted);
         }
     }
 

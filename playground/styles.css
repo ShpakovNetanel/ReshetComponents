@@ -2,8 +2,8 @@
   font-family:
     Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
     sans-serif;
-  color: #1d2433;
-  background: #f4f6f9;
+  color: var(--color-text-primary);
+  background: var(--color-background);
 }
 
 * {
@@ -12,6 +12,7 @@
 
 body {
   margin: 0;
+  background: var(--color-background);
 }
 
 button,
@@ -19,72 +20,297 @@ input {
   font: inherit;
 }
 
-.Playground {
-  width: min(1180px, calc(100vw - 32px));
+.ThemeRoot {
+  min-height: 100vh;
+  background: var(--color-background);
+  color: var(--color-text-primary);
+}
+
+.DocsPage {
+  display: grid;
+  grid-template-columns: 280px minmax(0, 1fr);
+  min-height: 100vh;
+}
+
+.Sidebar {
+  position: sticky;
+  top: 0;
+  display: grid;
+  height: 100vh;
+  align-content: start;
+  gap: 18px;
+  padding: 22px 16px;
+  border-right: 1px solid var(--color-surface-divider);
+  background: var(--color-surface);
+}
+
+.SidebarHeader {
+  display: grid;
+  gap: 4px;
+  padding: 0 8px;
+}
+
+.SidebarHeader strong {
+  color: var(--color-text-primary);
+  font-size: 1rem;
+}
+
+.SidebarHeader span {
+  color: var(--color-text-secondary);
+  font-size: 0.82rem;
+}
+
+.VerticalTabs {
+  display: grid;
+  gap: 4px;
+  max-height: calc(100vh - 92px);
+  overflow-y: auto;
+  padding-right: 4px;
+}
+
+.VerticalTab {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 8px;
+  align-items: center;
+  width: 100%;
+  min-height: 40px;
+  padding: 8px 10px;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--color-text-secondary);
+  text-align: left;
+  cursor: pointer;
+}
+
+.VerticalTab:hover {
+  background: var(--color-surface-hover);
+  color: var(--color-text-primary);
+}
+
+.VerticalTab[aria-selected='true'] {
+  border-color: var(--color-border);
+  background: var(--color-surface-selected);
+  color: var(--color-text-primary);
+  font-weight: 700;
+}
+
+.VerticalTab span,
+.VerticalTab small {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.VerticalTab small {
+  color: var(--color-text-secondary);
+  font-size: 0.72rem;
+  font-weight: 600;
+}
+
+.DocsMain {
+  width: min(1180px, calc(100vw - 328px));
   margin: 0 auto;
-  padding: 32px 0 56px;
+  padding: 36px 0 64px;
 }
 
-.Header {
+.Hero {
   display: flex;
-  align-items: flex-end;
+  gap: 18px;
+  align-items: start;
   justify-content: space-between;
-  gap: 24px;
-  margin-bottom: 28px;
+  padding-bottom: 28px;
+  border-bottom: 1px solid var(--color-surface-divider);
 }
 
-.Header h1,
-.Section h2 {
+.Hero h1,
+.ComponentHeader h2,
+.ComponentPanel h3,
+.SnippetGrid h4,
+.DialogContent h3,
+.DrawerContent h3 {
   margin: 0;
   letter-spacing: 0;
 }
 
-.Header h1 {
-  font-size: 2rem;
-  line-height: 1.15;
+.Hero h1 {
+  margin-top: 6px;
+  color: var(--color-text-primary);
+  font-size: 2.2rem;
+  line-height: 1.1;
 }
 
-.Header p {
-  max-width: 680px;
-  margin: 8px 0 0;
-  color: #5d6676;
+.Hero p,
+.ComponentHeader p,
+.GuidePanel p,
+.PreviewText,
+.DialogContent p,
+.DrawerContent p {
+  color: var(--color-text-secondary);
 }
 
-.Section {
-  padding: 24px 0;
-  border-top: 1px solid #d9dee8;
+.Hero p {
+  max-width: 760px;
+  margin: 10px 0 0;
 }
 
-.Section h2 {
-  margin-bottom: 16px;
-  font-size: 1.15rem;
+.Eyebrow {
+  margin: 0;
+  color: var(--color-blue);
+  font-size: 0.78rem;
+  font-weight: 800;
+  letter-spacing: 0;
+  text-transform: uppercase;
 }
 
-.Grid {
+.ComponentPanel {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 18px;
+  padding-top: 28px;
+}
+
+.ComponentHeader {
+  display: flex;
+  gap: 20px;
+  align-items: start;
+  justify-content: space-between;
+}
+
+.ComponentHeader h2 {
+  margin-top: 4px;
+  color: var(--color-text-primary);
+  font-size: 1.55rem;
+}
+
+.ComponentHeader p {
+  max-width: 760px;
+  margin: 8px 0 0;
+}
+
+.LayerBadge {
+  flex: 0 0 auto;
+  padding: 6px 10px;
+  border: 1px solid var(--color-border);
+  border-radius: 999px;
+  background: var(--color-surface-selected);
+  color: var(--color-text-primary);
+  font-size: 0.8rem;
+  font-weight: 700;
+}
+
+.PanelGrid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(320px, 440px);
   gap: 16px;
   align-items: start;
 }
 
-.Field {
-  display: grid;
-  gap: 8px;
+.PreviewPanel,
+.UsagePanel,
+.PropsPanel,
+.GuidePanel {
   min-width: 0;
-  padding: 16px;
-  border: 1px solid #d9dee8;
+  border: 1px solid var(--color-surface-divider);
   border-radius: 8px;
-  background: #ffffff;
+  background: var(--color-surface);
 }
 
-.Field > label {
-  color: #394356;
+.PreviewPanel {
+  display: grid;
+  min-height: 220px;
+  align-content: center;
+  gap: 12px;
+  padding: 20px;
+  overflow: visible;
+}
+
+.UsagePanel,
+.PropsPanel,
+.GuidePanel {
+  padding: 18px;
+}
+
+.UsagePanel h3,
+.PropsPanel h3,
+.GuidePanel h3 {
+  color: var(--color-text-primary);
+  font-size: 1rem;
+}
+
+.UsagePanel pre,
+.GuidePanel pre {
+  max-width: 100%;
+  margin: 10px 0 0;
+  padding: 12px;
+  overflow-x: auto;
+  border-radius: 6px;
+  background: #111827;
+  color: #eef2ff;
+  font-size: 0.78rem;
+  line-height: 1.5;
+}
+
+.PropsPanel {
+  display: grid;
+  gap: 12px;
+}
+
+.PropTable {
+  display: grid;
+  overflow: hidden;
+  border: 1px solid var(--color-surface-divider);
+  border-radius: 8px;
+}
+
+.PropRow {
+  display: grid;
+  grid-template-columns: minmax(120px, 0.8fr) minmax(170px, 1fr) minmax(240px, 1.7fr);
+  gap: 12px;
+  align-items: start;
+  padding: 10px 12px;
+  border-top: 1px solid var(--color-surface-divider);
+  color: var(--color-text-secondary);
+  font-size: 0.86rem;
+  line-height: 1.45;
+}
+
+.PropRow:first-child {
+  border-top: 0;
+}
+
+.PropHead {
+  background: var(--color-surface-overlay);
+  color: var(--color-text-primary);
+  font-weight: 800;
+}
+
+.PropRow code,
+.GuidePanel code {
+  color: var(--color-blue);
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+  font-size: 0.82rem;
+}
+
+.GuidePanel {
+  display: grid;
+  gap: 16px;
+}
+
+.GuidePanel p {
+  max-width: 900px;
+  margin: 8px 0 0;
+}
+
+.SnippetGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.SnippetGrid h4 {
+  color: var(--color-text-primary);
   font-size: 0.9rem;
-  font-weight: 700;
-}
-
-.FieldWide {
-  grid-column: 1 / -1;
 }
 
 .Inline {
@@ -94,19 +320,51 @@ input {
   align-items: center;
 }
 
+.PreviewStack {
+  display: grid;
+  gap: 8px;
+  align-content: start;
+}
+
+.PreviewStack > label {
+  color: var(--color-text-primary);
+  font-size: 0.9rem;
+  font-weight: 700;
+}
+
+.PreviewText,
+.DialogContent p,
+.DrawerContent p {
+  margin: 0;
+}
+
+.LoaderGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(128px, 1fr));
+  gap: 10px;
+}
+
+.LoaderBox {
+  min-height: 148px;
+  overflow: hidden;
+  border-radius: 8px;
+  background: #111827;
+}
+
+.LoaderBox > div {
+  min-height: 148px;
+  transform: scale(0.78);
+}
+
+.DialogContent,
 .DrawerContent {
   display: grid;
   gap: 12px;
   padding: 24px;
 }
 
-.DrawerContent h3,
-.DrawerContent p {
-  margin: 0;
-}
-
-.DrawerContent p {
-  color: #5d6676;
+.DialogContent {
+  width: min(360px, calc(100vw - 48px));
 }
 
 .SpeedDialTrigger,
@@ -125,14 +383,14 @@ input {
 }
 
 .SpeedDialAction {
-  background: #ffffff;
-  color: #1d2433;
+  background: var(--color-surface);
+  color: var(--color-text-primary);
   box-shadow: 0 8px 18px rgb(29 36 51 / 14%);
 }
 
 .TooltipGrid {
   display: flex;
-  min-height: 160px;
+  min-height: 170px;
   flex-wrap: wrap;
   gap: 12px;
   align-items: center;
@@ -141,22 +399,75 @@ input {
 
 output {
   min-height: 20px;
-  color: #6b7280;
+  color: var(--color-text-secondary);
   font-size: 0.875rem;
   overflow-wrap: anywhere;
 }
 
-@media (max-width: 620px) {
-  .Playground {
+@media (max-width: 1080px) {
+  .DocsPage {
+    display: block;
+  }
+
+  .Sidebar {
+    position: static;
+    height: auto;
+    padding: 16px 20px;
+    border-right: 0;
+    border-bottom: 1px solid var(--color-surface-divider);
+  }
+
+  .VerticalTabs {
+    display: flex;
+    max-height: none;
+    overflow-x: auto;
+    overflow-y: hidden;
+    padding: 0 0 4px;
+  }
+
+  .VerticalTab {
+    min-width: 160px;
+  }
+
+  .DocsMain {
+    width: min(100vw - 32px, 1180px);
+    padding-top: 28px;
+  }
+
+  .PanelGrid,
+  .SnippetGrid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 760px) {
+  .DocsMain {
     width: min(100vw - 20px, 1180px);
     padding-top: 20px;
   }
 
-  .Header {
-    display: block;
+  .Hero h1 {
+    font-size: 1.7rem;
   }
 
-  .Header h1 {
-    font-size: 1.55rem;
+  .Hero {
+    display: grid;
+  }
+
+  .ComponentHeader {
+    display: grid;
+  }
+
+  .LayerBadge {
+    justify-self: start;
+  }
+
+  .PropRow {
+    grid-template-columns: 1fr;
+    gap: 4px;
+  }
+
+  .PropHead {
+    display: none;
   }
 }

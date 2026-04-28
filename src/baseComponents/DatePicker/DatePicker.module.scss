@@ -19,7 +19,7 @@
     .Date {
         border: none;
         background: transparent;
-        color: black;
+        color: var(--color-datepicker-text);
         padding: 0;
         width: 5.5rem;
         height: fit-content;
@@ -48,7 +48,7 @@
         border-radius: 0.9rem;
         border: none;
         background: transparent;
-        color: black;
+        color: var(--color-datepicker-text);
         cursor: pointer;
         padding: 0;
         transition:

@@ -16,6 +16,13 @@ export {
     type DatePickerRangeProps,
     type DatePickerSingleProps,
 } from './baseComponents/DatePicker/DatePicker';
+export {
+    DarkModeProvider,
+    ThemeProvider,
+    useReshetTheme,
+    type ReshetResolvedTheme,
+    type ReshetThemeMode,
+} from './baseComponents/DarkModeProvider/DarkModeProvider';
 export { default as Dialog } from './baseComponents/Dialog/Dialog';
 export { Drawer } from './baseComponents/Drawer/Drawer';
 export { default as Input } from './baseComponents/Input/Input';

@@ -53,6 +53,12 @@
             0 10px 15px -3px var(--color-popup-shadow),
             0 4px 6px -4px var(--color-popup-shadow);
 
+        :global([data-theme='dark']) & {
+            box-shadow:
+                0 10px 15px -3px rgba(255, 255, 255, 0.36),
+                0 4px 6px -4px rgba(255, 255, 255, 0.28);
+        }
+
         &[data-starting-style],
         &[data-ending-style] {
             opacity: 0;

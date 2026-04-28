@@ -1,5 +1,15 @@
 @layer base {
     .Label {
         font-size: 0.8rem;
+        color: var(--color-text-secondary);
+
+        &[data-active],
+        &[data-completed] {
+            color: var(--color-text-primary);
+        }
+
+        &[data-disabled] {
+            color: var(--color-text-muted);
+        }
     }
 }
