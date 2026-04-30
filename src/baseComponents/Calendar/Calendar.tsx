@@ -71,6 +71,7 @@ type CalendarProps = DayPickerProps & {
   name?: string;
   testId?: string;
   'data-testid'?: string;
+  fluid?: boolean;
 }
 
 const createDropdownChangeEvent = (
@@ -131,7 +132,7 @@ function CalendarDropdown({
   )
 }
 
-function Calendar({ name, testId, 'data-testid': dataTestId, ...props }: CalendarProps) {
+function Calendar({ name, testId, 'data-testid': dataTestId, fluid, ...props }: CalendarProps) {
   const testIds = createTestIdBuilder('Calendar', { name, testId })
 
   return (
@@ -144,7 +145,10 @@ function Calendar({ name, testId, 'data-testid': dataTestId, ...props }: Calenda
       dir='rtl'
       data-testid={dataTestId ?? testIds.self()}
       {...props}
-      classNames={classNames}
+      classNames={{
+        ...classNames,
+        root: clsx(classNames.root, fluid && styles.Fluid),
+      }}
       components={{
         Dropdown: CalendarDropdown,
         Chevron: ({ className, orientation, ...props }) => {

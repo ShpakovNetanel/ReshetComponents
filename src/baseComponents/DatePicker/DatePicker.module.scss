@@ -17,11 +17,14 @@
     }
 
     .Date {
+        flex: 1 1 5.5rem;
+        min-width: 0;
+        max-width: none;
         border: none;
         background: transparent;
         color: var(--color-datepicker-text);
         padding: 0;
-        width: 5.5rem;
+        width: auto;
         height: fit-content;
         font-size: 0.8rem;
         text-align: right;
@@ -68,6 +71,7 @@
 
     .Popup {
         box-sizing: border-box;
+        width: 100%;
         background: var(--color-datepicker-background);
         color: var(--color-datepicker-text);
         transform-origin: var(--transform-origin);
@@ -90,9 +94,11 @@
 
     .PopupStack {
         position: relative;
+        box-sizing: border-box;
         display: flex;
         flex-direction: column;
         gap: 0.35rem;
-        width: fit-content;
+        width: min(20rem, var(--available-width));
+        max-width: var(--available-width);
     }
 }

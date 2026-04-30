@@ -324,6 +324,7 @@ export const DatePicker = (props: DatePickerProps) => {
 
     const calendarProps = {
         testId: testIds.part('Calendar'),
+        fluid: true,
         month,
         endMonth,
         onMonthChange: setMonth,

@@ -10,14 +10,19 @@
         --text-strong: var(--color-calendar-text);
         --text-muted: var(--color-calendar-text-muted);
         --border: var(--color-calendar-border);
-        --dropdown-month-width: 6.5rem;
-        --dropdown-year-width: 4.75rem;
+        --dropdown-month-width: 8rem;
+        --dropdown-year-width: 6.25rem;
 
         position: relative;
         box-sizing: border-box;
         font-family: "SF Pro Text", "SF Pro Display", -apple-system, "Helvetica Neue", "Segoe UI", sans-serif;
         border-radius: 1rem;
         color: var(--text-strong);
+    }
+
+    .Root.Fluid {
+        width: 100%;
+        min-width: calc(var(--cell-size) * 7);
     }
 
     .CaptionLabel {
@@ -53,7 +58,7 @@
         margin: 0;
         cursor: pointer;
         font: inherit;
-        color: var(--text-muted);
+        color: black;
         -moz-appearance: none;
         -webkit-appearance: none;
         display: inline-flex;
@@ -65,7 +70,7 @@
         width: var(--cell-size);
         height: var(--cell-size);
         border-radius: 50%;
-        border: 1px solid var(--border);
+        border: 1px solid black;
         transition: background-color 150ms ease, color 150ms ease, box-shadow 150ms ease, border-color 150ms ease;
 
         &:hover {
@@ -101,7 +106,8 @@
         position: relative;
         display: inline-flex;
         align-items: center;
-        gap: 0.1rem;
+        gap: 0.5rem;
+        min-width: 0;
     }
 
     .Dropdown {
@@ -128,10 +134,12 @@
 
     .MonthsDropdown {
         width: var(--dropdown-month-width);
+        min-width: 0;
     }
 
     .YearsDropdown {
         width: var(--dropdown-year-width);
+        min-width: 0;
     }
 
     .DropdownRoot .DropdownTrigger {
@@ -145,7 +153,7 @@
         min-width: 0;
         padding-inline-start: 0.65rem;
         padding-inline-end: 0.55rem;
-        border: 1px solid var(--border);
+        border: 1px solid black;
         border-radius: 0.9rem;
         background: var(--surface);
         box-shadow: 0 8px 18px rgba(0, 0, 0, 0.08);
@@ -166,8 +174,8 @@
 
         &[data-disabled] {
             cursor: revert;
-            opacity: 0.4;
-            background: transparent;
+            opacity: 0.72;
+            background: color-mix(in srgb, var(--surface) 70%, transparent);
             box-shadow: none;
         }
     }
@@ -177,15 +185,18 @@
         text-overflow: ellipsis;
         white-space: nowrap;
         color: inherit;
+        color: black;
     }
 
     .DropdownRoot .DropdownIcon {
         display: inline-flex;
         flex-shrink: 0;
-        color: var(--text-muted);
+        color: black;
+        opacity: 0.8;
     }
 
     .DropdownPopup {
+        min-width: 8rem;
         border: 1px solid var(--border);
         background-color: var(--surface);
         box-shadow: 0 12px 24px var(--color-calendar-shadow);
@@ -196,7 +207,7 @@
     }
 
     .DropdownRoot .DropdownTrigger[data-disabled] .Chevron {
-        opacity: 0.4;
+        opacity: 0.7;
     }
 
     .MonthCaption {
@@ -218,6 +229,21 @@
     .Root[data-nav-layout="around"] .MonthCaption {
         justify-content: center;
         position: relative;
+    }
+
+    .Root.Fluid[data-nav-layout="around"] .MonthCaption {
+        padding-inline: calc(var(--cell-size) + 0.5rem);
+    }
+
+    .Fluid .Dropdowns {
+        display: grid;
+        grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr);
+        width: 100%;
+    }
+
+    .Fluid .MonthsDropdown,
+    .Fluid .YearsDropdown {
+        width: auto;
     }
 
     .Root[data-nav-layout="around"] .ButtonPrevious {
@@ -244,14 +270,27 @@
         max-width: fit-content;
     }
 
+    .Fluid .Months {
+        width: 100%;
+        max-width: none;
+    }
+
     .MonthGrid {
         border-collapse: collapse;
+    }
+
+    .Fluid .MonthGrid {
+        width: 100%;
     }
 
     .Month {
         display: flex;
         flex-direction: column;
         gap: 1rem;
+    }
+
+    .Fluid .Month {
+        width: 100%;
     }
 
     .Weekdays {
@@ -267,7 +306,9 @@
 
     .Weekday {
         color: var(--text-muted);
+        flex: 0 0 var(--cell-size);
         width: var(--cell-size);
+        min-width: var(--cell-size);
         font-weight: 600;
         font-size: 0.72rem;
         text-align: center;
@@ -290,7 +331,9 @@
 
     .Day {
         position: relative;
+        flex: 0 0 var(--cell-size);
         width: var(--cell-size);
+        min-width: var(--cell-size);
         height: var(--cell-size);
         border-radius: 1rem;
         transition: background-color 150ms ease, color 150ms ease, box-shadow 150ms ease;
@@ -365,6 +408,12 @@
                 border-end-end-radius: 1rem;
             }
         }
+    }
+
+    .Fluid .Weekday,
+    .Fluid .Day {
+        flex: 1 1 var(--cell-size);
+        width: auto;
     }
 
     .DayButton {
