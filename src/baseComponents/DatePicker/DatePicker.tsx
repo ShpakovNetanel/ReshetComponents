@@ -6,6 +6,7 @@ import { useEffect, useId, useMemo, useState, type ChangeEvent, type ReactNode }
 import type { DateRange } from 'react-day-picker'
 import { createTestIdBuilder } from '../../utils/testIds'
 import Calendar from '../Calendar/Calendar'
+import type { CalendarSlotProps } from '../Calendar/Calendar'
 import Input from '../Input/Input'
 import styles from './DatePicker.module.scss'
 import { Button } from '../Button/Button'
@@ -35,6 +36,7 @@ type DatePickerCommonProps = {
     popupFooter?: ReactNode;
     dateFormat?: string;
     slotProps?: {
+        calendar?: CalendarSlotProps;
         classes?: {
             InputWrapper?: string;
             Input?: string;
@@ -325,6 +327,7 @@ export const DatePicker = (props: DatePickerProps) => {
     const calendarProps = {
         testId: testIds.part('Calendar'),
         fluid: true,
+        slotProps: slotProps?.calendar,
         month,
         endMonth,
         onMonthChange: setMonth,
