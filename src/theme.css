@@ -1,3 +1,5 @@
+@layer base, library;
+
 @layer base {
   :root,
   [data-theme='light'] {
