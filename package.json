@@ -39,9 +39,10 @@
     "dev": "vite",
     "build:types": "tsc -p tsconfig.build.json",
     "build:js": "vite build && node ./scripts/inject-entry-css.mjs",
+    "build:lib": "npm run clean && npm run build:js && npm run build:types",
     "build:playground": "vite build --mode playground",
-    "build": "npm run clean && npm run build:js && npm run build:types",
-    "prepack": "npm run build",
+    "build": "npm run build:playground",
+    "prepack": "npm run build:lib",
     "pack:check": "npm pack --dry-run",
     "version:canary": "node ./scripts/set-canary-version.mjs"
   },
