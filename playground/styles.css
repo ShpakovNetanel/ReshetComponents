@@ -124,10 +124,15 @@ input {
   border-bottom: 1px solid var(--color-surface-divider);
 }
 
+.HeroActions {
+  flex: 0 0 auto;
+}
+
 .Hero h1,
 .ComponentHeader h2,
 .ComponentPanel h3,
 .SnippetGrid h4,
+.UsagePanel h4,
 .DialogContent h3,
 .DrawerContent h3 {
   margin: 0;
@@ -209,6 +214,7 @@ input {
 .PreviewPanel,
 .UsagePanel,
 .PropsPanel,
+.NotesPanel,
 .GuidePanel {
   min-width: 0;
   border: 1px solid var(--color-surface-divider);
@@ -227,15 +233,32 @@ input {
 
 .UsagePanel,
 .PropsPanel,
+.NotesPanel,
 .GuidePanel {
   padding: 18px;
 }
 
 .UsagePanel h3,
 .PropsPanel h3,
+.NotesPanel h3,
 .GuidePanel h3 {
   color: var(--color-text-primary);
   font-size: 1rem;
+}
+
+.ExampleStack {
+  display: grid;
+  gap: 14px;
+}
+
+.ExampleStack article {
+  display: grid;
+  gap: 8px;
+}
+
+.UsagePanel h4 {
+  color: var(--color-text-primary);
+  font-size: 0.9rem;
 }
 
 .UsagePanel pre,
@@ -254,6 +277,21 @@ input {
 .PropsPanel {
   display: grid;
   gap: 12px;
+}
+
+.NotesPanel {
+  display: grid;
+  gap: 10px;
+}
+
+.NotesPanel ul {
+  display: grid;
+  gap: 8px;
+  margin: 0;
+  padding-left: 20px;
+  color: var(--color-text-secondary);
+  font-size: 0.92rem;
+  line-height: 1.55;
 }
 
 .PropTable {
@@ -330,6 +368,52 @@ input {
   color: var(--color-text-primary);
   font-size: 0.9rem;
   font-weight: 700;
+}
+
+.PreviewModeControl {
+  display: grid;
+  gap: 6px;
+  align-items: start;
+}
+
+.PreviewModeControl > span {
+  color: var(--color-text-primary);
+  font-size: 0.82rem;
+  font-weight: 800;
+}
+
+.SegmentedControl {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 3px;
+  width: fit-content;
+  max-width: 100%;
+  padding: 3px;
+  border: 1px solid var(--color-surface-divider);
+  border-radius: 8px;
+  background: var(--color-surface-overlay);
+}
+
+.SegmentedControl button {
+  min-height: 30px;
+  padding: 5px 9px;
+  border: 0;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--color-text-secondary);
+  font-size: 0.82rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.SegmentedControl button:hover {
+  background: var(--color-surface-hover);
+  color: var(--color-text-primary);
+}
+
+.SegmentedControl button[aria-pressed='true'] {
+  background: var(--color-blue);
+  color: #ffffff;
 }
 
 .PreviewText,

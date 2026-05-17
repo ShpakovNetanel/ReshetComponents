@@ -1,7 +1,6 @@
 import './theme.css';
 
 export { Accordion } from './baseComponents/Accordion/Accordion';
-export { AmmoLoading, type LoaderVariant } from './baseComponents/AmmoLoading/AmmoLoading';
 export { ArrowSvg } from './baseComponents/ArrowSvg/ArrowSvg';
 export { Button } from './baseComponents/Button/Button';
 export { default as Calendar, type CalendarSlotProps } from './baseComponents/Calendar/Calendar';
@@ -26,7 +25,7 @@ export {
 export { default as Dialog } from './baseComponents/Dialog/Dialog';
 export { Drawer } from './baseComponents/Drawer/Drawer';
 export { default as Input } from './baseComponents/Input/Input';
-export { Menu } from './baseComponents/Menu/Menu';
+export { Menu, type MenuGroup } from './baseComponents/Menu/Menu';
 export { NumberField } from './baseComponents/NumberField/NumberField';
 export { numberWithCommas } from './baseComponents/NumberField/utils/NumberField.util';
 export { Select, type Primitive as SelectPrimitive, type ValueLabelPair as SelectValueLabelPair } from './baseComponents/Select/Select';

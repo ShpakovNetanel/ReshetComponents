@@ -49,7 +49,7 @@ export const SpeedDialMenu = ({ items, trigger, slotProps, name, testId, ...prop
                                 <BaseMenu.Item data-testid={testIds.part('Item', index)} className={clsx(styles.Item, slotProps?.classes?.Item)}>
                                     {item}
                                 </BaseMenu.Item>
-                                {index !== items.length - 1 &&
+                                {index !== items.length - 1 && !slotProps?.disable?.separator &&
                                     <BaseSeparator data-testid={testIds.part('Separator', index)} className={clsx(styles.Separator, slotProps?.classes?.Separator)} />}
                             </React.Fragment>
                         ))}

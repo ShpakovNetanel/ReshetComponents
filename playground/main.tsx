@@ -26,6 +26,7 @@ import {
   NumberField,
   Select,
   SpeedDial,
+  SpeedDialMenu,
   Step,
   StepConnector,
   StepIndicator,
@@ -33,11 +34,15 @@ import {
   Stepper,
   Tabs,
   Toast,
+  ToastBase,
+  ToastButton,
+  ToastList,
   Tooltip,
   Typography,
   type ComboboxValueLabelPair,
+  type DatePickerMode,
   type ReshetThemeMode,
-  type SelectValueLabelPair,
+  type SelectValueLabelPair
 } from '../src';
 import '../src/theme.css';
 import './styles.css';
@@ -48,13 +53,19 @@ type PropDoc = {
   description: string;
 };
 
+type UsageExample = {
+  title: string;
+  code: string;
+};
+
 type ComponentDoc = {
   id: string;
   title: string;
   summary: string;
   layer: string;
   props: PropDoc[];
-  usage: string;
+  usage: UsageExample[];
+  notes: string[];
   preview: ReactNode;
 };
 
@@ -88,6 +99,21 @@ const tabOptions = [
 
 const stepLabels = ['Account', 'Profile', 'Review'];
 const tooltipDirections = ['top', 'right', 'bottom', 'left'] as const;
+
+type CalendarPreviewMode = 'single' | 'multiple' | 'range';
+type ComboboxPreviewMode = 'single' | 'multiple';
+type DrawerPreviewDirection = 'left' | 'right' | 'top' | 'bottom';
+type MenuPreviewMode = 'grouped' | 'flat';
+type SelectPreviewMode = 'single' | 'multiple';
+type SpeedDialMenuPreviewMode = 'separators' | 'compact';
+type StepperPreviewOrientation = 'horizontal' | 'vertical';
+type ToastPreviewKind = 'success' | 'error' | 'info' | 'primitives';
+type TooltipPreviewStyle = 'boxShadow' | 'outline';
+
+type PreviewOption<TValue extends string> = {
+  label: string;
+  value: TValue;
+};
 
 const cssLayerUsage = `import { Button } from 'reshet-components';
 import 'reshet-components/styles.css';
@@ -130,6 +156,33 @@ const renderStepperSteps = () =>
       )}
     </Step>
   ));
+
+const PreviewModeControl = <TValue extends string>({
+  label,
+  options,
+  value,
+  onChange,
+}: {
+  label: string;
+  options: PreviewOption<TValue>[];
+  value: TValue;
+  onChange: (value: TValue) => void;
+}) => (
+  <div className="PreviewModeControl" aria-label={label}>
+    <span>{label}</span>
+    <div className="SegmentedControl" role="group">
+      {options.map((option) => (
+        <button
+          key={option.value}
+          type="button"
+          aria-pressed={option.value === value}
+          onClick={() => onChange(option.value)}>
+          {option.label}
+        </button>
+      ))}
+    </div>
+  </div>
+);
 
 const PropTable = ({ props }: { props: PropDoc[] }) => (
   <div className="PropTable" role="table" aria-label="Props">
@@ -197,10 +250,17 @@ const ComponentPanel = ({ doc }: ComponentPanelProps) => (
         {doc.preview}
       </section>
       <section className="UsagePanel" aria-label={`${doc.title} usage`}>
-        <h3>Usage</h3>
-        <pre>
-          <code>{doc.usage}</code>
-        </pre>
+        <h3>Usage Examples</h3>
+        <div className="ExampleStack">
+          {doc.usage.map((example) => (
+            <article key={example.title}>
+              <h4>{example.title}</h4>
+              <pre>
+                <code>{example.code}</code>
+              </pre>
+            </article>
+          ))}
+        </div>
       </section>
     </div>
 
@@ -208,6 +268,16 @@ const ComponentPanel = ({ doc }: ComponentPanelProps) => (
       <p className="Eyebrow">API</p>
       <h3 id={`${doc.id}-props-title`}>Props</h3>
       <PropTable props={doc.props} />
+    </section>
+
+    <section className="NotesPanel" aria-labelledby={`${doc.id}-notes-title`}>
+      <p className="Eyebrow">AI Usage Notes</p>
+      <h3 id={`${doc.id}-notes-title`}>How to choose and wire it</h3>
+      <ul>
+        {doc.notes.map((note) => (
+          <li key={note}>{note}</li>
+        ))}
+      </ul>
     </section>
 
     <CssLayerGuide layer={doc.layer} />
@@ -227,14 +297,28 @@ function Documentation() {
     comboboxOptions[1],
     comboboxOptions[2],
   ]);
+  const [comboboxMode, setComboboxMode] = useState<ComboboxPreviewMode>('single');
   const [singleDate, setSingleDate] = useState(new Date());
   const [multipleDates, setMultipleDates] = useState<Date[]>([new Date()]);
   const [rangeDate, setRangeDate] = useState<DateRange>({
     from: new Date(),
     to: undefined,
   });
+  const [datePickerMode, setDatePickerMode] = useState<DatePickerMode>('single');
   const [calendarDate, setCalendarDate] = useState<Date | undefined>(new Date());
+  const [calendarDates, setCalendarDates] = useState<Date[] | undefined>([new Date()]);
+  const [calendarRange, setCalendarRange] = useState<DateRange | undefined>({ from: new Date(), to: undefined });
+  const [calendarMode, setCalendarMode] = useState<CalendarPreviewMode>('single');
   const [activeTab, setActiveTab] = useState(tabOptions[0].value);
+  const [drawerDirection, setDrawerDirection] = useState<DrawerPreviewDirection>('right');
+  const [menuMode, setMenuMode] = useState<MenuPreviewMode>('grouped');
+  const [selectMode, setSelectMode] = useState<SelectPreviewMode>('single');
+  const [cities, setCities] = useState<SelectValueLabelPair[]>([cityOptions[0], cityOptions[2]]);
+  const [speedDialMenuMode, setSpeedDialMenuMode] = useState<SpeedDialMenuPreviewMode>('separators');
+  const [stepperOrientation, setStepperOrientation] = useState<StepperPreviewOrientation>('horizontal');
+  const [toastKind, setToastKind] = useState<ToastPreviewKind>('success');
+  const [tooltipSide, setTooltipSide] = useState<(typeof tooltipDirections)[number]>('top');
+  const [tooltipStyle, setTooltipStyle] = useState<TooltipPreviewStyle>('boxShadow');
 
   const componentDocs = useMemo<ComponentDoc[]>(
     () => [
@@ -252,7 +336,21 @@ function Documentation() {
           { name: 'className / style', type: 'HTML div props', description: 'Forwarded to the provider wrapper element.' },
           { name: 'useReshetTheme', type: 'hook', description: 'Read theme, resolvedTheme, isDark, and setTheme inside the provider.' },
         ],
-        usage: darkModeUsage,
+        usage: [
+          { title: 'Controlled app theme', code: darkModeUsage },
+          { title: 'Uncontrolled system theme', code: `<ThemeProvider defaultTheme="system">
+  <App />
+</ThemeProvider>` },
+          { title: 'Portaled components', code: `<ThemeProvider syncDocumentTheme>
+  <Select items={items} value={value} onValueChange={setValue} />
+  <Dialog trigger={<Button>Open</Button>}>Content</Dialog>
+</ThemeProvider>` },
+        ],
+        notes: [
+          'Prefer ThemeProvider over DarkModeProvider in application code; they are the same export, but ThemeProvider explains intent better.',
+          'Keep syncDocumentTheme enabled when using Select, Combobox, DatePicker, Menu, Dialog, Drawer, Tooltip, or Toast because their popups render in portals.',
+          'Use controlled theme when the host app already stores the theme; use defaultTheme when Reshet can own the initial choice.',
+        ],
         preview: (
           <div className="PreviewStack">
             <div className="Inline">
@@ -293,11 +391,28 @@ function Documentation() {
           { name: 'slotProps', type: '{ classes?, headerProps? }', description: 'Pass class names or header data attributes for styling and tests.' },
           { name: 'name / testId', type: 'string', description: 'Customize generated test IDs.' },
         ],
-        usage: `<Accordion
+        usage: [
+          { title: 'Closed by default', code: `<Accordion
   title="Advanced settings"
   defaultOpen={false}>
   <p>Panel content</p>
-</Accordion>`,
+</Accordion>` },
+          { title: 'Header actions', code: `<Accordion
+  title={<strong>Filters</strong>}
+  actions={<Button type="button">Reset</Button>}>
+  <FilterControls />
+</Accordion>` },
+          { title: 'Open-state callback', code: `<Accordion
+  title="Audit details"
+  onOpenChange={(open) => analytics.track('accordion', { open })}>
+  <AuditTrail />
+</Accordion>` },
+        ],
+        notes: [
+          'Use Accordion for one collapsible content group, not for a multi-item FAQ list; this wrapper renders a single Base UI item.',
+          'Put secondary controls in actions so the trigger remains focused on opening and closing the panel.',
+          'Pass headerProps when tests or analytics need attributes on the whole header row rather than only the trigger.',
+        ],
         preview: (
           <Accordion
             name="docs-accordion"
@@ -321,9 +436,22 @@ function Documentation() {
           { name: 'className', type: 'string', description: 'Adds an app class next to the default module class.' },
           { name: 'name / testId', type: 'string', description: 'Customize generated test IDs.' },
         ],
-        usage: `<Button type="button" onClick={handleSave}>
+        usage: [
+          { title: 'Basic action', code: `<Button type="button" onClick={handleSave}>
   Save
-</Button>`,
+</Button>` },
+          { title: 'Icon button content', code: `<Button type="button" aria-label="Save changes">
+  <Save size={18} />
+</Button>` },
+          { title: 'Disabled state', code: `<Button type="button" disabled>
+  Saving
+</Button>` },
+        ],
+        notes: [
+          'Use type="button" for non-form actions so clicks do not accidentally submit a parent form.',
+          'All Base UI button props are forwarded, so aria attributes, disabled, className, and event handlers work normally.',
+          'Use children for the visible label or icon; use aria-label when the button only contains an icon.',
+        ],
         preview: (
           <div className="Inline">
             <Button onClick={() => setCount((value) => value + 1)}>Add one</Button>
@@ -344,18 +472,67 @@ function Documentation() {
           { name: 'components', type: 'DayPicker components', description: 'Override internal DayPicker pieces.' },
           { name: 'name / testId', type: 'string', description: 'Customize generated test IDs.' },
         ],
-        usage: `<Calendar
+        usage: [
+          { title: 'Single date', code: `<Calendar
   mode="single"
   selected={date}
   onSelect={setDate}
-/>`,
+/>` },
+          { title: 'Range selection', code: `<Calendar
+  mode="range"
+  selected={range}
+  onSelect={setRange}
+  disabled={{ after: new Date() }}
+/>` },
+          { title: 'Custom classes', code: `<Calendar
+  mode="single"
+  selected={date}
+  onSelect={setDate}
+  slotProps={{ classes: { Root: styles.CalendarRoot } }}
+/>` },
+        ],
+        notes: [
+          'Calendar is the low-level date surface. Use DatePicker when you also need an input and popover.',
+          'The wrapper defaults to Hebrew locale, RTL direction, outside days, animated navigation, and month/year dropdowns.',
+          'Most react-day-picker props pass through, including mode, selected, onSelect, disabled, month, and onMonthChange.',
+        ],
         preview: (
-          <Calendar
-            name="docs-calendar"
-            mode="single"
-            selected={calendarDate}
-            onSelect={setCalendarDate}
-          />
+          <div className="PreviewStack">
+            <PreviewModeControl
+              label="Mode"
+              value={calendarMode}
+              onChange={setCalendarMode}
+              options={[
+                { label: 'Single', value: 'single' },
+                { label: 'Multiple', value: 'multiple' },
+                { label: 'Range', value: 'range' },
+              ]}
+            />
+            {calendarMode === 'single' && (
+              <Calendar
+                name="docs-calendar-single"
+                mode="single"
+                selected={calendarDate}
+                onSelect={setCalendarDate}
+              />
+            )}
+            {calendarMode === 'multiple' && (
+              <Calendar
+                name="docs-calendar-multiple"
+                mode="multiple"
+                selected={calendarDates}
+                onSelect={setCalendarDates}
+              />
+            )}
+            {calendarMode === 'range' && (
+              <Calendar
+                name="docs-calendar-range"
+                mode="range"
+                selected={calendarRange}
+                onSelect={setCalendarRange}
+              />
+            )}
+          </div>
         ),
       },
       {
@@ -370,10 +547,26 @@ function Documentation() {
           { name: 'slotProps.classes.Label', type: 'string', description: 'Adds a class to the root label element.' },
           { name: 'name / testId', type: 'string', description: 'Customize generated test IDs.' },
         ],
-        usage: `<Chip
+        usage: [
+          { title: 'Status label', code: `<Chip
   label="Active"
   slotProps={{ backgroundColor: '#16a34a' }}
-/>`,
+/>` },
+          { title: 'Clickable chip', code: `<Chip
+  label="Clear filter"
+  onChipClick={() => clearFilter('status')}
+  slotProps={{ backgroundColor: '#eef2f7' }}
+/>` },
+          { title: 'Custom content', code: `<Chip
+  label={<><Check size={12} /> Complete</>}
+  slotProps={{ backgroundColor: '#2563eb' }}
+/>` },
+        ],
+        notes: [
+          'Use Chip for short metadata, status, or selected-filter labels.',
+          'backgroundColor accepts hex and rgb values; the component derives a readable foreground color when it can parse the background.',
+          'If onChipClick is provided, also make the surrounding UX clear because the rendered element is a div, not a button.',
+        ],
         preview: (
           <div className="Inline">
             <Chip label="Active" slotProps={{ backgroundColor: '#16a34a' }} />
@@ -397,36 +590,76 @@ function Documentation() {
           { name: 'itemComponent', type: '(item) => ReactNode', description: 'Custom option renderer.' },
           { name: 'slotProps', type: '{ classes?, disable? }', description: 'Customize internal slots and hide trigger, separator, or indicators.' },
         ],
-        usage: `<Combobox
+        usage: [
+          { title: 'Single searchable value', code: `<Combobox
   items={items}
   value={value}
   placeholder="Choose item"
   emptyLabel="No item found"
   onValueChange={setValue}
-/>`,
+/>` },
+          { title: 'Multiple chips', code: `<Combobox
+  multiple
+  items={items}
+  value={values}
+  placeholder="Choose items"
+  emptyLabel="No items found"
+  onValueChange={setValues}
+/>` },
+          { title: 'Custom option and selected value', code: `<Combobox
+  items={users}
+  value={user}
+  itemToStringValue={(user) => user.id}
+  itemToStringLabel={(user) => user.name}
+  itemComponent={(user) => <UserOption user={user} />}
+  valueNode={(user) => user ? <UserPill user={user} /> : null}
+  placeholder="Assign user"
+  emptyLabel="No users found"
+  onValueChange={setUser}
+/>` },
+        ],
+        notes: [
+          'Use Combobox when users need to type to filter options; use Select when the option list is short enough to scan.',
+          'Primitive values, { value, label } pairs, and object values are supported. For object values, prefer itemToStringValue and itemToStringLabel for stable matching and readable filtering.',
+          'slotProps.disable can remove the trigger, separators, empty label, or check indicators when embedding the control in denser workflows.',
+        ],
         preview: (
           <div className="PreviewStack">
-            <label>Single</label>
-            <Combobox
-              name="docs-combobox-single"
-              items={comboboxOptions}
-              value={comboSingle}
-              placeholder="Choose item"
-              emptyLabel="No item found"
-              onValueChange={setComboSingle}
+            <PreviewModeControl
+              label="Type"
+              value={comboboxMode}
+              onChange={setComboboxMode}
+              options={[
+                { label: 'Single', value: 'single' },
+                { label: 'Multiple', value: 'multiple' },
+              ]}
             />
-            <output>{comboSingle?.label ?? 'No item selected'}</output>
-            <label>Multiple</label>
-            <Combobox
-              name="docs-combobox-multi"
-              items={comboboxOptions}
-              multiple
-              value={comboMulti}
-              placeholder="Choose items"
-              emptyLabel="No items found"
-              onValueChange={setComboMulti}
-            />
-            <output>{comboMulti.map((item) => item.label).join(', ') || 'No items selected'}</output>
+            {comboboxMode === 'single' ? (
+              <>
+                <Combobox
+                  name="docs-combobox-single"
+                  items={comboboxOptions}
+                  value={comboSingle}
+                  placeholder="Choose item"
+                  emptyLabel="No item found"
+                  onValueChange={setComboSingle}
+                />
+                <output>{comboSingle?.label ?? 'No item selected'}</output>
+              </>
+            ) : (
+              <>
+                <Combobox
+                  name="docs-combobox-multi"
+                  items={comboboxOptions}
+                  multiple
+                  value={comboMulti}
+                  placeholder="Choose items"
+                  emptyLabel="No items found"
+                  onValueChange={setComboMulti}
+                />
+                <output>{comboMulti.map((item) => item.label).join(', ') || 'No items selected'}</output>
+              </>
+            )}
           </div>
         ),
       },
@@ -444,42 +677,82 @@ function Documentation() {
           { name: 'dateFormat', type: 'string', description: 'date-fns parse and display format. Defaults to dd.MM.yyyy.' },
           { name: 'popupFooter', type: 'ReactNode', description: 'Optional content below the calendar.' },
         ],
-        usage: `<DatePicker
+        usage: [
+          { title: 'Single date input', code: `<DatePicker
+  value={date}
+  onValueChange={(nextDate) => setDate(nextDate)}
+/>` },
+          { title: 'Range picker that stays open', code: `<DatePicker
   mode="range"
   value={range}
   closeOnSelect={false}
   onValueChange={setRange}
-/>`,
+/>` },
+          { title: 'Multiple dates with max date', code: `<DatePicker
+  mode="multiple"
+  value={dates}
+  maxDate={new Date()}
+  closeOnSelect={false}
+  onValueChange={(nextDates, details) => {
+    setDates(nextDates);
+    console.log(details.source);
+  }}
+/>` },
+        ],
+        notes: [
+          'The value shape follows mode: Date for single, Date[] for multiple, and DateRange for range.',
+          'onValueChange includes details.source so consumers can distinguish typed input from calendar clicks.',
+          'dateFormat is both the display format and strict parse format. If users type dates, show a format they can reproduce.',
+        ],
         preview: (
           <div className="PreviewStack">
-            <label>Single</label>
-            <DatePicker
-              name="docs-single-date"
-              mode="single"
-              value={singleDate}
-              onValueChange={setSingleDate}
+            <PreviewModeControl
+              label="Mode"
+              value={datePickerMode}
+              onChange={setDatePickerMode}
+              options={[
+                { label: 'Single', value: 'single' },
+                { label: 'Multiple', value: 'multiple' },
+                { label: 'Range', value: 'range' },
+              ]}
             />
-            <output>{formatDate(singleDate)}</output>
-            <label>Multiple</label>
-            <DatePicker
-              name="docs-multiple-date"
-              mode="multiple"
-              value={multipleDates}
-              closeOnSelect={false}
-              onValueChange={setMultipleDates}
-            />
-            <output>{multipleDates.map(formatDate).join(', ') || 'empty'}</output>
-            <label>Range</label>
-            <DatePicker
-              name="docs-range-date"
-              mode="range"
-              value={rangeDate}
-              closeOnSelect={false}
-              onValueChange={setRangeDate}
-            />
-            <output>
-              {formatDate(rangeDate.from)} - {formatDate(rangeDate.to)}
-            </output>
+            {datePickerMode === 'single' && (
+              <>
+                <DatePicker
+                  name="docs-single-date"
+                  mode="single"
+                  value={singleDate}
+                  onValueChange={setSingleDate}
+                />
+                <output>{formatDate(singleDate)}</output>
+              </>
+            )}
+            {datePickerMode === 'multiple' && (
+              <>
+                <DatePicker
+                  name="docs-multiple-date"
+                  mode="multiple"
+                  value={multipleDates}
+                  closeOnSelect={false}
+                  onValueChange={setMultipleDates}
+                />
+                <output>{multipleDates.map(formatDate).join(', ') || 'empty'}</output>
+              </>
+            )}
+            {datePickerMode === 'range' && (
+              <>
+                <DatePicker
+                  name="docs-range-date"
+                  mode="range"
+                  value={rangeDate}
+                  closeOnSelect={false}
+                  onValueChange={setRangeDate}
+                />
+                <output>
+                  {formatDate(rangeDate.from)} - {formatDate(rangeDate.to)}
+                </output>
+              </>
+            )}
           </div>
         ),
       },
@@ -496,9 +769,27 @@ function Documentation() {
           { name: 'slotProps.disabled.trigger', type: 'boolean', description: 'Disables the trigger.' },
           { name: 'slotProps.hidden.trigger', type: 'boolean', description: 'Allows rendering a controlled dialog without a visible trigger.' },
         ],
-        usage: `<Dialog trigger={<Button>Open dialog</Button>}>
+        usage: [
+          { title: 'Triggered modal', code: `<Dialog trigger={<Button>Open dialog</Button>}>
   <div>Dialog content</div>
-</Dialog>`,
+</Dialog>` },
+          { title: 'Controlled modal', code: `<Dialog
+  open={open}
+  onOpenChange={setOpen}
+  slotProps={{ hidden: { trigger: true } }}>
+  <ConfirmDelete onClose={() => setOpen(false)} />
+</Dialog>` },
+          { title: 'Disabled trigger', code: `<Dialog
+  trigger={<Button>Open</Button>}
+  slotProps={{ disabled: { trigger: isSaving } }}>
+  <Form />
+</Dialog>` },
+        ],
+        notes: [
+          'Use Dialog for blocking workflows that require a user decision or focused form.',
+          'children render directly inside the popup, so include your own title, body, actions, and close behavior.',
+          'Use slotProps.hidden.trigger for dialogs opened by external state rather than a local trigger button.',
+        ],
         preview: (
           <Dialog
             name="docs-dialog"
@@ -524,19 +815,51 @@ function Documentation() {
           { name: 'slotProps.height', type: 'string', description: 'CSS height for top and bottom drawers.' },
           { name: 'slotProps.disableBackdrop', type: 'boolean', description: 'Removes the backdrop when true.' },
         ],
-        usage: `<Drawer slotProps={{ direction: 'right', width: '360px' }}>
+        usage: [
+          { title: 'Right drawer', code: `<Drawer slotProps={{ direction: 'right', width: '360px' }}>
   <div>Drawer content</div>
-</Drawer>`,
+</Drawer>` },
+          { title: 'Bottom drawer', code: `<Drawer
+  triggerIcon={<Settings />}
+  slotProps={{ direction: 'bottom', height: '45vh' }}>
+  <SettingsPanel />
+</Drawer>` },
+          { title: 'Without backdrop', code: `<Drawer slotProps={{ disableBackdrop: true, width: '320px' }}>
+  <FilterPanel />
+</Drawer>` },
+        ],
+        notes: [
+          'Use Drawer for secondary surfaces such as filters, navigation, or contextual details.',
+          'direction controls the entrance side; width matters for left/right drawers, and height matters for top/bottom drawers.',
+          'Drawer is built on Base UI Dialog, so open and onOpenChange can be used for controlled state.',
+        ],
         preview: (
-          <Drawer
-            name="docs-drawer"
-            slotProps={{ width: '360px', direction: 'right' }}>
-            <div className="DrawerContent">
-              <h3>Drawer panel</h3>
-              <p>Use this panel for navigation, filters, or contextual actions.</p>
-              <Button>Drawer action</Button>
-            </div>
-          </Drawer>
+          <div className="PreviewStack">
+            <PreviewModeControl
+              label="Direction"
+              value={drawerDirection}
+              onChange={setDrawerDirection}
+              options={[
+                { label: 'Left', value: 'left' },
+                { label: 'Right', value: 'right' },
+                { label: 'Top', value: 'top' },
+                { label: 'Bottom', value: 'bottom' },
+              ]}
+            />
+            <Drawer
+              name="docs-drawer"
+              slotProps={{
+                direction: drawerDirection,
+                width: drawerDirection === 'left' || drawerDirection === 'right' ? '360px' : undefined,
+                height: drawerDirection === 'top' || drawerDirection === 'bottom' ? '34vh' : undefined,
+              }}>
+              <div className="DrawerContent">
+                <h3>{drawerDirection} drawer</h3>
+                <p>Use this panel for navigation, filters, or contextual actions.</p>
+                <Button>Drawer action</Button>
+              </div>
+            </Drawer>
+          </div>
         ),
       },
       {
@@ -552,10 +875,27 @@ function Documentation() {
           { name: 'className', type: 'string', description: 'Adds an app class next to the default module class.' },
           { name: 'name / testId', type: 'string', description: 'Customize generated test IDs.' },
         ],
-        usage: `<Input
+        usage: [
+          { title: 'Controlled input', code: `<Input
   value={value}
   onChange={(event) => setValue(event.target.value)}
-/>`,
+/>` },
+          { title: 'Named form input', code: `<Input
+  name="email"
+  type="email"
+  placeholder="name@example.com"
+  autoComplete="email"
+/>` },
+          { title: 'Disabled input', code: `<Input
+  value="Readonly display"
+  disabled
+/>` },
+        ],
+        notes: [
+          'Input is a thin styled wrapper around Base UI Input and forwards native input attributes.',
+          'Use name for both form submission and predictable generated test IDs.',
+          'For labels, pair Input with Typography or another accessible label using htmlFor and id.',
+        ],
         preview: (
           <div className="PreviewStack">
             <Input
@@ -571,26 +911,68 @@ function Documentation() {
       {
         id: 'menu',
         title: 'Menu',
-        summary: 'A trigger and popup menu for a list of React node items.',
+        summary: 'A trigger and popup menu for flat or grouped React node actions.',
         layer: '@layer base',
         props: [
-          { name: 'items', type: 'ReactNode[]', description: 'Each array item is rendered as a menu item.' },
+          { name: 'items', type: 'ReactNode[] | MenuGroup[]', description: 'Pass a flat array for simple menus, or grouped objects shaped like { label, items } for labeled sections.' },
+          { name: 'items[].label', type: 'ReactNode', description: 'Group heading rendered with Base UI GroupLabel when using grouped items.' },
+          { name: 'items[].items', type: 'ReactNode[]', description: 'The actions inside a labeled group.' },
           { name: 'slotProps.trigger', type: 'ReactNode', description: 'Custom trigger content. Defaults to a menu icon.' },
           { name: 'slotProps.classes', type: 'Base UI class map', description: 'Adds classes to trigger, positioner, popup, and items.' },
           { name: 'open', type: 'boolean', description: 'Controlled open state from Base UI Menu.' },
           { name: 'onOpenChange', type: '(open: boolean) => void', description: 'Called when the menu opens or closes.' },
           { name: 'name / testId', type: 'string', description: 'Customize generated test IDs.' },
         ],
-        usage: `<Menu
+        usage: [
+          { title: 'Icon trigger menu', code: `<Menu
   items={['Profile', 'Settings', 'Sign out']}
   slotProps={{ trigger: <List /> }}
-/>`,
+/>` },
+          { title: 'Action items', code: `<Menu
+  items={[
+    <button type="button" onClick={edit}>Edit</button>,
+    <button type="button" onClick={archive}>Archive</button>,
+  ]}
+/>` },
+          { title: 'Grouped menu', code: `<Menu
+  items={[
+    { label: 'Account', items: ['Profile', 'Security'] },
+    { label: 'Danger zone', items: ['Delete account'] },
+  ]}
+/>` },
+          { title: 'Controlled menu', code: `<Menu
+  open={open}
+  onOpenChange={setOpen}
+  items={actions}
+/>` },
+        ],
+        notes: [
+          'Menu renders each action inside a Base UI Menu.Item, so pass compact action content rather than large panels.',
+          'Use grouped items when actions need labels such as Account, Export, or Danger zone.',
+          'Use slotProps.trigger for custom trigger content; the default trigger is a menu icon.',
+        ],
         preview: (
-          <Menu
-            name="docs-menu"
-            items={['Profile', 'Settings', 'Sign out']}
-            slotProps={{ trigger: <List size={20} /> }}
-          />
+          <div className="PreviewStack">
+            <PreviewModeControl
+              label="Structure"
+              value={menuMode}
+              onChange={setMenuMode}
+              options={[
+                { label: 'Grouped', value: 'grouped' },
+                { label: 'Flat', value: 'flat' },
+              ]}
+            />
+            <Menu
+              name="docs-menu"
+              items={menuMode === 'grouped'
+                ? [
+                    { label: 'Account', items: ['Profile', 'Settings'] },
+                    { label: 'Session', items: ['Sign out'] },
+                  ]
+                : ['Profile', 'Settings', 'Sign out']}
+              slotProps={{ trigger: <List size={20} /> }}
+            />
+          </div>
         ),
       },
       {
@@ -606,13 +988,31 @@ function Documentation() {
           { name: 'label', type: 'string', description: 'Visible label and scrub area text.' },
           { name: 'slotProps.classes', type: 'NumberField class map', description: 'Adds classes to root, label, group, input, and controls.' },
         ],
-        usage: `<NumberField
+        usage: [
+          { title: 'Controlled amount', code: `<NumberField
   label="Amount"
   min={0}
   max={20}
   value={count}
   onValueChange={(value) => setCount(value ?? 0)}
-/>`,
+/>` },
+          { title: 'Commit-only side effects', code: `<NumberField
+  label="Quantity"
+  value={quantity}
+  onValueChange={(value) => setQuantity(value ?? 0)}
+  onValueCommitted={(value) => saveQuantity(value)}
+/>` },
+          { title: 'Disabled display', code: `<NumberField
+  label="Locked"
+  value={10}
+  disabled
+/>` },
+        ],
+        notes: [
+          'Use NumberField when the value should be numeric and users benefit from increment, decrement, keyboard, and scrub interactions.',
+          'onValueChange fires during editing; onValueCommitted is better for saving, validation, or network updates.',
+          'Always provide min and max when the domain has bounds. The wrapper also uses max to size the input length.',
+        ],
         preview: (
           <div className="PreviewStack">
             <NumberField
@@ -641,22 +1041,69 @@ function Documentation() {
           { name: 'valueNode', type: '(value) => ReactNode', description: 'Custom selected value renderer.' },
           { name: 'itemDisabled', type: '(item) => boolean', description: 'Marks options as disabled.' },
         ],
-        usage: `<Select
+        usage: [
+          { title: 'Value-label options', code: `<Select
   items={cityOptions}
   value={city}
   placeholder="Choose city"
   onValueChange={setCity}
-/>`,
+/>` },
+          { title: 'Primitive options', code: `<Select
+  items={['Low', 'Medium', 'High']}
+  value={priority}
+  placeholder="Priority"
+  onValueChange={setPriority}
+/>` },
+          { title: 'Custom rendering', code: `<Select
+  items={users}
+  value={assignee}
+  itemToStringValue={(user) => user.id}
+  itemToStringLabel={(user) => user.name}
+  itemComponent={(user) => <UserOption user={user} />}
+  valueNode={(user) => user ? <UserPill user={user} /> : null}
+  onValueChange={setAssignee}
+/>` },
+        ],
+        notes: [
+          'Use Select for bounded choices where search is unnecessary; use Combobox for searchable or long lists.',
+          'The wrapper understands { value, label, disabled } items automatically.',
+          'For arbitrary objects, pass itemToStringValue and itemToStringLabel so values, labels, item keys, and test IDs stay stable.',
+        ],
         preview: (
           <div className="PreviewStack">
-            <Select
-              name="docs-city"
-              items={cityOptions}
-              value={city}
-              placeholder="Choose city"
-              onValueChange={setCity}
+            <PreviewModeControl
+              label="Type"
+              value={selectMode}
+              onChange={setSelectMode}
+              options={[
+                { label: 'Single', value: 'single' },
+                { label: 'Multiple', value: 'multiple' },
+              ]}
             />
-            <output>{city?.label ?? 'No city selected'}</output>
+            {selectMode === 'single' ? (
+              <>
+                <Select
+                  name="docs-city"
+                  items={cityOptions}
+                  value={city}
+                  placeholder="Choose city"
+                  onValueChange={setCity}
+                />
+                <output>{city?.label ?? 'No city selected'}</output>
+              </>
+            ) : (
+              <>
+                <Select
+                  name="docs-cities"
+                  items={cityOptions}
+                  multiple
+                  value={cities}
+                  placeholder="Choose cities"
+                  onValueChange={setCities}
+                />
+                <output>{cities.map((item) => item.label).join(', ') || 'No cities selected'}</output>
+              </>
+            )}
           </div>
         ),
       },
@@ -673,10 +1120,33 @@ function Documentation() {
           { name: 'items[].closeOnClick', type: 'boolean', description: 'Reserved on item type for action close behavior.' },
           { name: 'name / testId', type: 'string', description: 'Customize generated test IDs.' },
         ],
-        usage: `<SpeedDial
+        usage: [
+          { title: 'Floating actions', code: `<SpeedDial
   trigger={<button>+</button>}
   items={[{ visible: true, component: <button>Save</button> }]}
-/>`,
+/>` },
+          { title: 'Conditional actions', code: `<SpeedDial
+  trigger={<Plus />}
+  items={[
+    { visible: canSave, component: <button onClick={save}>Save</button> },
+    { visible: canNotify, component: <button onClick={notify}>Notify</button> },
+  ]}
+/>` },
+          { title: 'Nested SpeedDialMenu', code: `<SpeedDial
+  trigger={<Plus />}
+  items={[
+    {
+      visible: true,
+      component: <SpeedDialMenu trigger="More" items={['Copy', 'Delete']} />,
+    },
+  ]}
+/>` },
+        ],
+        notes: [
+          'Use SpeedDial for a compact cluster of secondary actions around a primary floating trigger.',
+          'Each item controls its own visible flag, so callers can keep permission or state logic near the action definition.',
+          'The current wrapper opens the root trigger on hover through Base UI Menu behavior.',
+        ],
         preview: (
           <SpeedDial
             name="docs-speed-dial"
@@ -699,6 +1169,82 @@ function Documentation() {
         ),
       },
       {
+        id: 'speeddialmenu',
+        title: 'SpeedDialMenu',
+        summary: 'A nested submenu component for grouped SpeedDial actions.',
+        layer: '@layer base',
+        props: [
+          { name: 'trigger', type: 'ReactNode', description: 'Content rendered in the submenu trigger item.' },
+          { name: 'items', type: 'ReactNode[]', description: 'Every item is rendered as a Base UI menu item inside the submenu popup.' },
+          { name: 'slotProps.openOnHover', type: 'boolean', description: 'Opens the submenu when the trigger is hovered. Defaults to false.' },
+          { name: 'slotProps.disable.separator', type: 'boolean', description: 'Removes separators between submenu items when true.' },
+          { name: 'slotProps.classes', type: 'class map', description: 'Adds classes to Button, Popup, Item, and Separator slots.' },
+          { name: 'name / testId', type: 'string', description: 'Customize generated test IDs for the submenu trigger, popup, items, and separators.' },
+        ],
+        usage: [
+          { title: 'Inside SpeedDial', code: `<SpeedDial
+  trigger={<Plus />}
+  items={[{
+    visible: true,
+    component: (
+      <SpeedDialMenu
+        trigger="More"
+        items={['Copy', 'Archive', 'Delete']}
+      />
+    ),
+  }]}
+/>` },
+          { title: 'Open on hover', code: `<SpeedDialMenu
+  trigger="Export"
+  items={['CSV', 'PDF']}
+  slotProps={{ openOnHover: true }}
+/>` },
+          { title: 'No separators', code: `<SpeedDialMenu
+  trigger="Actions"
+  items={actions}
+  slotProps={{ disable: { separator: true } }}
+/>` },
+        ],
+        notes: [
+          'Render SpeedDialMenu inside a parent menu surface, usually as one SpeedDial item.',
+          'Use it when several related actions should stay visually grouped under one action.',
+          'Keep submenu items short; each entry is wrapped in a menu item and separated by default.',
+        ],
+        preview: (
+          <div className="PreviewStack">
+            <PreviewModeControl
+              label="Separators"
+              value={speedDialMenuMode}
+              onChange={setSpeedDialMenuMode}
+              options={[
+                { label: 'On', value: 'separators' },
+                { label: 'Off', value: 'compact' },
+              ]}
+            />
+            <SpeedDial
+              name="docs-speed-dial-menu"
+              trigger={<span className="SpeedDialTrigger"><Plus size={22} /></span>}
+              items={[
+                {
+                  visible: true,
+                  component: (
+                    <SpeedDialMenu
+                      name="docs-nested-speed-dial-menu"
+                      trigger={<span className="SpeedDialAction"><Settings size={18} /></span>}
+                      items={['Copy', 'Archive', 'Delete']}
+                      slotProps={{
+                        openOnHover: true,
+                        disable: { separator: speedDialMenuMode === 'compact' },
+                      }}
+                    />
+                  ),
+                },
+              ]}
+            />
+          </div>
+        ),
+      },
+      {
         id: 'stepper',
         title: 'Stepper',
         summary: 'A horizontal or vertical multi-step indicator system.',
@@ -711,18 +1257,46 @@ function Documentation() {
           { name: 'Step.index', type: 'number', description: 'Required index for each child step.' },
           { name: 'Step.disabled / completed', type: 'boolean', description: 'Overrides state for individual steps.' },
         ],
-        usage: `<Stepper defaultActive={1}>
+        usage: [
+          { title: 'Uncontrolled stepper', code: `<Stepper defaultActive={1}>
   <Step index={0}>
     <StepIndicator />
     <StepLabel>Account</StepLabel>
   </Step>
-</Stepper>`,
+</Stepper>` },
+          { title: 'Controlled stepper', code: `<Stepper active={activeStep} setActiveStep={setActiveStep}>
+  {steps.map((step, index) => (
+    <Step key={step.id} index={index} completed={index < activeStep}>
+      <StepIndicator />
+      <StepLabel>{step.label}</StepLabel>
+    </Step>
+  ))}
+</Stepper>` },
+          { title: 'Vertical stepper', code: `<Stepper orientation="vertical" defaultActive={0}>
+  <Step index={0}><StepIndicator /><StepLabel>Account</StepLabel></Step>
+  <Step index={1} disabled><StepIndicator /><StepLabel>Review</StepLabel></Step>
+</Stepper>` },
+        ],
+        notes: [
+          'Stepper provides context; Step, StepIndicator, StepLabel, and StepConnector must be rendered inside it.',
+          'Use active and setActiveStep for wizard state owned by the page. Use defaultActive for local demo or simple uncontrolled state.',
+          'Step computes state from disabled, active index, completed, and index position; child components read that state from context.',
+        ],
         preview: (
           <div className="PreviewStack">
-            <Stepper name="docs-stepper-horizontal" defaultActive={1}>
-              {renderStepperSteps()}
-            </Stepper>
-            <Stepper name="docs-stepper-vertical" defaultActive={1} orientation="vertical">
+            <PreviewModeControl
+              label="Orientation"
+              value={stepperOrientation}
+              onChange={setStepperOrientation}
+              options={[
+                { label: 'Horizontal', value: 'horizontal' },
+                { label: 'Vertical', value: 'vertical' },
+              ]}
+            />
+            <Stepper
+              name={`docs-stepper-${stepperOrientation}`}
+              defaultActive={1}
+              orientation={stepperOrientation}>
               {renderStepperSteps()}
             </Stepper>
           </div>
@@ -740,11 +1314,26 @@ function Documentation() {
           { name: 'slotProps.classes', type: 'BaseTabs class map', description: 'Adds classes to Root, List, Tab, and Indicator.' },
           { name: 'name / testId', type: 'string', description: 'Customize generated test IDs.' },
         ],
-        usage: `<Tabs
+        usage: [
+          { title: 'Controlled tabs', code: `<Tabs
   tabs={tabs}
   activeTab={activeTab}
   setActiveTab={setActiveTab}
-/>`,
+/>` },
+          { title: 'Tab definitions', code: `const tabs = [
+  { value: 0, label: 'Overview', color: '#2563eb' },
+  { value: 1, label: 'Details', color: '#16a34a' },
+];` },
+          { title: 'Render panel content', code: `<>
+  <Tabs tabs={tabs} activeTab={activeTab} setActiveTab={setActiveTab} />
+  {activeTab === 0 ? <Overview /> : <Details />}
+</>` },
+        ],
+        notes: [
+          'Tabs renders only the tab list and indicator; the consuming page owns panel rendering.',
+          'activeTab must match one of the numeric tabs[].value entries.',
+          'The color field controls the visual indicator color for each tab.',
+        ],
         preview: (
           <div className="PreviewStack">
             <Tabs
@@ -770,31 +1359,131 @@ function Documentation() {
           { name: 'slotProps.ToastList', type: 'ToastListSlotProps', description: 'Customize rendered toast list and list icon.' },
           { name: 'name / testId', type: 'string', description: 'Customize generated test IDs.' },
         ],
-        usage: `<Toast.Success
+        usage: [
+          { title: 'Success trigger', code: `<Toast.Success
   title="Saved"
   description="Item saved"
   icon={<Check />}
-/>`,
+/>` },
+          { title: 'Scoped list ownership', code: `<Toast.Success name="profile" title="Saved" description="Profile updated" />
+<ToastList name="profile" />` },
+          { title: 'Custom ToastBase', code: `<ToastBase
+  title="Queued"
+  description="The export started"
+  slotProps={{ ToastList: { icon: <Clock /> } }}
+/>` },
+        ],
+        notes: [
+          'Wrap the app or docs area in BaseToast.Provider before rendering Toast triggers or ToastList.',
+          'Toast.Success, Toast.Error, and Toast.Info are convenience presets over ToastBase with default Hebrew copy and status icons.',
+          'Use name to scope which ToastList displays which toast when several areas on the page own separate notifications.',
+        ],
         preview: (
-          <div className="Inline">
-            <Toast.Success
-              name="docs-toast-success"
-              title="Saved"
-              description="The docs item was saved."
-              icon={<Check size={18} />}
+          <div className="PreviewStack">
+            <PreviewModeControl
+              label="Kind"
+              value={toastKind}
+              onChange={setToastKind}
+              options={[
+                { label: 'Success', value: 'success' },
+                { label: 'Error', value: 'error' },
+                { label: 'Info', value: 'info' },
+                { label: 'Primitive', value: 'primitives' },
+              ]}
             />
-            <Toast.Error
-              name="docs-toast-error"
-              title="Failed"
-              description="The action could not be completed."
-              icon="Error"
-            />
-            <Toast.Info
-              name="docs-toast-info"
-              title="Heads up"
-              description="There is more information to review."
-              icon={<MessageCircle size={18} />}
-            />
+            <div className="Inline">
+              {toastKind === 'success' && (
+                <Toast.Success
+                  name="docs-toast-success"
+                  title="Saved"
+                  description="The docs item was saved."
+                  icon={<Check size={18} />}
+                />
+              )}
+              {toastKind === 'error' && (
+                <Toast.Error
+                  name="docs-toast-error"
+                  title="Failed"
+                  description="The action could not be completed."
+                  icon="Error"
+                />
+              )}
+              {toastKind === 'info' && (
+                <Toast.Info
+                  name="docs-toast-info"
+                  title="Heads up"
+                  description="There is more information to review."
+                  icon={<MessageCircle size={18} />}
+                />
+              )}
+              {toastKind === 'primitives' && (
+                <ToastButton
+                  name="docs-toast-primitive-kind"
+                  title="Primitive toast"
+                  description="Created from the lower-level ToastButton."
+                  slotProps={{ icon: 'Primitive', toastIcon: <Bell size={18} /> }}
+                />
+              )}
+            </div>
+          </div>
+        ),
+      },
+      {
+        id: 'toast-primitives',
+        title: 'ToastBase, ToastButton, ToastList',
+        summary: 'Lower-level toast building blocks for custom trigger, ownership, icon, and list behavior.',
+        layer: '@layer base + @layer library',
+        props: [
+          { name: 'ToastBase.title', type: 'string', description: 'Title passed into the generated toast when the default ToastButton trigger is clicked.' },
+          { name: 'ToastBase.description', type: 'string', description: 'Description passed into the generated toast body.' },
+          { name: 'ToastBase.trigger', type: 'ReactNode', description: 'Optional custom trigger. If provided, ToastBase does not render its default ToastButton.' },
+          { name: 'ToastButton.slotProps.icon', type: 'ReactNode', description: 'Visible content inside the trigger button. Defaults to "Toast Me!".' },
+          { name: 'ToastButton.slotProps.toastIcon', type: 'ReactNode', description: 'Icon stored in toast data and displayed by ToastList.' },
+          { name: 'ToastList.slotProps.disable.close', type: 'boolean', description: 'Hides the close button for each toast when true.' },
+          { name: 'ToastList.slotProps.icon', type: 'ReactNode', description: 'Fallback icon displayed for toasts without their own toastIcon data.' },
+          { name: 'name', type: 'string', description: 'Scopes ToastButton-created toasts to matching ToastList instances.' },
+        ],
+        usage: [
+          { title: 'Custom primitive pair', code: `<ToastButton
+  name="uploads"
+  title="Upload complete"
+  description="The file is ready"
+  slotProps={{ icon: <Upload />, toastIcon: <Check /> }}
+/>
+<ToastList name="uploads" />` },
+          { title: 'ToastBase default trigger', code: `<ToastBase
+  name="exports"
+  title="Export queued"
+  description="You can keep working"
+  slotProps={{ ToastButton: { icon: 'Export' } }}
+/>` },
+          { title: 'List without close buttons', code: `<ToastList
+  name="system"
+  slotProps={{ disable: { close: true }, icon: <Bell /> }}
+/>` },
+        ],
+        notes: [
+          'Use Toast.Success, Toast.Error, and Toast.Info first; reach for primitives when you need a custom trigger/list split.',
+          'ToastButton writes title, description, owner, and icon into Base UI toast manager data.',
+          'ToastList filters by name so several sections can display only the notifications they own.',
+        ],
+        preview: (
+          <div className="PreviewStack">
+            <div className="Inline">
+              <ToastButton
+                name="docs-primitives"
+                title="Primitive toast"
+                description="Created by ToastButton and rendered by ToastList."
+                slotProps={{ icon: 'Primitive toast', toastIcon: <Bell size={18} /> }}
+              />
+              <ToastBase
+                name="docs-base"
+                title="ToastBase"
+                description="ToastBase renders a default button and list together."
+                slotProps={{ ToastButton: { icon: 'ToastBase' }, ToastList: { icon: <Check size={18} /> } }}
+              />
+            </div>
+            <ToastList name="docs-primitives" />
           </div>
         ),
       },
@@ -811,29 +1500,54 @@ function Documentation() {
           { name: 'slotProps.disableArrow', type: 'boolean', description: 'Hides the arrow.' },
           { name: 'slotProps.provider', type: 'Tooltip.Provider props', description: 'Overrides provider behavior such as delay.' },
         ],
-        usage: `<Tooltip title="Helpful detail" slotProps={{ side: 'top' }}>
+        usage: [
+          { title: 'Basic tooltip', code: `<Tooltip title="Helpful detail" slotProps={{ side: 'top' }}>
   <Button>Hover</Button>
-</Tooltip>`,
+</Tooltip>` },
+          { title: 'Outline style', code: `<Tooltip
+  title="Validation note"
+  slotProps={{ side: 'right', boldType: 'Outline', outlineColor: '#dc2626' }}>
+  <Button>Inspect</Button>
+</Tooltip>` },
+          { title: 'Provider delay', code: `<Tooltip
+  title="Appears immediately"
+  slotProps={{ provider: { delay: 0 }, disableArrow: true }}>
+  <Button>Fast</Button>
+</Tooltip>` },
+        ],
+        notes: [
+          'Use Tooltip for short supporting text. Do not put interactive content inside the tooltip popup.',
+          'Empty title values skip popup rendering unless displayWhenEmpty is set, which is useful for preserving trigger layout.',
+          'side is a preference; collision handling can flip or shift the popup to keep it visible.',
+        ],
         preview: (
-          <div className="TooltipGrid">
-            {tooltipDirections.map((side) => (
+          <div className="PreviewStack">
+            <PreviewModeControl
+              label="Side"
+              value={tooltipSide}
+              onChange={setTooltipSide}
+              options={tooltipDirections.map((side) => ({ label: side, value: side }))}
+            />
+            <PreviewModeControl
+              label="Style"
+              value={tooltipStyle}
+              onChange={setTooltipStyle}
+              options={[
+                { label: 'Shadow', value: 'boxShadow' },
+                { label: 'Outline', value: 'outline' },
+              ]}
+            />
+            <div className="TooltipGrid">
               <Tooltip
-                key={side}
-                name={`docs-tooltip-${side}`}
-                title={`${side} tooltip`}
-                slotProps={{ side }}>
-                <Button>{side}</Button>
+                name={`docs-tooltip-${tooltipSide}-${tooltipStyle}`}
+                title={`${tooltipSide} ${tooltipStyle === 'outline' ? 'outline' : 'shadow'} tooltip`}
+                slotProps={{
+                  side: tooltipSide,
+                  boldType: tooltipStyle === 'outline' ? 'Outline' : 'BoxShadow',
+                }}>
+                <Button>{tooltipSide}</Button>
               </Tooltip>
-            ))}
-            {tooltipDirections.map((side) => (
-              <Tooltip
-                key={`outline-${side}`}
-                name={`docs-tooltip-outline-${side}`}
-                title={`${side} outline`}
-                slotProps={{ side, boldType: 'Outline' }}>
-                <Button>{side}</Button>
-              </Tooltip>
-            ))}
+            </div>
           </div>
         ),
       },
@@ -849,9 +1563,24 @@ function Documentation() {
           { name: 'slotProps.classes.Field', type: 'string', description: 'Adds a class to the field root.' },
           { name: 'name / testId', type: 'string', description: 'Customize generated test IDs.' },
         ],
-        usage: `<Typography htmlFor="email">
+        usage: [
+          { title: 'Input label', code: `<Typography htmlFor="email">
   Email address
-</Typography>`,
+</Typography>` },
+          { title: 'Required label', code: `<Typography htmlFor="firstName">
+  First name <span aria-hidden="true">*</span>
+</Typography>` },
+          { title: 'Custom label props', code: `<Typography
+  htmlFor="amount"
+  className={styles.RequiredLabel}>
+  Amount
+</Typography>` },
+        ],
+        notes: [
+          'Typography is specifically a Base UI Field.Label wrapper, not a general text component.',
+          'Use htmlFor with a matching input id to create an accessible label relationship.',
+          'children can include inline elements, but keep the label concise and form-control focused.',
+        ],
         preview: (
           <div className="PreviewStack">
             <Typography htmlFor="docs-input">Documented label</Typography>
@@ -862,16 +1591,30 @@ function Documentation() {
     ],
     [
       activeTab,
+      calendarDates,
       calendarDate,
+      calendarMode,
+      calendarRange,
+      cities,
       city,
       comboMulti,
+      comboboxMode,
       comboSingle,
       count,
+      datePickerMode,
       docsTheme,
+      drawerDirection,
       inputValue,
+      menuMode,
       multipleDates,
       rangeDate,
+      selectMode,
       singleDate,
+      speedDialMenuMode,
+      stepperOrientation,
+      toastKind,
+      tooltipSide,
+      tooltipStyle,
     ],
   );
 
@@ -912,14 +1655,16 @@ function Documentation() {
                   <h1>Component Documentation</h1>
                   <p>
                     Select a component from the vertical tabs to see its live example,
-                    full prop notes, usage snippet, and CSS layer guidance.
+                    detailed prop notes, multiple usage examples, AI usage notes, and CSS layer guidance.
                   </p>
                 </div>
-                <Button
-                  type="button"
-                  onClick={() => setDocsTheme((theme) => theme === 'dark' ? 'light' : 'dark')}>
-                  {docsTheme === 'dark' ? 'Light mode' : 'Dark mode'}
-                </Button>
+                <div className="HeroActions">
+                  <Button
+                    type="button"
+                    onClick={() => setDocsTheme((theme) => theme === 'dark' ? 'light' : 'dark')}>
+                    {docsTheme === 'dark' ? 'Light mode' : 'Dark mode'}
+                  </Button>
+                </div>
               </header>
 
               <ComponentPanel doc={activeDoc} />
