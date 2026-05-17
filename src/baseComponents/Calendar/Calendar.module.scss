@@ -51,7 +51,7 @@
     .ButtonNext,
     .ButtonPrevious {
         position: relative;
-        z-index: 2;
+        z-index: 1;
         border: none;
         background: var(--surface);
         padding: 0;
@@ -102,114 +102,6 @@
         transform-origin: 50%;
     }
 
-    .Dropdowns {
-        position: relative;
-        display: inline-flex;
-        align-items: center;
-        gap: 0.5rem;
-        min-width: 0;
-    }
-
-    .Dropdown {
-        opacity: 0;
-        appearance: none;
-        position: absolute;
-        inset-block-start: 0;
-        inset-block-end: 0;
-        inset-inline-start: 0;
-        width: 100%;
-        margin: 0;
-        padding: 0;
-        cursor: inherit;
-        border: none;
-        line-height: inherit;
-        z-index: 2;
-    }
-
-    .DropdownRoot {
-        position: relative;
-        display: inline-flex;
-        width: 100%;
-    }
-
-    .MonthsDropdown {
-        width: var(--dropdown-month-width);
-        min-width: 0;
-    }
-
-    .YearsDropdown {
-        width: var(--dropdown-year-width);
-        min-width: 0;
-    }
-
-    .DropdownRoot .DropdownTrigger {
-        box-sizing: border-box;
-        display: inline-flex;
-        align-items: center;
-        justify-content: space-between;
-        gap: 0.35rem;
-        width: 100%;
-        height: var(--cell-size);
-        min-width: 0;
-        padding-inline-start: 0.65rem;
-        padding-inline-end: 0.55rem;
-        border: 2px solid var(--color-calendar-text);
-        border-radius: 0.9rem;
-        background: var(--surface);
-        box-shadow: 0 8px 18px rgba(0, 0, 0, 0.08);
-        color: var(--color-calendar-text);
-        font: inherit;
-        font-size: 0.92rem;
-        font-weight: 600;
-        transition: background-color 150ms ease, box-shadow 150ms ease, border-color 150ms ease;
-
-        &:hover {
-            background-color: var(--surface-strong);
-            box-shadow: 0 8px 16px var(--color-calendar-shadow);
-        }
-
-        &[data-popup-open] {
-            background-color: var(--surface-strong);
-        }
-
-        &[data-disabled] {
-            cursor: revert;
-            opacity: 0.72;
-            background: color-mix(in srgb, var(--surface) 70%, transparent);
-            box-shadow: none;
-        }
-    }
-
-    .DropdownRoot .DropdownValue {
-        overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
-        color: inherit;
-        color: var(--color-calendar-text);
-    }
-
-    .DropdownRoot .DropdownIcon {
-        display: inline-flex;
-        flex-shrink: 0;
-        color: var(--color-calendar-text);
-        opacity: 0.8;
-    }
-
-    .DropdownPopup {
-        min-width: 8rem;
-        border: 1px solid var(--border);
-        background-color: var(--surface);
-        box-shadow: 0 12px 24px var(--color-calendar-shadow);
-    }
-
-    .DropdownItem.DropdownItem {
-        color: var(--text-strong);
-    }
-
-    .DropdownRoot .DropdownTrigger[data-disabled] .Chevron {
-        opacity: 0.7;
-    }
-
     .MonthCaption {
         display: flex;
         align-items: center;
@@ -233,17 +125,6 @@
 
     .Root.Fluid[data-nav-layout="around"] .MonthCaption {
         padding-inline: calc(var(--cell-size) + 0.5rem);
-    }
-
-    .Fluid .Dropdowns {
-        display: grid;
-        grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr);
-        width: 100%;
-    }
-
-    .Fluid .MonthsDropdown,
-    .Fluid .YearsDropdown {
-        width: auto;
     }
 
     .Root[data-nav-layout="around"] .ButtonPrevious {
@@ -552,5 +433,127 @@
 
     .CaptionBeforeExit {
         animation: rdp-fade_out var(--rdp-animation_duration) var(--rdp-animation_timing) forwards;
+    }
+}
+
+@layer library {
+    .Dropdowns {
+        position: relative;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        min-width: 0;
+    }
+
+    .Dropdown {
+        opacity: 0;
+        appearance: none;
+        position: absolute;
+        inset-block-start: 0;
+        inset-block-end: 0;
+        inset-inline-start: 0;
+        width: 100%;
+        margin: 0;
+        padding: 0;
+        cursor: inherit;
+        border: none;
+        line-height: inherit;
+        z-index: 2;
+    }
+
+    .DropdownRoot {
+        position: relative;
+        display: inline-flex;
+        width: 100%;
+    }
+
+    .MonthsDropdown {
+        width: var(--dropdown-month-width);
+        min-width: 0;
+    }
+
+    .YearsDropdown {
+        width: var(--dropdown-year-width);
+        min-width: 0;
+    }
+
+    .DropdownRoot .DropdownTrigger {
+        box-sizing: border-box;
+        display: inline-flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 0.35rem;
+        width: 100%;
+        height: var(--cell-size);
+        min-width: 0;
+        padding-inline-start: 0.65rem;
+        padding-inline-end: 0.55rem;
+        border: 2px solid var(--color-calendar-text);
+        border-radius: 0.9rem;
+        background: var(--surface);
+        box-shadow: 0 8px 18px rgba(0, 0, 0, 0.08);
+        color: var(--color-calendar-text);
+        font: inherit;
+        font-size: 0.92rem;
+        font-weight: 600;
+        transition: background-color 150ms ease, box-shadow 150ms ease, border-color 150ms ease;
+
+        &:hover {
+            background-color: var(--surface-strong);
+            box-shadow: 0 8px 16px var(--color-calendar-shadow);
+        }
+
+        &[data-popup-open] {
+            background-color: var(--surface-strong);
+        }
+
+        &[data-disabled] {
+            cursor: revert;
+            opacity: 0.72;
+            background: color-mix(in srgb, var(--surface) 70%, transparent);
+            box-shadow: none;
+        }
+    }
+
+    .DropdownRoot .DropdownValue {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        color: inherit;
+        color: var(--color-calendar-text);
+    }
+
+    .DropdownRoot .DropdownIcon {
+        display: inline-flex;
+        flex-shrink: 0;
+        color: var(--color-calendar-text);
+        opacity: 0.8;
+    }
+
+    .DropdownPopup {
+        min-width: 8rem;
+        // border: 1px solid var(--color-calendar-text);
+        background-color: var(--color-calendar-surface);
+        box-shadow: 0 12px 24px var(--color-calendar-shadow);
+        z-index: 5;
+    }
+
+    .DropdownItem.DropdownItem {
+        color: var(--color-calendar-text);
+    }
+
+    .DropdownRoot .DropdownTrigger[data-disabled] .Chevron {
+        opacity: 0.7;
+    }
+
+    .Fluid .Dropdowns {
+        display: grid;
+        grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr);
+        width: 100%;
+    }
+
+    .Fluid .MonthsDropdown,
+    .Fluid .YearsDropdown {
+        width: auto;
     }
 }
