@@ -78,7 +78,8 @@ export const Combobox = <Value, Multiple extends boolean | undefined = false>({
 	const inputRef = useRef<HTMLInputElement | null>(null);
 	const containerRef = useRef<HTMLDivElement | null>(null);
 	const testIds = createTestIdBuilder('Combobox', { name, testId });
-	const hasSingleValue = !props.multiple && props.value != null;
+	const isMultiple = Boolean(props.multiple);
+	const hasSingleValue = !isMultiple && props.value != null;
 	const isIndicatorEnabled = !slotProps?.disable?.checkIndicator;
 
 	const focusInput = () => {
@@ -124,11 +125,11 @@ export const Combobox = <Value, Multiple extends boolean | undefined = false>({
 	}
 
 	return (
-		<BaseCombobox.Root items={items} {...props} disabled={disabled}>
+		<BaseCombobox.Root key={isMultiple ? 'multiple' : 'single'} items={items} {...props} disabled={disabled}>
 			<div className={clsx(styles.Container, slotProps?.classes?.Container)}
 				data-testid={testIds.self()}
 				data-disabled={disabled}>
-				{props.multiple
+				{isMultiple
 					?
 					<BaseCombobox.Chips
 						data-testid={testIds.part('Chips')}
@@ -145,11 +146,13 @@ export const Combobox = <Value, Multiple extends boolean | undefined = false>({
 								{startAdornment}
 							</Button>}
 						<BaseCombobox.Value>
-							{(values: Value[]) =>
-								<>
+							{(values: Value[] | Value | null) => {
+								const selectedValues = Array.isArray(values) ? values : [];
+
+								return <>
 									{valueNode
-										? valueNode(values)
-										: values.map((value) => (
+										? valueNode(selectedValues)
+										: selectedValues.map((value) => (
 											<BaseCombobox.Chip
 												key={getItemValue(value)}
 												data-testid={testIds.part('Chip', getItemValue(value))}
@@ -165,7 +168,7 @@ export const Combobox = <Value, Multiple extends boolean | undefined = false>({
 									<BaseCombobox.Input
 										ref={inputRef}
 										data-testid={testIds.part('Input')}
-										placeholder={isEmptyish(values) ? placeholder : ''}
+										placeholder={isEmptyish(selectedValues) ? placeholder : ''}
 										id={id}
 										onKeyDownCapture={onInputKeyDownCapture}
 										onKeyDown={onInputKeyDown}
@@ -173,7 +176,7 @@ export const Combobox = <Value, Multiple extends boolean | undefined = false>({
 										onBlur={onInputBlur}
 										className={clsx(styles.Input, slotProps?.classes?.Input)} />
 								</>
-							}
+							}}
 						</BaseCombobox.Value>
 						{!slotProps?.disable?.trigger &&
 							<BaseCombobox.Trigger data-testid={testIds.part('Trigger')} className={clsx(styles.Trigger, slotProps?.classes?.Trigger)}>
