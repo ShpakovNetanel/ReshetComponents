@@ -17,11 +17,11 @@ The package exports its public components from [src/index.ts](../index.ts).
 Main component exports:
 
 - `Accordion`
-- `AmmoLoading`
 - `Button`
 - `Calendar`
 - `Chip`
 - `Combobox`
+- `DataTable`
 - `DatePicker`
 - `DarkModeProvider`
 - `Dialog`
@@ -29,7 +29,10 @@ Main component exports:
 - `Input`
 - `Menu`
 - `NumberField`
+- `Radio`
+- `RadioGroup`
 - `Select`
+- `Skeleton`
 - `SpeedDial`
 - `SpeedDialMenu`
 - `Step`
@@ -55,7 +58,7 @@ Utility exports:
 ## Basic Import Pattern
 
 ```tsx
-import { Button, DatePicker, Select, SpeedDial, ToastList } from 'reshet-components';
+import { Button, DataTable, DatePicker, RadioGroup, Select, SpeedDial, ToastList } from 'reshet-components';
 ```
 
 ## Theme Provider
@@ -104,6 +107,92 @@ Inside a provider, `useReshetTheme()` returns:
 - `resolvedTheme`
 - `isDark`
 - `setTheme`
+
+## DataTable
+
+`DataTable` is the table wrapper for row-based application data. It is built on `@tanstack/react-table` and supports:
+
+- TanStack `ColumnDef` columns
+- sortable headers
+- global search
+- per-column filter inputs
+- loading skeleton rows
+- optional row selection column
+- optional expandable detail panels
+- optional virtualization through `@tanstack/react-virtual`
+- dense mode for compact tables
+
+Basic usage:
+
+```tsx
+import { DataTable } from 'reshet-components';
+import type { ColumnDef } from '@tanstack/react-table';
+
+type Invoice = {
+  id: string;
+  customer: string;
+  amount: number;
+};
+
+const columns: ColumnDef<Invoice>[] = [
+  { accessorKey: 'id', header: 'Invoice' },
+  { accessorKey: 'customer', header: 'Customer' },
+  { accessorKey: 'amount', header: 'Amount' },
+];
+
+<DataTable
+  name="invoices"
+  columns={columns}
+  data={invoices}
+  getRowId={(row) => row.id}
+/>;
+```
+
+Common feature flags:
+
+```tsx
+<DataTable
+  columns={columns}
+  data={rows}
+  enableGlobalSearch
+  globalSearchPlaceholder="Search rows"
+  showColumnFilters
+  enableRowSelectionColumn
+  renderDetailPanel={({ row }) => <Details row={row.original} />}
+/>;
+```
+
+Use `enableVirtualization` when the table is inside a constrained-height container and renders many rows.
+
+## Radio
+
+Use `RadioGroup` for one-of-many selections. It can render options from an `items` array or accept custom `Radio` children.
+
+```tsx
+import { Radio, RadioGroup } from 'reshet-components';
+
+<RadioGroup
+  name="notification"
+  value={notification}
+  onValueChange={setNotification}
+  items={[
+    { value: 'email', label: 'Email' },
+    { value: 'sms', label: 'SMS' },
+    { value: 'none', label: 'No notification' },
+  ]}
+/>;
+```
+
+Custom children:
+
+```tsx
+<RadioGroup name="plan" defaultValue="team">
+  <Radio value="solo" label="Solo" description="For one user" />
+  <Radio value="team">
+    <strong>Team</strong>
+  </Radio>
+</RadioGroup>
+```
 
 ## Test ID System
 

@@ -1,0 +1,58 @@
+.TableHeader {
+  &[data-virtualized='true'] {
+    display: grid;
+    position: sticky;
+    top: 0;
+    padding-bottom: var(--row-gap);
+  }
+
+  .TableRow {
+    &[data-virtualized='true'] {
+      display: flex;
+      width: 100%;
+    }
+
+    .TableHead {
+      &[data-virtualized='true'] {
+        align-items: center;
+        display: flex;
+      }
+    }
+  }
+}
+
+.FilterRow {
+  &[data-virtualized='true'] {
+    display: flex;
+    width: 100%;
+  }
+}
+
+.FilterHead {
+  padding-block: 0.25rem;
+
+  &[data-virtualized='true'] {
+    align-items: center;
+    display: flex;
+  }
+}
+
+.FilterInput {
+  box-sizing: border-box;
+  width: 100%;
+  min-width: 0;
+  height: 2rem;
+  padding-inline: 0.5rem;
+  border: 1px solid var(--color-gray-200);
+  border-radius: 0.375rem;
+  background-color: var(--color-surface);
+  color: var(--color-text-primary);
+  font: inherit;
+  font-size: 0.875rem;
+  font-weight: 400;
+
+  &:focus {
+    border-color: var(--color-blue);
+    outline: none;
+  }
+}

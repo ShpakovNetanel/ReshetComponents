@@ -15,7 +15,7 @@ npm install reshet-components
 Import components directly from the package:
 
 ```tsx
-import { Button, DatePicker, Tooltip } from 'reshet-components';
+import { Button, DataTable, DatePicker, RadioGroup, Tooltip } from 'reshet-components';
 ```
 
 The package entry loads its stylesheet automatically. `reshet-components/styles.css` is still exported if you want a direct style import for a custom setup.
@@ -67,7 +67,7 @@ Then open the local URL printed by Vite. The playground lives in `playground/mai
 
 - `react` and `react-dom` are peer dependencies.
 - The package ships a default light/dark token set in `styles.css`.
-- Some components depend on `@base-ui/react`, `react-day-picker`, `react-hot-toast`, `lucide-react`, `clsx`, `remeda`, and `date-fns`, which are installed as package dependencies.
+- Some components depend on `@base-ui/react`, `@tanstack/react-table`, `@tanstack/react-virtual`, `react-day-picker`, `react-hot-toast`, `lucide-react`, `clsx`, `remeda`, and `date-fns`, which are installed as package dependencies.
 
 ## Publishing
 

@@ -1,0 +1,93 @@
+@layer base {
+  .Group {
+    display: grid;
+    gap: 0.625rem;
+    color: var(--color-text-primary);
+
+    &[data-orientation='horizontal'] {
+      display: flex;
+      flex-wrap: wrap;
+      column-gap: 1rem;
+      row-gap: 0.625rem;
+    }
+  }
+
+  .Root {
+    display: inline-grid;
+    grid-template-columns: 1.125rem minmax(0, 1fr);
+    gap: 0.5rem;
+    align-items: start;
+    width: fit-content;
+    max-width: 100%;
+    color: var(--color-text-primary);
+    cursor: pointer;
+    -webkit-user-select: none;
+    user-select: none;
+
+    &[data-disabled] {
+      cursor: not-allowed;
+      opacity: 0.5;
+    }
+
+    &[data-focus-visible] .Control {
+      outline: 2px solid var(--color-blue);
+      outline-offset: 2px;
+    }
+
+    &[data-checked] .Control {
+      border-color: var(--color-blue);
+      background-color: var(--color-surface-selected);
+    }
+  }
+
+  .Control {
+    display: grid;
+    width: 1.125rem;
+    height: 1.125rem;
+    place-items: center;
+    margin-top: 0.125rem;
+    border: 1px solid var(--color-gray-300);
+    border-radius: 999px;
+    background-color: var(--color-surface);
+    transition:
+      background-color 120ms ease,
+      border-color 120ms ease,
+      box-shadow 120ms ease;
+  }
+
+  .Indicator {
+    display: block;
+    width: 0.5rem;
+    height: 0.5rem;
+    border-radius: 999px;
+    background-color: var(--color-blue);
+    opacity: 1;
+    transform: scale(1);
+    transition:
+      opacity 120ms ease,
+      transform 120ms ease;
+
+    &[data-unchecked] {
+      opacity: 0;
+      transform: scale(0.45);
+    }
+  }
+
+  .Content {
+    display: grid;
+    gap: 0.125rem;
+    min-width: 0;
+  }
+
+  .Label {
+    color: var(--color-text-primary);
+    font-size: 0.95rem;
+    line-height: 1.35;
+  }
+
+  .Description {
+    color: var(--color-text-secondary);
+    font-size: 0.82rem;
+    line-height: 1.35;
+  }
+}

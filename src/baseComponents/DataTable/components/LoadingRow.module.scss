@@ -1,0 +1,21 @@
+.TableRow {
+  &[data-virtualized='true'] {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    height: var(--row-height);
+  }
+
+  .TableCell {
+    &[data-virtualized='true'] {
+      display: flex;
+      align-items: center;
+      height: var(--row-height);
+    }
+
+    .Skeleton {
+      height: 1rem;
+      width: 100%;
+    }
+  }
+}

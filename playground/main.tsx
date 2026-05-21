@@ -1,4 +1,5 @@
 import { Toast as BaseToast, DirectionProvider } from '@base-ui/react';
+import type { ColumnDef } from '@tanstack/react-table';
 import {
   Bell,
   Check,
@@ -18,12 +19,15 @@ import {
   Chip,
   Combobox,
   DarkModeProvider,
+  DataTable,
   DatePicker,
   Dialog,
   Drawer,
   Input,
   Menu,
   NumberField,
+  Radio,
+  RadioGroup,
   Select,
   SpeedDial,
   SpeedDialMenu,
@@ -41,6 +45,7 @@ import {
   Typography,
   type ComboboxValueLabelPair,
   type DatePickerMode,
+  type RadioGroupOption,
   type ReshetThemeMode,
   type SelectValueLabelPair
 } from '../src';
@@ -91,6 +96,84 @@ const comboboxOptions: ComboboxValueLabelPair[] = [
   { value: 'echo', label: 'Echo' },
 ];
 
+type InvoiceRow = {
+  id: string;
+  status: 'Paid' | 'Pending' | 'Failed';
+  customer: string;
+  owner: string;
+  amount: number;
+};
+
+const invoiceRows: InvoiceRow[] = [
+  { id: 'INV-1042', status: 'Paid', customer: 'Northwind', owner: 'Dana', amount: 1840 },
+  { id: 'INV-1043', status: 'Pending', customer: 'Blue River', owner: 'Ari', amount: 920 },
+  { id: 'INV-1044', status: 'Failed', customer: 'Cedar Labs', owner: 'Mika', amount: 1260 },
+  { id: 'INV-1045', status: 'Paid', customer: 'Atlas Co', owner: 'Noam', amount: 2480 },
+];
+
+const invoiceColumns: ColumnDef<InvoiceRow, unknown>[] = [
+  {
+    accessorKey: 'id',
+    header: 'Invoice',
+    size: 110,
+    cell: ({ getValue }) => <strong>{getValue<string>()}</strong>,
+  },
+  {
+    accessorKey: 'status',
+    header: 'Status',
+    size: 120,
+    cell: ({ getValue }) => {
+      const status = getValue<InvoiceRow['status']>();
+      const colorByStatus = {
+        Paid: '#16a34a',
+        Pending: '#2563eb',
+        Failed: '#dc2626',
+      };
+
+      return <Chip label={status} slotProps={{ backgroundColor: colorByStatus[status] }} />;
+    },
+  },
+  {
+    accessorKey: 'customer',
+    header: 'Customer',
+    size: 150,
+  },
+  {
+    accessorKey: 'owner',
+    header: 'Owner',
+    size: 110,
+  },
+  {
+    accessorKey: 'amount',
+    header: 'Amount',
+    size: 110,
+    cell: ({ getValue }) =>
+      getValue<number>().toLocaleString('en-US', {
+        style: 'currency',
+        currency: 'USD',
+        maximumFractionDigits: 0,
+      }),
+  },
+];
+
+const radioOptions: RadioGroupOption<string>[] = [
+  {
+    value: 'email',
+    label: 'Email',
+    description: 'Send a message to the account owner.',
+  },
+  {
+    value: 'sms',
+    label: 'SMS',
+    description: 'Use only for urgent notifications.',
+  },
+  {
+    value: 'none',
+    label: 'No notification',
+    description: 'Save the record without sending an update.',
+  },
+];
+
 const tabOptions = [
   { value: 0, label: 'Overview', color: '#2563eb' },
   { value: 1, label: 'Details', color: '#16a34a' },
@@ -102,8 +185,10 @@ const tooltipDirections = ['top', 'right', 'bottom', 'left'] as const;
 
 type CalendarPreviewMode = 'single' | 'multiple' | 'range';
 type ComboboxPreviewMode = 'single' | 'multiple';
+type DataTablePreviewMode = 'basic' | 'filters' | 'details' | 'dense';
 type DrawerPreviewDirection = 'left' | 'right' | 'top' | 'bottom';
 type MenuPreviewMode = 'grouped' | 'flat';
+type RadioPreviewOrientation = 'vertical' | 'horizontal';
 type SelectPreviewMode = 'single' | 'multiple';
 type SpeedDialMenuPreviewMode = 'separators' | 'compact';
 type StepperPreviewOrientation = 'horizontal' | 'vertical';
@@ -309,9 +394,12 @@ function Documentation() {
   const [calendarDates, setCalendarDates] = useState<Date[] | undefined>([new Date()]);
   const [calendarRange, setCalendarRange] = useState<DateRange | undefined>({ from: new Date(), to: undefined });
   const [calendarMode, setCalendarMode] = useState<CalendarPreviewMode>('single');
+  const [dataTableMode, setDataTableMode] = useState<DataTablePreviewMode>('basic');
   const [activeTab, setActiveTab] = useState(tabOptions[0].value);
   const [drawerDirection, setDrawerDirection] = useState<DrawerPreviewDirection>('right');
   const [menuMode, setMenuMode] = useState<MenuPreviewMode>('grouped');
+  const [radioValue, setRadioValue] = useState(radioOptions[0].value);
+  const [radioOrientation, setRadioOrientation] = useState<RadioPreviewOrientation>('vertical');
   const [selectMode, setSelectMode] = useState<SelectPreviewMode>('single');
   const [cities, setCities] = useState<SelectValueLabelPair[]>([cityOptions[0], cityOptions[2]]);
   const [speedDialMenuMode, setSpeedDialMenuMode] = useState<SpeedDialMenuPreviewMode>('separators');
@@ -660,6 +748,93 @@ function Documentation() {
                 <output>{comboMulti.map((item) => item.label).join(', ') || 'No items selected'}</output>
               </>
             )}
+          </div>
+        ),
+      },
+      {
+        id: 'datatable',
+        title: 'DataTable',
+        summary: 'A TanStack-powered data grid with sorting, row selection, loading rows, optional filters, detail panels, and virtualization support.',
+        layer: '@layer primitives + @layer base',
+        props: [
+          { name: 'columns', type: 'ColumnDef<TData, TValue>[]', description: 'Column definitions from @tanstack/react-table. Undefined entries are filtered so conditional columns are easy to compose.' },
+          { name: 'data', type: 'TData[]', description: 'Rows displayed by the table.' },
+          { name: 'enableRowSelectionColumn', type: 'boolean', description: 'Adds a leading checkbox column for selecting all page rows or individual rows.' },
+          { name: 'enableGlobalSearch', type: 'boolean', description: 'Renders a table-level search input wired to TanStack global filtering.' },
+          { name: 'showColumnFilters', type: 'boolean', description: 'Renders a filter input below columns that can be filtered.' },
+          { name: 'renderDetailPanel', type: '({ row, table }) => ReactElement', description: 'Adds an expand column and renders a collapsible detail row for each record.' },
+          { name: 'enableVirtualization', type: 'boolean', description: 'Uses @tanstack/react-virtual for larger scrollable row sets.' },
+          { name: 'isLoading / loadingRowsCount', type: 'boolean / number', description: 'Shows skeleton rows while data is loading. loadingRowsCount defaults to 5.' },
+          { name: 'dense', type: 'boolean', description: 'Removes row gaps and rounded row corners for compact operational tables.' },
+          { name: 'name / testId', type: 'string', description: 'Customize generated test IDs for the wrapper, table, and global search input.' },
+        ],
+        usage: [
+          { title: 'Basic sortable table', code: `<DataTable
+  columns={columns}
+  data={rows}
+  getRowId={(row) => row.id}
+/>` },
+          { title: 'Search and filters', code: `<DataTable
+  columns={columns}
+  data={rows}
+  enableGlobalSearch
+  globalSearchPlaceholder="Search invoices"
+  showColumnFilters
+/>` },
+          { title: 'Selection and detail panel', code: `<DataTable
+  columns={columns}
+  data={rows}
+  enableRowSelectionColumn
+  renderDetailPanel={({ row }) => <InvoiceDetails invoice={row.original} />}
+/>` },
+          { title: 'Virtualized dense rows', code: `<DataTable
+  columns={columns}
+  data={largeRows}
+  dense
+  enableVirtualization
+/>` },
+        ],
+        notes: [
+          'Use TanStack ColumnDef objects for accessors, headers, cell rendering, sorting, and filter behavior.',
+          'Pass getRowId when row identity matters for selection, expansion, or later controlled table state.',
+          'Use enableVirtualization for long lists inside a constrained-height parent; small tables are simpler without it.',
+        ],
+        preview: (
+          <div className="PreviewStack DataTablePreview">
+            <PreviewModeControl
+              label="Mode"
+              value={dataTableMode}
+              onChange={setDataTableMode}
+              options={[
+                { label: 'Basic', value: 'basic' },
+                { label: 'Filters', value: 'filters' },
+                { label: 'Details', value: 'details' },
+                { label: 'Dense', value: 'dense' },
+              ]}
+            />
+            <DataTable
+              name="docs-invoices"
+              columns={invoiceColumns}
+              data={invoiceRows}
+              getRowId={(row) => row.id}
+              enableGlobalSearch
+              globalSearchPlaceholder="Search invoices"
+              enableRowSelectionColumn={dataTableMode !== 'basic'}
+              showColumnFilters={dataTableMode === 'filters'}
+              dense={dataTableMode === 'dense'}
+              renderDetailPanel={
+                dataTableMode === 'details'
+                  ? ({ row }) => (
+                      <div className="DataTableDetail">
+                        <strong>{row.original.customer}</strong>
+                        <span>
+                          Owned by {row.original.owner}. Current status is {row.original.status.toLowerCase()}.
+                        </span>
+                      </div>
+                    )
+                  : undefined
+              }
+            />
           </div>
         ),
       },
@@ -1024,6 +1199,83 @@ function Documentation() {
               onValueChange={(nextValue) => setCount(nextValue ?? 0)}
             />
             <output>{count}</output>
+          </div>
+        ),
+      },
+      {
+        id: 'radio',
+        title: 'Radio and RadioGroup',
+        summary: 'A Base UI radio wrapper for one-of-many choices, with an item-mapping RadioGroup shortcut and custom child support.',
+        layer: '@layer base',
+        props: [
+          { name: 'Radio.value', type: 'string | number', description: 'Unique value submitted or selected when the radio is active.' },
+          { name: 'Radio.label', type: 'ReactNode', description: 'Visible label when children are not provided.' },
+          { name: 'Radio.description', type: 'ReactNode', description: 'Optional helper text under the label.' },
+          { name: 'Radio.disabled / required / readOnly', type: 'boolean', description: 'Base UI radio state props forwarded to the root.' },
+          { name: 'RadioGroup.items', type: 'RadioGroupOption[]', description: 'Optional shortcut that renders Radio children from { value, label, description, disabled } objects.' },
+          { name: 'RadioGroup.value / defaultValue', type: 'string | number', description: 'Use value for controlled state or defaultValue for uncontrolled initial selection.' },
+          { name: 'RadioGroup.onValueChange', type: '(value, details) => void', description: 'Receives the newly selected option value.' },
+          { name: 'RadioGroup.orientation', type: "'vertical' | 'horizontal'", description: 'Controls visual layout. Defaults to vertical.' },
+          { name: 'name / testId', type: 'string', description: 'RadioGroup name controls the submitted field; name and testId also customize generated test IDs.' },
+        ],
+        usage: [
+          { title: 'Mapped options', code: `<RadioGroup
+  name="notification"
+  value={value}
+  onValueChange={setValue}
+  items={[
+    { value: 'email', label: 'Email' },
+    { value: 'sms', label: 'SMS' },
+  ]}
+/>` },
+          { title: 'Custom children', code: `<RadioGroup name="plan" defaultValue="team">
+  <Radio value="solo" label="Solo" description="For one user" />
+  <Radio value="team">
+    <strong>Team</strong>
+  </Radio>
+</RadioGroup>` },
+          { title: 'Horizontal layout', code: `<RadioGroup
+  name="size"
+  orientation="horizontal"
+  defaultValue="m"
+  items={sizeOptions}
+/>` },
+        ],
+        notes: [
+          'Use RadioGroup for mutually exclusive choices. Radio is intended to live inside RadioGroup for normal form behavior.',
+          'Use items for straightforward option lists; use Radio children when labels need richer custom markup.',
+          'Keep option labels concise and put explanatory copy in description so the selected value stays easy to scan.',
+        ],
+        preview: (
+          <div className="PreviewStack">
+            <PreviewModeControl
+              label="Layout"
+              value={radioOrientation}
+              onChange={setRadioOrientation}
+              options={[
+                { label: 'Vertical', value: 'vertical' },
+                { label: 'Horizontal', value: 'horizontal' },
+              ]}
+            />
+            {radioOrientation === 'vertical' ? (
+              <RadioGroup
+                name="docs-radio"
+                value={radioValue}
+                onValueChange={setRadioValue}
+                items={radioOptions}
+              />
+            ) : (
+              <RadioGroup
+                name="docs-radio-custom"
+                value={radioValue}
+                onValueChange={setRadioValue}
+                orientation="horizontal">
+                {radioOptions.map((option) => (
+                  <Radio key={option.value} value={option.value} label={option.label} />
+                ))}
+              </RadioGroup>
+            )}
+            <output>{radioOptions.find((option) => option.value === radioValue)?.label}</output>
           </div>
         ),
       },
@@ -1601,6 +1853,7 @@ function Documentation() {
       comboboxMode,
       comboSingle,
       count,
+      dataTableMode,
       datePickerMode,
       docsTheme,
       drawerDirection,
@@ -1608,6 +1861,8 @@ function Documentation() {
       menuMode,
       multipleDates,
       rangeDate,
+      radioOrientation,
+      radioValue,
       selectMode,
       singleDate,
       speedDialMenuMode,

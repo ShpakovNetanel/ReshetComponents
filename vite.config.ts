@@ -23,6 +23,8 @@ export default defineConfig(({ mode }) => {
               'react-dom',
               '@base-ui/react',
               '@base-ui/react/input',
+              '@tanstack/react-table',
+              '@tanstack/react-virtual',
               'clsx',
               'date-fns',
               'lucide-react',
