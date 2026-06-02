@@ -1,4 +1,4 @@
-import { Toast as BaseToast, DirectionProvider } from '@base-ui/react';
+import { DirectionProvider } from '@base-ui/react';
 import type { ColumnDef } from '@tanstack/react-table';
 import {
   Bell,
@@ -7,7 +7,8 @@ import {
   MessageCircle,
   Plus,
   Save,
-  Settings
+  Settings,
+  Star
 } from 'lucide-react';
 import { useMemo, useState, type ReactNode } from 'react';
 import type { DateRange } from 'react-day-picker';
@@ -37,10 +38,7 @@ import {
   StepLabel,
   Stepper,
   Tabs,
-  Toast,
-  ToastBase,
-  ToastButton,
-  ToastList,
+  Toggle,
   Tooltip,
   Typography,
   type ComboboxValueLabelPair,
@@ -193,6 +191,7 @@ type SelectPreviewMode = 'single' | 'multiple';
 type SpeedDialMenuPreviewMode = 'separators' | 'compact';
 type StepperPreviewOrientation = 'horizontal' | 'vertical';
 type ToastPreviewKind = 'success' | 'error' | 'info' | 'primitives';
+type TogglePreviewValue = 'compact' | 'favorite';
 type TooltipPreviewStyle = 'boxShadow' | 'outline';
 
 type PreviewOption<TValue extends string> = {
@@ -405,6 +404,10 @@ function Documentation() {
   const [speedDialMenuMode, setSpeedDialMenuMode] = useState<SpeedDialMenuPreviewMode>('separators');
   const [stepperOrientation, setStepperOrientation] = useState<StepperPreviewOrientation>('horizontal');
   const [toastKind, setToastKind] = useState<ToastPreviewKind>('success');
+  const [activeToggles, setActiveToggles] = useState<Record<TogglePreviewValue, boolean>>({
+    compact: true,
+    favorite: false,
+  });
   const [tooltipSide, setTooltipSide] = useState<(typeof tooltipDirections)[number]>('top');
   const [tooltipStyle, setTooltipStyle] = useState<TooltipPreviewStyle>('boxShadow');
 
@@ -943,6 +946,8 @@ function Documentation() {
           { name: 'onOpenChange', type: '(open: boolean) => void', description: 'Called when the dialog opens or closes.' },
           { name: 'slotProps.disabled.trigger', type: 'boolean', description: 'Disables the trigger.' },
           { name: 'slotProps.hidden.trigger', type: 'boolean', description: 'Allows rendering a controlled dialog without a visible trigger.' },
+          { name: 'slotProps.hidden.closeButton', type: 'boolean', description: 'Hides the default CloseButton when custom close UI is needed.' },
+          { name: 'slotProps.closeButtonProps', type: 'CloseButton props', description: 'Customizes the default dialog close control.' },
         ],
         usage: [
           { title: 'Triggered modal', code: `<Dialog trigger={<Button>Open dialog</Button>}>
@@ -962,7 +967,7 @@ function Documentation() {
         ],
         notes: [
           'Use Dialog for blocking workflows that require a user decision or focused form.',
-          'children render directly inside the popup, so include your own title, body, actions, and close behavior.',
+          'Dialog renders a default CloseButton inside the popup; hide it when the child content owns the close action.',
           'Use slotProps.hidden.trigger for dialogs opened by external state rather than a local trigger button.',
         ],
         preview: (
@@ -989,6 +994,8 @@ function Documentation() {
           { name: 'slotProps.width', type: 'string', description: 'CSS width for left and right drawers.' },
           { name: 'slotProps.height', type: 'string', description: 'CSS height for top and bottom drawers.' },
           { name: 'slotProps.disableBackdrop', type: 'boolean', description: 'Removes the backdrop when true.' },
+          { name: 'slotProps.hidden.closeButton', type: 'boolean', description: 'Hides the default CloseButton when custom drawer chrome is needed.' },
+          { name: 'slotProps.closeButtonProps', type: 'CloseButton props', description: 'Customizes the default drawer close control.' },
         ],
         usage: [
           { title: 'Right drawer', code: `<Drawer slotProps={{ direction: 'right', width: '360px' }}>
@@ -1005,8 +1012,9 @@ function Documentation() {
         ],
         notes: [
           'Use Drawer for secondary surfaces such as filters, navigation, or contextual details.',
+          'Drawer renders a default CloseButton inside the panel because it is built on Base UI Dialog.',
           'direction controls the entrance side; width matters for left/right drawers, and height matters for top/bottom drawers.',
-          'Drawer is built on Base UI Dialog, so open and onOpenChange can be used for controlled state.',
+          'open and onOpenChange can be used for controlled state.',
         ],
         preview: (
           <div className="PreviewStack">
@@ -1599,143 +1607,65 @@ function Documentation() {
         ),
       },
       {
-        id: 'toast',
-        title: 'Toast',
-        summary: 'Success, error, and info toast triggers with configurable copy and icons.',
-        layer: '@layer base + @layer library',
+        id: 'toggle',
+        title: 'Toggle',
+        summary: 'A Base UI two-state button for independent on/off options.',
+        layer: '@layer base',
         props: [
-          { name: 'title', type: 'string', description: 'Toast title text.' },
-          { name: 'description', type: 'string', description: 'Toast body text.' },
-          { name: 'icon', type: 'ReactNode', description: 'Icon rendered inside the trigger button.' },
-          { name: 'trigger', type: 'ReactNode', description: 'Custom trigger element for ToastBase.' },
-          { name: 'slotProps.ToastList', type: 'ToastListSlotProps', description: 'Customize rendered toast list and list icon.' },
+          { name: 'pressed / defaultPressed', type: 'boolean', description: 'Use pressed for controlled state or defaultPressed for uncontrolled initial state.' },
+          { name: 'onPressedChange', type: '(pressed, details) => void', description: 'Receives the next pressed state.' },
+          { name: 'value', type: 'string', description: 'Identifies the toggle when it is used with Base UI toggle group primitives.' },
+          { name: 'icon', type: 'ReactNode', description: 'Optional icon rendered before the label.' },
+          { name: 'label / children', type: 'ReactNode', description: 'Visible toggle content. Children take precedence over label.' },
+          { name: 'disabled', type: 'boolean', description: 'Disables pointer and keyboard activation.' },
+          { name: 'slotProps.classes', type: '{ Root?, Icon?, Label? }', description: 'Adds classes to the internal Toggle slots.' },
           { name: 'name / testId', type: 'string', description: 'Customize generated test IDs.' },
         ],
         usage: [
-          { title: 'Success trigger', code: `<Toast.Success
-  title="Saved"
-  description="Item saved"
-  icon={<Check />}
-/>` },
-          { title: 'Scoped list ownership', code: `<Toast.Success name="profile" title="Saved" description="Profile updated" />
-<ToastList name="profile" />` },
-          { title: 'Custom ToastBase', code: `<ToastBase
-  title="Queued"
-  description="The export started"
-  slotProps={{ ToastList: { icon: <Clock /> } }}
-/>` },
+          { title: 'Controlled toggle', code: `<Toggle
+  pressed={compact}
+  onPressedChange={setCompact}
+  icon={<Settings size={16} />}>
+  Compact
+</Toggle>` },
+          { title: 'Uncontrolled toggle', code: `<Toggle defaultPressed label="Pinned" />` },
+          { title: 'Disabled toggle', code: `<Toggle pressed disabled>
+  Locked
+</Toggle>` },
         ],
         notes: [
-          'Wrap the app or docs area in BaseToast.Provider before rendering Toast triggers or ToastList.',
-          'Toast.Success, Toast.Error, and Toast.Info are convenience presets over ToastBase with default Hebrew copy and status icons.',
-          'Use name to scope which ToastList displays which toast when several areas on the page own separate notifications.',
-        ],
-        preview: (
-          <div className="PreviewStack">
-            <PreviewModeControl
-              label="Kind"
-              value={toastKind}
-              onChange={setToastKind}
-              options={[
-                { label: 'Success', value: 'success' },
-                { label: 'Error', value: 'error' },
-                { label: 'Info', value: 'info' },
-                { label: 'Primitive', value: 'primitives' },
-              ]}
-            />
-            <div className="Inline">
-              {toastKind === 'success' && (
-                <Toast.Success
-                  name="docs-toast-success"
-                  title="Saved"
-                  description="The docs item was saved."
-                  icon={<Check size={18} />}
-                />
-              )}
-              {toastKind === 'error' && (
-                <Toast.Error
-                  name="docs-toast-error"
-                  title="Failed"
-                  description="The action could not be completed."
-                  icon="Error"
-                />
-              )}
-              {toastKind === 'info' && (
-                <Toast.Info
-                  name="docs-toast-info"
-                  title="Heads up"
-                  description="There is more information to review."
-                  icon={<MessageCircle size={18} />}
-                />
-              )}
-              {toastKind === 'primitives' && (
-                <ToastButton
-                  name="docs-toast-primitive-kind"
-                  title="Primitive toast"
-                  description="Created from the lower-level ToastButton."
-                  slotProps={{ icon: 'Primitive', toastIcon: <Bell size={18} /> }}
-                />
-              )}
-            </div>
-          </div>
-        ),
-      },
-      {
-        id: 'toast-primitives',
-        title: 'ToastBase, ToastButton, ToastList',
-        summary: 'Lower-level toast building blocks for custom trigger, ownership, icon, and list behavior.',
-        layer: '@layer base + @layer library',
-        props: [
-          { name: 'ToastBase.title', type: 'string', description: 'Title passed into the generated toast when the default ToastButton trigger is clicked.' },
-          { name: 'ToastBase.description', type: 'string', description: 'Description passed into the generated toast body.' },
-          { name: 'ToastBase.trigger', type: 'ReactNode', description: 'Optional custom trigger. If provided, ToastBase does not render its default ToastButton.' },
-          { name: 'ToastButton.slotProps.icon', type: 'ReactNode', description: 'Visible content inside the trigger button. Defaults to "Toast Me!".' },
-          { name: 'ToastButton.slotProps.toastIcon', type: 'ReactNode', description: 'Icon stored in toast data and displayed by ToastList.' },
-          { name: 'ToastList.slotProps.disable.close', type: 'boolean', description: 'Hides the close button for each toast when true.' },
-          { name: 'ToastList.slotProps.icon', type: 'ReactNode', description: 'Fallback icon displayed for toasts without their own toastIcon data.' },
-          { name: 'name', type: 'string', description: 'Scopes ToastButton-created toasts to matching ToastList instances.' },
-        ],
-        usage: [
-          { title: 'Custom primitive pair', code: `<ToastButton
-  name="uploads"
-  title="Upload complete"
-  description="The file is ready"
-  slotProps={{ icon: <Upload />, toastIcon: <Check /> }}
-/>
-<ToastList name="uploads" />` },
-          { title: 'ToastBase default trigger', code: `<ToastBase
-  name="exports"
-  title="Export queued"
-  description="You can keep working"
-  slotProps={{ ToastButton: { icon: 'Export' } }}
-/>` },
-          { title: 'List without close buttons', code: `<ToastList
-  name="system"
-  slotProps={{ disable: { close: true }, icon: <Bell /> }}
-/>` },
-        ],
-        notes: [
-          'Use Toast.Success, Toast.Error, and Toast.Info first; reach for primitives when you need a custom trigger/list split.',
-          'ToastButton writes title, description, owner, and icon into Base UI toast manager data.',
-          'ToastList filters by name so several sections can display only the notifications they own.',
+          'Use Toggle for independent pressed/unpressed actions such as compact mode, favorite, or pin.',
+          'For mutually exclusive choices, use RadioGroup or Tabs instead of separate Toggle controls.',
+          'Provide an accessible name through visible text or aria-label when rendering icon-only toggles.',
         ],
         preview: (
           <div className="PreviewStack">
             <div className="Inline">
-              <ToastButton
-                name="docs-primitives"
-                title="Primitive toast"
-                description="Created by ToastButton and rendered by ToastList."
-                slotProps={{ icon: 'Primitive toast', toastIcon: <Bell size={18} /> }}
-              />
-              <ToastBase
-                name="docs-base"
-                title="ToastBase"
-                description="ToastBase renders a default button and list together."
-                slotProps={{ ToastButton: { icon: 'ToastBase' }, ToastList: { icon: <Check size={18} /> } }}
-              />
+              <Toggle
+                name="docs-toggle-compact"
+                value="compact"
+                pressed={activeToggles.compact}
+                onPressedChange={(pressed) => setActiveToggles((toggles) => ({ ...toggles, compact: pressed }))}
+                icon={<Settings size={16} />}
+              >
+                Compact
+              </Toggle>
+              <Toggle
+                name="docs-toggle-favorite"
+                value="favorite"
+                pressed={activeToggles.favorite}
+                onPressedChange={(pressed) => setActiveToggles((toggles) => ({ ...toggles, favorite: pressed }))}
+                icon={<Star size={16} />}
+              >
+                Favorite
+              </Toggle>
+              <Toggle defaultPressed disabled label="Locked" />
             </div>
-            <ToastList name="docs-primitives" />
+            <output>
+              {activeToggles.compact ? 'Compact on' : 'Compact off'}
+              {' · '}
+              {activeToggles.favorite ? 'favorite selected' : 'favorite clear'}
+            </output>
           </div>
         ),
       },
@@ -1868,6 +1798,7 @@ function Documentation() {
       speedDialMenuMode,
       stepperOrientation,
       toastKind,
+      activeToggles,
       tooltipSide,
       tooltipStyle,
     ],

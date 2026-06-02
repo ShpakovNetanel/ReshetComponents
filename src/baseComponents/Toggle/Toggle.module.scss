@@ -1,0 +1,75 @@
+@layer base {
+  .Root {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.375rem;
+    min-height: 2rem;
+    max-width: 100%;
+    padding: 0.375rem 0.625rem;
+    border: 1px solid var(--color-gray-200);
+    border-radius: 0.375rem;
+    background-color: transparent;
+    color: var(--color-text-primary);
+    font: inherit;
+    font-size: 0.875rem;
+    font-weight: 700;
+    line-height: 1.25;
+    cursor: pointer;
+    -webkit-user-select: none;
+    user-select: none;
+    transition:
+      background-color 120ms ease,
+      border-color 120ms ease,
+      color 120ms ease,
+      box-shadow 120ms ease;
+
+    &:hover {
+      background-color: var(--color-surface-hover);
+      color: var(--color-text-primary);
+    }
+
+    &:focus-visible {
+      outline: 2px solid var(--color-blue);
+      outline-offset: 2px;
+    }
+
+    &[data-pressed] {
+      border-color: var(--color-blue);
+      background-color: var(--color-surface-selected);
+      color: var(--color-blue);
+    }
+
+    &[data-disabled],
+    &:disabled {
+      cursor: not-allowed;
+      opacity: 0.5;
+    }
+
+    &[data-disabled]:hover,
+    &:disabled:hover {
+      background-color: transparent;
+    }
+  }
+
+  .Icon {
+    display: inline-flex;
+    flex: 0 0 auto;
+    align-items: center;
+    justify-content: center;
+    width: 1rem;
+    height: 1rem;
+
+    svg {
+      width: 1rem;
+      height: 1rem;
+    }
+  }
+
+  .Label {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+}

@@ -5,6 +5,7 @@ export { ArrowSvg } from './baseComponents/ArrowSvg/ArrowSvg';
 export { Button } from './baseComponents/Button/Button';
 export { default as Calendar, type CalendarSlotProps } from './baseComponents/Calendar/Calendar';
 export { Chip } from './baseComponents/Chip/Chip';
+export { CloseButton, type CloseButtonProps } from './baseComponents/CloseButton/CloseButton';
 export { Combobox, type Primitive as ComboboxPrimitive, type ValueLabelPair as ComboboxValueLabelPair } from './baseComponents/Combobox/Combobox';
 export {
     DatePicker,
@@ -50,6 +51,7 @@ export { StepIndicator } from './baseComponents/Stepper/StepIndicator/StepIndica
 export { StepLabel } from './baseComponents/Stepper/StepLabel/StepLabel';
 export { Stepper, type StepperProps } from './baseComponents/Stepper/Stepper';
 export { Tabs } from './baseComponents/Tabs/Tabs';
+export { Toggle, type ToggleProps, type ToggleSlotProps } from './baseComponents/Toggle/Toggle';
 export { Toast } from './baseComponents/Toast/Toast';
 export { ToastBase } from './baseComponents/Toast/ToastBase/ToastBase';
 export { ToastButton, type SlotProps as ToastButtonSlotProps } from './baseComponents/Toast/ToastBase/ToastButton/ToastButton';

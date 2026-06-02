@@ -3,6 +3,7 @@ import clsx from "clsx";
 import { Menu } from "lucide-react";
 import type { PropsWithChildren, ReactNode } from "react";
 import { createTestIdBuilder } from "../../utils/testIds";
+import { CloseButton, type CloseButtonProps } from "../CloseButton/CloseButton";
 import styles from "./Drawer.module.scss";
 
 type Direction = "left" | "right" | "top" | "bottom";
@@ -10,9 +11,10 @@ const XAxios = ['left', 'right'];
 const YAxios = ['top', 'bottom'];
 
 type Classes = {
-    Trigger?: keyof typeof styles;
-    Drawer?: keyof typeof styles;
-    Icon?: keyof typeof styles;
+    Trigger?: string;
+    Drawer?: string;
+    Icon?: string;
+    Close?: string;
 }
 
 type Disable = {
@@ -26,6 +28,10 @@ type SlotProps = {
     disableBackdrop?: boolean;
     classes?: Classes;
     disable?: Disable;
+    hidden?: {
+        closeButton?: boolean;
+    };
+    closeButtonProps?: Omit<CloseButtonProps, 'className' | 'testId'>;
 }
 
 type DrawerProps = {
@@ -72,6 +78,13 @@ export const Drawer = ({
                     className={styles.Backdrop} />}
                 <BaseDialog.Popup data-testid={testIds.part('Popup')} className={clsx(styles.Drawer, slotProps?.classes?.Drawer, styles[direction])}
                     style={{ width, height }}>
+                    {!slotProps?.hidden?.closeButton && (
+                        <CloseButton
+                            {...slotProps?.closeButtonProps}
+                            testId={testIds.part('Close')}
+                            className={clsx(styles.Close, slotProps?.classes?.Close)}
+                        />
+                    )}
                     {children}
                 </BaseDialog.Popup>
             </BaseDialog.Portal>

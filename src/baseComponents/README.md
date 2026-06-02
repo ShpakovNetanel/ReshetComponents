@@ -20,6 +20,7 @@ Main component exports:
 - `Button`
 - `Calendar`
 - `Chip`
+- `CloseButton`
 - `Combobox`
 - `DataTable`
 - `DatePicker`
@@ -41,6 +42,7 @@ Main component exports:
 - `StepLabel`
 - `Stepper`
 - `Tabs`
+- `Toggle`
 - `Toast`
 - `ToastBase`
 - `ToastButton`
@@ -58,7 +60,7 @@ Utility exports:
 ## Basic Import Pattern
 
 ```tsx
-import { Button, DataTable, DatePicker, RadioGroup, Select, SpeedDial, ToastList } from 'reshet-components';
+import { Button, CloseButton, DataTable, DatePicker, RadioGroup, Select, SpeedDial, Toggle, ToastList } from 'reshet-components';
 ```
 
 ## Theme Provider
