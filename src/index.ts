@@ -52,7 +52,7 @@ export { StepLabel } from './baseComponents/Stepper/StepLabel/StepLabel';
 export { Stepper, type StepperProps } from './baseComponents/Stepper/Stepper';
 export { Tabs } from './baseComponents/Tabs/Tabs';
 export { Toggle, type ToggleProps, type ToggleSlotProps } from './baseComponents/Toggle/Toggle';
-export { Tooltip, type TooltipSlotProps } from './baseComponents/Tooltip/Tooltip';§
+export { Tooltip, type TooltipSlotProps } from './baseComponents/Tooltip/Tooltip';
 export { Typography } from './baseComponents/Typography/Typography';
 export { buildTestId, testIdProps } from './utils/testIds';
 export type { ClassNames } from './types/baseui';
