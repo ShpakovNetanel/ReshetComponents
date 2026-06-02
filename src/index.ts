@@ -52,11 +52,7 @@ export { StepLabel } from './baseComponents/Stepper/StepLabel/StepLabel';
 export { Stepper, type StepperProps } from './baseComponents/Stepper/Stepper';
 export { Tabs } from './baseComponents/Tabs/Tabs';
 export { Toggle, type ToggleProps, type ToggleSlotProps } from './baseComponents/Toggle/Toggle';
-export { Toast } from './baseComponents/Toast/Toast';
-export { ToastBase } from './baseComponents/Toast/ToastBase/ToastBase';
-export { ToastButton, type SlotProps as ToastButtonSlotProps } from './baseComponents/Toast/ToastBase/ToastButton/ToastButton';
-export { ToastList, type SlotProps as ToastListSlotProps } from './baseComponents/Toast/ToastBase/ToastList/ToastList';
-export { Tooltip, type TooltipSlotProps } from './baseComponents/Tooltip/Tooltip';
+export { Tooltip, type TooltipSlotProps } from './baseComponents/Tooltip/Tooltip';§
 export { Typography } from './baseComponents/Typography/Typography';
 export { buildTestId, testIdProps } from './utils/testIds';
 export type { ClassNames } from './types/baseui';

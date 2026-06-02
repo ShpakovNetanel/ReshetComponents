@@ -2,9 +2,7 @@ import { DirectionProvider } from '@base-ui/react';
 import type { ColumnDef } from '@tanstack/react-table';
 import {
   Bell,
-  Check,
   List,
-  MessageCircle,
   Plus,
   Save,
   Settings,
@@ -1808,7 +1806,6 @@ function Documentation() {
 
   return (
     <DirectionProvider direction="ltr">
-      <BaseToast.Provider>
         <DarkModeProvider theme={docsTheme} className="ThemeRoot">
           <main className="DocsPage">
             <aside className="Sidebar" aria-label="Component documentation">
@@ -1857,7 +1854,6 @@ function Documentation() {
             </div>
           </main>
         </DarkModeProvider>
-      </BaseToast.Provider>
     </DirectionProvider>
   );
 }
