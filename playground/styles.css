@@ -470,6 +470,14 @@ input {
   padding: 24px;
 }
 
+.SurfaceHeader {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  justify-content: space-between;
+  min-width: 0;
+}
+
 .DialogContent {
   width: min(360px, calc(100vw - 48px));
 }

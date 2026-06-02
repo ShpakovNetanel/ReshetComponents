@@ -16,6 +16,7 @@ import {
   Button,
   Calendar,
   Chip,
+  CloseButton,
   Combobox,
   DarkModeProvider,
   DataTable,
@@ -188,7 +189,6 @@ type RadioPreviewOrientation = 'vertical' | 'horizontal';
 type SelectPreviewMode = 'single' | 'multiple';
 type SpeedDialMenuPreviewMode = 'separators' | 'compact';
 type StepperPreviewOrientation = 'horizontal' | 'vertical';
-type ToastPreviewKind = 'success' | 'error' | 'info' | 'primitives';
 type TogglePreviewValue = 'compact' | 'favorite';
 type TooltipPreviewStyle = 'boxShadow' | 'outline';
 
@@ -401,7 +401,6 @@ function Documentation() {
   const [cities, setCities] = useState<SelectValueLabelPair[]>([cityOptions[0], cityOptions[2]]);
   const [speedDialMenuMode, setSpeedDialMenuMode] = useState<SpeedDialMenuPreviewMode>('separators');
   const [stepperOrientation, setStepperOrientation] = useState<StepperPreviewOrientation>('horizontal');
-  const [toastKind, setToastKind] = useState<ToastPreviewKind>('success');
   const [activeToggles, setActiveToggles] = useState<Record<TogglePreviewValue, boolean>>({
     compact: true,
     favorite: false,
@@ -944,12 +943,13 @@ function Documentation() {
           { name: 'onOpenChange', type: '(open: boolean) => void', description: 'Called when the dialog opens or closes.' },
           { name: 'slotProps.disabled.trigger', type: 'boolean', description: 'Disables the trigger.' },
           { name: 'slotProps.hidden.trigger', type: 'boolean', description: 'Allows rendering a controlled dialog without a visible trigger.' },
-          { name: 'slotProps.hidden.closeButton', type: 'boolean', description: 'Hides the default CloseButton when custom close UI is needed.' },
-          { name: 'slotProps.closeButtonProps', type: 'CloseButton props', description: 'Customizes the default dialog close control.' },
         ],
         usage: [
           { title: 'Triggered modal', code: `<Dialog trigger={<Button>Open dialog</Button>}>
-  <div>Dialog content</div>
+  <div>
+    <CloseButton />
+    <div>Dialog content</div>
+  </div>
 </Dialog>` },
           { title: 'Controlled modal', code: `<Dialog
   open={open}
@@ -965,7 +965,7 @@ function Documentation() {
         ],
         notes: [
           'Use Dialog for blocking workflows that require a user decision or focused form.',
-          'Dialog renders a default CloseButton inside the popup; hide it when the child content owns the close action.',
+          'children render directly inside the popup, so include your own title, body, actions, and close behavior.',
           'Use slotProps.hidden.trigger for dialogs opened by external state rather than a local trigger button.',
         ],
         preview: (
@@ -973,7 +973,10 @@ function Documentation() {
             name="docs-dialog"
             trigger={<Button type="button">Open dialog</Button>}>
             <div className="DialogContent">
-              <h3>Confirm action</h3>
+              <div className="SurfaceHeader">
+                <h3>Confirm action</h3>
+                <CloseButton name="docs-dialog" />
+              </div>
               <p>Dialog content is supplied as children.</p>
               <Button type="button">Action</Button>
             </div>
@@ -992,12 +995,13 @@ function Documentation() {
           { name: 'slotProps.width', type: 'string', description: 'CSS width for left and right drawers.' },
           { name: 'slotProps.height', type: 'string', description: 'CSS height for top and bottom drawers.' },
           { name: 'slotProps.disableBackdrop', type: 'boolean', description: 'Removes the backdrop when true.' },
-          { name: 'slotProps.hidden.closeButton', type: 'boolean', description: 'Hides the default CloseButton when custom drawer chrome is needed.' },
-          { name: 'slotProps.closeButtonProps', type: 'CloseButton props', description: 'Customizes the default drawer close control.' },
         ],
         usage: [
           { title: 'Right drawer', code: `<Drawer slotProps={{ direction: 'right', width: '360px' }}>
-  <div>Drawer content</div>
+  <div>
+    <CloseButton />
+    <div>Drawer content</div>
+  </div>
 </Drawer>` },
           { title: 'Bottom drawer', code: `<Drawer
   triggerIcon={<Settings />}
@@ -1010,9 +1014,8 @@ function Documentation() {
         ],
         notes: [
           'Use Drawer for secondary surfaces such as filters, navigation, or contextual details.',
-          'Drawer renders a default CloseButton inside the panel because it is built on Base UI Dialog.',
           'direction controls the entrance side; width matters for left/right drawers, and height matters for top/bottom drawers.',
-          'open and onOpenChange can be used for controlled state.',
+          'Drawer is built on Base UI Dialog, so open and onOpenChange can be used for controlled state.',
         ],
         preview: (
           <div className="PreviewStack">
@@ -1035,7 +1038,10 @@ function Documentation() {
                 height: drawerDirection === 'top' || drawerDirection === 'bottom' ? '34vh' : undefined,
               }}>
               <div className="DrawerContent">
-                <h3>{drawerDirection} drawer</h3>
+                <div className="SurfaceHeader">
+                  <h3>{drawerDirection} drawer</h3>
+                  <CloseButton name="docs-drawer" />
+                </div>
                 <p>Use this panel for navigation, filters, or contextual actions.</p>
                 <Button>Drawer action</Button>
               </div>
@@ -1795,7 +1801,6 @@ function Documentation() {
       singleDate,
       speedDialMenuMode,
       stepperOrientation,
-      toastKind,
       activeToggles,
       tooltipSide,
       tooltipStyle,

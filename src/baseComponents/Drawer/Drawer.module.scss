@@ -61,13 +61,6 @@
     transition: transform 0.25s ease-in-out;
   }
 
-  .Close {
-    position: absolute;
-    inset-block-start: 0.75rem;
-    inset-inline-end: 0.75rem;
-    z-index: 1;
-  }
-
   .Drawer[data-open] {
     transform: translate(0, 0);
   }
