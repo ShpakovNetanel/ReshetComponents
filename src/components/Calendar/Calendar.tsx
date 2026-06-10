@@ -143,6 +143,7 @@ function CalendarDropdown({
             TriggerIcon: clsx(styles.Chevron, slotProps?.classes?.Chevron),
             Popup: clsx(styles.DropdownPopup, slotProps?.classes?.DropdownPopup),
             Item: clsx(styles.DropdownItem, slotProps?.classes?.DropdownItem),
+            Positioner: clsx(styles.DropdownPositioner, slotProps?.classes?.DropDownPositioner)
           },
           triggerProps: {
             'aria-label': ariaLabel,

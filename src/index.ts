@@ -1,12 +1,12 @@
 import './theme.css';
 
-export { Accordion } from './baseComponents/Accordion/Accordion';
-export { ArrowSvg } from './baseComponents/ArrowSvg/ArrowSvg';
-export { Button } from './baseComponents/Button/Button';
-export { default as Calendar, type CalendarSlotProps } from './baseComponents/Calendar/Calendar';
-export { Chip, type ChipProps, type ChipSlotProps } from './baseComponents/Chip/Chip';
-export { CloseButton, type CloseButtonProps } from './baseComponents/CloseButton/CloseButton';
-export { Combobox, type Primitive as ComboboxPrimitive, type ValueLabelPair as ComboboxValueLabelPair } from './baseComponents/Combobox/Combobox';
+export { Accordion } from './components/Accordion/Accordion';
+export { ArrowSvg } from './components/ArrowSvg/ArrowSvg';
+export { Button } from './components/Button/Button';
+export { default as Calendar, type CalendarSlotProps } from './components/Calendar/Calendar';
+export { Chip, type ChipProps, type ChipSlotProps } from './components/Chip/Chip';
+export { CloseButton, type CloseButtonProps } from './components/CloseButton/CloseButton';
+export { Combobox, type Primitive as ComboboxPrimitive, type ValueLabelPair as ComboboxValueLabelPair } from './components/Combobox/Combobox';
 export {
     DatePicker,
     type DatePickerChangeDetails,
@@ -15,22 +15,22 @@ export {
     type DatePickerProps,
     type DatePickerRangeProps,
     type DatePickerSingleProps,
-} from './baseComponents/DatePicker/DatePicker';
-export { DataTable, type DataTableProps } from './baseComponents/DataTable/DataTable';
-export type { RenderDetailPanel } from './baseComponents/DataTable/types';
+} from './components/DatePicker/DatePicker';
+export { DataTable, type DataTableProps } from './components/DataTable/DataTable';
+export type { RenderDetailPanel } from './components/DataTable/types';
 export {
     DarkModeProvider,
     ThemeProvider,
     useReshetTheme,
     type ReshetResolvedTheme,
     type ReshetThemeMode,
-} from './baseComponents/DarkModeProvider/DarkModeProvider';
-export { default as Dialog } from './baseComponents/Dialog/Dialog';
-export { Drawer } from './baseComponents/Drawer/Drawer';
-export { default as Input } from './baseComponents/Input/Input';
-export { Menu, type MenuGroup } from './baseComponents/Menu/Menu';
-export { NumberField } from './baseComponents/NumberField/NumberField';
-export { numberWithCommas } from './baseComponents/NumberField/utils/NumberField.util';
+} from './components/DarkModeProvider/DarkModeProvider';
+export { default as Dialog } from './components/Dialog/Dialog';
+export { Drawer } from './components/Drawer/Drawer';
+export { default as Input } from './components/Input/Input';
+export { Menu, type MenuGroup } from './components/Menu/Menu';
+export { NumberField } from './components/NumberField/NumberField';
+export { numberWithCommas } from './components/NumberField/utils/NumberField.util';
 export {
     Radio,
     RadioGroup,
@@ -40,20 +40,20 @@ export {
     type RadioProps,
     type RadioSlotProps,
     type RadioValue,
-} from './baseComponents/Radio/Radio';
-export { Select, type Primitive as SelectPrimitive, type ValueLabelPair as SelectValueLabelPair } from './baseComponents/Select/Select';
-export { Skeleton } from './baseComponents/Skeleton/Skeleton';
-export { SpeedDial, type SpeedDialItem } from './baseComponents/SpeedDial/SpeedDial';
-export { SpeedDialMenu } from './baseComponents/SpeedDial/SpeedDialMenu/SpeedDialMenu';
-export { Step } from './baseComponents/Stepper/Step/Step';
-export { StepConnector } from './baseComponents/Stepper/StepConnector/StepConnector';
-export { StepIndicator } from './baseComponents/Stepper/StepIndicator/StepIndicator';
-export { StepLabel } from './baseComponents/Stepper/StepLabel/StepLabel';
-export { Stepper, type StepperProps } from './baseComponents/Stepper/Stepper';
-export { Tabs } from './baseComponents/Tabs/Tabs';
-export { Toggle, type ToggleProps, type ToggleSlotProps } from './baseComponents/Toggle/Toggle';
-export { Tooltip, type TooltipSlotProps } from './baseComponents/Tooltip/Tooltip';
-export { Typography } from './baseComponents/Typography/Typography';
+} from './components/Radio/Radio';
+export { Select, type Primitive as SelectPrimitive, type ValueLabelPair as SelectValueLabelPair } from './components/Select/Select';
+export { Skeleton } from './components/Skeleton/Skeleton';
+export { SpeedDial, type SpeedDialItem } from './components/SpeedDial/SpeedDial';
+export { SpeedDialMenu } from './components/SpeedDial/SpeedDialMenu/SpeedDialMenu';
+export { Step } from './components/Stepper/Step/Step';
+export { StepConnector } from './components/Stepper/StepConnector/StepConnector';
+export { StepIndicator } from './components/Stepper/StepIndicator/StepIndicator';
+export { StepLabel } from './components/Stepper/StepLabel/StepLabel';
+export { Stepper, type StepperProps } from './components/Stepper/Stepper';
+export { Tabs } from './components/Tabs/Tabs';
+export { Toggle, type ToggleProps, type ToggleSlotProps } from './components/Toggle/Toggle';
+export { Tooltip, type TooltipSlotProps } from './components/Tooltip/Tooltip';
+export { Typography } from './components/Typography/Typography';
 export { buildTestId, testIdProps } from './utils/testIds';
 export type { ClassNames } from './types/baseui';
 export type { Direction } from './types/types';
