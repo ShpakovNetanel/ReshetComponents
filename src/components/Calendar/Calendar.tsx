@@ -86,7 +86,7 @@ export type CalendarSlotProps = {
     ButtonNext?: string;
     ButtonPrevious?: string;
     YearsDropdown?: string;
-    DropDownPositioner: string;
+    DropDownPositioner?: string;
   };
 }
 

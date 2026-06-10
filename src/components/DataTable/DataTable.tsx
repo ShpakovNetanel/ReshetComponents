@@ -22,6 +22,7 @@ import { useVirtualizer } from "@tanstack/react-virtual";
 import { useColumnSizeVars } from "./useColumnSizeVars";
 import clsx from "clsx";
 import { createTestIdBuilder } from "../../utils/testIds";
+import Input from "../Input/Input";
 
 export interface DataTableProps<TData, TValue = unknown> extends Omit<
   TableOptions<TData>,
@@ -127,7 +128,7 @@ export function DataTable<TData, TValue = unknown>({
     >
       {enableGlobalSearch && (
         <div className={styles.Toolbar}>
-          <input
+          <Input
             aria-label="Search table"
             className={styles.GlobalSearchInput}
             data-testid={testIds.part("GlobalSearch")}

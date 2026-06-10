@@ -138,7 +138,7 @@ export const Combobox = <Value, Multiple extends boolean | undefined = false>({
 						onClick={focusInput}
 						onPasteCapture={onPaste}>
 						{startAdornment &&
-							<Button type="button"
+							<Button
 								data-testid={testIds.part('StartAdornment')}
 								data-disabled={disabled}
 								className={clsx(styles.StartAdornment, slotProps?.classes?.StartAdornment)}
@@ -206,9 +206,9 @@ export const Combobox = <Value, Multiple extends boolean | undefined = false>({
 							{!slotProps?.disable?.trigger &&
 								<BaseCombobox.Trigger
 									data-testid={testIds.part('Trigger')}
-									className={clsx(styles.Trigger, slotProps?.classes?.Trigger)}
-									data-selected={hasSingleValue}
-									aria-label="Open popup">
+								className={clsx(styles.Trigger, slotProps?.classes?.Trigger)}
+								data-selected={hasSingleValue}
+								aria-label="Open popup">
 									<ChevronDown className={clsx(styles.TriggerIcon, slotProps?.classes?.TriggerIcon)} />
 								</BaseCombobox.Trigger>}
 						</div>

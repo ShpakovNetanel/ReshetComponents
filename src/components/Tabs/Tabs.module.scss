@@ -4,6 +4,7 @@
         position: relative;
         padding-inline: 0.25rem;
         gap: 1.3rem;
+        border-bottom: 1px solid var(--color-border);
     }
 
     .Tab {
@@ -28,7 +29,6 @@
 
         &[data-active] {
             color: var(--tab-color);
-            border-bottom: 2px solid var(--tab-color);
             font-weight: 600;
         }
 
@@ -38,41 +38,46 @@
 
         :global([data-theme='dark']) &[data-active] {
             color: var(--color-gray-950);
-            border-bottom-color: var(--color-gray-950);
+        }
+
+        .TabSizer,
+        .TabLabel {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.375rem;
+            color: inherit;
+        }
+
+        .TabSizer {
+            font-weight: 600;
+            visibility: hidden;
+            pointer-events: none;
         }
 
         .TabLabel {
             position: absolute;
             inset: 0;
-            display: flex;
-            align-items: center;
-            justify-content: center;
             pointer-events: none;
-            color: inherit;
             font-weight: inherit;
-        }
-
-        &::after {
-            content: attr(data-text);
-            font-weight: 600;
-            display: block;
-            visibility: hidden;
-            height: 0;
-            overflow: hidden;
-            pointer-events: none;
         }
     }
 
     .Indicator {
         position: absolute;
         left: 0;
-        top: 50%;
-        translate: var(--active-tab-left) -50%;
+        bottom: -1px;
+        translate: var(--active-tab-left) 0;
         width: var(--active-tab-width);
-        height: 1.5rem;
-        border-radius: 0.25rem;
-        transition-property: translate, width;
+        height: 2px;
+        border-radius: 999px;
+        background-color: var(--active-tab-color);
+        transition-property: translate, width, background-color;
         transition-duration: 200ms;
         transition-timing-function: ease-in-out;
+    }
+
+    :global([data-theme='dark']) .Indicator {
+        background-color: var(--color-gray-950);
     }
 }

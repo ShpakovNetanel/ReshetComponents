@@ -3,6 +3,7 @@ import clsx from 'clsx'
 import { ArrowDown, ArrowUp, ChevronsUpDown } from 'lucide-react'
 import styles from './ColumnHeader.module.scss'
 import type { HTMLAttributes, PropsWithChildren } from 'react'
+import { Button } from '../../Button/Button'
 
 interface ColumnHeaderProps<TData, TValue>
   extends HTMLAttributes<HTMLDivElement>,
@@ -22,8 +23,7 @@ export function ColumnHeader<TData, TValue>({
   return (
     <div className={clsx(styles.ColumnHeader, className)}>
       {/* TODO: style button */}
-      <button
-        type='button'
+      <Button
         className='data-[state=open]:bg-accent -ml-3 h-8'
         onClick={() => column.toggleSorting()}
         style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}
@@ -36,7 +36,7 @@ export function ColumnHeader<TData, TValue>({
         ) : (
           <ChevronsUpDown size='1rem' />
         )}
-      </button>
+      </Button>
     </div>
   )
 }

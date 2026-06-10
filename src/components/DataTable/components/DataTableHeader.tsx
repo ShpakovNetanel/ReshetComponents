@@ -3,6 +3,7 @@ import { Fragment } from 'react'
 import { ColumnHeader } from './ColumnHeader'
 import TablePrimitive from '../TablePrimitive'
 import styles from './DataTableHeader.module.scss'
+import Input from '../../Input/Input'
 
 export interface DataTableHeaderProps<TData> {
   table: Table<TData>
@@ -69,7 +70,7 @@ export function DataTableHeader<TData>({
                 }}
               >
                 {header.column.getCanFilter() ? (
-                  <input
+                  <Input
                     aria-label={`Filter ${header.column.id}`}
                     className={styles.FilterInput}
                     value={String(header.column.getFilterValue() ?? '')}

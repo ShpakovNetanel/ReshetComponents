@@ -358,6 +358,36 @@ input {
   align-items: center;
 }
 
+.ChipSuccess {
+  background-color: #16a34a;
+  --chip-foreground: #ffffff;
+}
+
+.ChipInfo {
+  background-color: #2563eb;
+  --chip-foreground: #ffffff;
+}
+
+.ChipDanger {
+  background-color: #dc2626;
+  --chip-foreground: #ffffff;
+}
+
+.ChipSoftInfo {
+  background-color: #e6f4ff;
+  --chip-foreground: #121316;
+}
+
+.ChipNeutral {
+  background-color: #eef2f7;
+  --chip-foreground: #121316;
+}
+
+.ChipDark {
+  background-color: #33415a;
+  --chip-foreground: #f4f7fb;
+}
+
 .PreviewStack {
   display: grid;
   gap: 8px;

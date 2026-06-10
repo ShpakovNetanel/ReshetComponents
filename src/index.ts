@@ -4,7 +4,7 @@ export { Accordion } from './baseComponents/Accordion/Accordion';
 export { ArrowSvg } from './baseComponents/ArrowSvg/ArrowSvg';
 export { Button } from './baseComponents/Button/Button';
 export { default as Calendar, type CalendarSlotProps } from './baseComponents/Calendar/Calendar';
-export { Chip } from './baseComponents/Chip/Chip';
+export { Chip, type ChipProps, type ChipSlotProps } from './baseComponents/Chip/Chip';
 export { CloseButton, type CloseButtonProps } from './baseComponents/CloseButton/CloseButton';
 export { Combobox, type Primitive as ComboboxPrimitive, type ValueLabelPair as ComboboxValueLabelPair } from './baseComponents/Combobox/Combobox';
 export {

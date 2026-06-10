@@ -2,13 +2,14 @@ import type { ColumnDef } from '@tanstack/react-table'
 import { ChevronRight } from 'lucide-react'
 import styles from './expandColumnDef.module.scss'
 import clsx from 'clsx'
+import { Button } from '../../Button/Button'
 
 export const expandColumnDef: ColumnDef<unknown> = {
   id: 'expand',
   header: () => null,
   cell: ({ row }) => {
     return row.getCanExpand() ? (
-      <button
+      <Button
         className={styles.ExpandButton}
         onClick={row.getToggleExpandedHandler()}
       >
@@ -16,7 +17,7 @@ export const expandColumnDef: ColumnDef<unknown> = {
           className={clsx(styles.Chevron)}
           data-expanded={row.getIsExpanded()}
         />
-      </button>
+      </Button>
     ) : null
   },
   minSize: 1,

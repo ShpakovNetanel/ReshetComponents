@@ -121,13 +121,13 @@ const invoiceColumns: ColumnDef<InvoiceRow, unknown>[] = [
     size: 120,
     cell: ({ getValue }) => {
       const status = getValue<InvoiceRow['status']>();
-      const colorByStatus = {
-        Paid: '#16a34a',
-        Pending: '#2563eb',
-        Failed: '#dc2626',
+      const classNameByStatus = {
+        Paid: 'ChipSuccess',
+        Pending: 'ChipInfo',
+        Failed: 'ChipDanger',
       };
 
-      return <Chip label={status} slotProps={{ backgroundColor: colorByStatus[status] }} />;
+      return <Chip label={status} slotProps={{ classes: { Root: classNameByStatus[status] } }} />;
     },
   },
   {
@@ -172,9 +172,9 @@ const radioOptions: RadioGroupOption<string>[] = [
 ];
 
 const tabOptions = [
-  { value: 0, label: 'Overview', color: '#2563eb' },
-  { value: 1, label: 'Details', color: '#16a34a' },
-  { value: 2, label: 'Activity', color: '#c2410c' },
+  { value: 0, label: <><List size={14} /> Overview</>, labelText: 'Overview', color: '#2563eb' },
+  { value: 1, label: 'Details', labelText: 'Details', color: '#16a34a' },
+  { value: 2, label: <><Bell size={14} /> Activity</>, labelText: 'Activity', color: '#c2410c' },
 ];
 
 const stepLabels = ['Account', 'Profile', 'Review'];
@@ -407,6 +407,7 @@ function Documentation() {
   });
   const [tooltipSide, setTooltipSide] = useState<(typeof tooltipDirections)[number]>('top');
   const [tooltipStyle, setTooltipStyle] = useState<TooltipPreviewStyle>('boxShadow');
+  const activeTabOption = tabOptions.find((tab) => tab.value === activeTab);
 
   const componentDocs = useMemo<ComponentDoc[]>(
     () => [
@@ -449,7 +450,7 @@ function Documentation() {
               </Button>
               <Chip
                 label={`Current: ${docsTheme}`}
-                slotProps={{ backgroundColor: docsTheme === 'dark' ? '#33415a' : '#e6f4ff' }}
+                slotProps={{ classes: { Root: docsTheme === 'dark' ? 'ChipDark' : 'ChipSoftInfo' } }}
               />
             </div>
             <Input
@@ -505,7 +506,7 @@ function Documentation() {
           <Accordion
             name="docs-accordion"
             title={<strong>Advanced settings</strong>}
-            actions={<Chip label="Optional" slotProps={{ backgroundColor: '#e6f4ff' }} />}
+            actions={<Chip label="Optional" slotProps={{ classes: { Root: 'ChipSoftInfo' } }} />}
             defaultOpen={false}>
             <p className="PreviewText">Use the panel for grouped content that can be hidden until needed.</p>
           </Accordion>
@@ -626,40 +627,42 @@ function Documentation() {
       {
         id: 'chip',
         title: 'Chip',
-        summary: 'A compact metadata label with automatic readable foreground color.',
+        summary: 'A compact metadata label with slot-level styling control.',
         layer: '@layer base',
         props: [
           { name: 'label', type: 'ReactNode', description: 'The visible chip content.' },
           { name: 'onChipClick', type: 'MouseEventHandler', description: 'Optional click behavior for interactive chips.' },
-          { name: 'slotProps.backgroundColor', type: 'string', description: 'Sets the chip background and derives readable text color.' },
-          { name: 'slotProps.classes.Label', type: 'string', description: 'Adds a class to the root label element.' },
+          { name: 'className', type: 'string', description: 'Convenience class added to the root element.' },
+          { name: 'slotProps.classes.Root', type: 'string', description: 'Adds a class to the root label element.' },
+          { name: 'slotProps.rootProps', type: 'div props', description: 'Adds supported div props to the root element.' },
           { name: 'name / testId', type: 'string', description: 'Customize generated test IDs.' },
         ],
         usage: [
           { title: 'Status label', code: `<Chip
   label="Active"
-  slotProps={{ backgroundColor: '#16a34a' }}
+  slotProps={{ classes: { Root: 'ChipSuccess' } }}
 />` },
           { title: 'Clickable chip', code: `<Chip
   label="Clear filter"
   onChipClick={() => clearFilter('status')}
-  slotProps={{ backgroundColor: '#eef2f7' }}
+  slotProps={{ classes: { Root: 'ChipNeutral' } }}
 />` },
           { title: 'Custom content', code: `<Chip
   label={<><Check size={12} /> Complete</>}
-  slotProps={{ backgroundColor: '#2563eb' }}
+  slotProps={{ classes: { Root: 'ChipInfo' } }}
 />` },
         ],
         notes: [
           'Use Chip for short metadata, status, or selected-filter labels.',
-          'backgroundColor accepts hex and rgb values; the component derives a readable foreground color when it can parse the background.',
+          'Use slotProps.classes.Root to set background color and --chip-foreground when the foreground needs a custom value.',
+          'Use className for quick one-off root styling, and slotProps when the caller needs a structured extension point.',
           'If onChipClick is provided, also make the surrounding UX clear because the rendered element is a div, not a button.',
         ],
         preview: (
           <div className="Inline">
-            <Chip label="Active" slotProps={{ backgroundColor: '#16a34a' }} />
-            <Chip label={`Count ${count}`} slotProps={{ backgroundColor: '#2563eb' }} />
-            <Chip label="Neutral" slotProps={{ backgroundColor: '#eef2f7' }} />
+            <Chip label="Active" slotProps={{ classes: { Root: 'ChipSuccess' } }} />
+            <Chip label={`Count ${count}`} slotProps={{ classes: { Root: 'ChipInfo' } }} />
+            <Chip label="Neutral" slotProps={{ classes: { Root: 'ChipNeutral' } }} />
           </div>
         ),
       },
@@ -1572,7 +1575,7 @@ function Documentation() {
         summary: 'A controlled tab list with per-tab indicator color.',
         layer: '@layer base',
         props: [
-          { name: 'tabs', type: '{ value: number; label: string; color: string }[]', description: 'Tab definitions and indicator colors.' },
+          { name: 'tabs', type: '{ value: number; label: ReactNode; labelText?: string; color: string }[]', description: 'Tab definitions and indicator colors.' },
           { name: 'activeTab', type: 'number', description: 'Current selected tab value.' },
           { name: 'setActiveTab', type: '(tab: number) => void', description: 'Called when the user selects a tab.' },
           { name: 'slotProps.classes', type: 'BaseTabs class map', description: 'Adds classes to Root, List, Tab, and Indicator.' },
@@ -1585,7 +1588,7 @@ function Documentation() {
   setActiveTab={setActiveTab}
 />` },
           { title: 'Tab definitions', code: `const tabs = [
-  { value: 0, label: 'Overview', color: '#2563eb' },
+  { value: 0, label: <><List size={14} /> Overview</>, labelText: 'Overview', color: '#2563eb' },
   { value: 1, label: 'Details', color: '#16a34a' },
 ];` },
           { title: 'Render panel content', code: `<>
@@ -1597,6 +1600,7 @@ function Documentation() {
           'Tabs renders only the tab list and indicator; the consuming page owns panel rendering.',
           'activeTab must match one of the numeric tabs[].value entries.',
           'The color field controls the visual indicator color for each tab.',
+          'Provide labelText when label is JSX so metadata and accessible names remain readable.',
         ],
         preview: (
           <div className="PreviewStack">
@@ -1606,7 +1610,7 @@ function Documentation() {
               activeTab={activeTab}
               setActiveTab={setActiveTab}
             />
-            <output>{tabOptions.find((tab) => tab.value === activeTab)?.label}</output>
+            <output>{activeTabOption?.labelText ?? activeTabOption?.label}</output>
           </div>
         ),
       },
@@ -1777,6 +1781,7 @@ function Documentation() {
     ],
     [
       activeTab,
+      activeTabOption,
       calendarDates,
       calendarDate,
       calendarMode,

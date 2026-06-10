@@ -70,7 +70,7 @@ export function DataTableRow<TData>({
           className={styles.CollapsibleRoot}
           open={row.getIsExpanded()}
           render={
-            <tr
+            <TablePrimitive.TableRow
               className={styles.TableRow}
               data-detail-panel
               data-index={detailPanelIndex}
@@ -91,7 +91,7 @@ export function DataTableRow<TData>({
             />
           }
         >
-          <td
+          <TablePrimitive.TableCell
             className={styles.DetailPanelCell}
             data-virtualized={enableVirtualization}
             colSpan={row.getVisibleCells().length}
@@ -99,7 +99,7 @@ export function DataTableRow<TData>({
             <Collapsible.Panel className={styles.CollapsiblePanel}>
               <div>{renderDetailPanel({ row, table })}</div>
             </Collapsible.Panel>
-          </td>
+          </TablePrimitive.TableCell>
         </Collapsible.Root>
       )}
     </Fragment>
