@@ -51,7 +51,7 @@ Use uncontrolled mode when Reshet can own the local theme:
 </ThemeProvider>
 ```
 
-`theme` and `defaultTheme` accept `'light'`, `'dark'`, or `'system'`. By default, the provider also mirrors `data-theme` to `document.documentElement` with `syncDocumentTheme={true}`. Keep that enabled for popup components such as `Select`, `Combobox`, `DatePicker`, `Menu`, `Dialog`, `Drawer`, `Tooltip`, and `Toast`, because they render through portals and need the document-level theme to inherit the same dark-mode tokens.
+`theme` and `defaultTheme` accept `'light'`, `'dark'`, or `'system'`. By default, the provider also mirrors `data-theme` to `document.documentElement` with `syncDocumentTheme={true}`. Keep that enabled for popup components such as `Select`, `Combobox`, `AutoComplete`, `DatePicker`, `Menu`, `Dialog`, `Drawer`, `Tooltip`, and `Toast`, because they render through portals and need the document-level theme to inherit the same dark-mode tokens.
 
 ## Testing components locally
 

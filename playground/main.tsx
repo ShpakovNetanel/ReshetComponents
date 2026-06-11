@@ -2,6 +2,7 @@ import { DirectionProvider } from '@base-ui/react';
 import type { ColumnDef } from '@tanstack/react-table';
 import {
   Bell,
+  Dna,
   List,
   Plus,
   Save,
@@ -13,6 +14,7 @@ import type { DateRange } from 'react-day-picker';
 import { createRoot } from 'react-dom/client';
 import {
   Accordion,
+  AutoComplete,
   Button,
   Calendar,
   Chip,
@@ -40,6 +42,7 @@ import {
   Toggle,
   Tooltip,
   Typography,
+  type AutoCompleteValueLabelPair,
   type ComboboxValueLabelPair,
   type DatePickerMode,
   type RadioGroupOption,
@@ -92,6 +95,37 @@ const comboboxOptions: ComboboxValueLabelPair[] = [
   { value: 'delta', label: 'Delta' },
   { value: 'echo', label: 'Echo' },
 ];
+
+const autoCompleteOptions: AutoCompleteValueLabelPair[] = [
+  { value: 'northwind', label: 'Northwind Traders' },
+  { value: 'blue-river', label: 'Blue River Supply' },
+  { value: 'cedar-labs', label: 'Cedar Labs' },
+  { value: 'atlas-co', label: 'Atlas Co' },
+  { value: 'harbor-finance', label: 'Harbor Finance' },
+];
+
+const loadAutoCompleteOptions = (
+  query: string,
+  { signal }: { signal: AbortSignal },
+) =>
+  new Promise<AutoCompleteValueLabelPair[]>((resolve, reject) => {
+    const timeoutId = window.setTimeout(() => {
+      const normalizedQuery = query.trim().toLowerCase();
+      const nextOptions = autoCompleteOptions.filter((item) => {
+        const label = String(item.label).toLowerCase();
+        const value = String(item.value).toLowerCase();
+
+        return label.includes(normalizedQuery) || value.includes(normalizedQuery);
+      });
+
+      resolve(nextOptions);
+    }, 350);
+
+    signal.addEventListener('abort', () => {
+      window.clearTimeout(timeoutId);
+      reject(new DOMException('Aborted', 'AbortError'));
+    }, { once: true });
+  });
 
 type InvoiceRow = {
   id: string;
@@ -379,6 +413,8 @@ function Documentation() {
     comboboxOptions[1],
     comboboxOptions[2],
   ]);
+  const [autoCompleteInputValue, setAutoCompleteInputValue] = useState('');
+  const [autoCompleteValue, setAutoCompleteValue] = useState<AutoCompleteValueLabelPair | null>(null);
   const [comboboxMode, setComboboxMode] = useState<ComboboxPreviewMode>('single');
   const [singleDate, setSingleDate] = useState(new Date());
   const [multipleDates, setMultipleDates] = useState<Date[]>([new Date()]);
@@ -427,10 +463,12 @@ function Documentation() {
         ],
         usage: [
           { title: 'Controlled app theme', code: darkModeUsage },
-          { title: 'Uncontrolled system theme', code: `<ThemeProvider defaultTheme="system">
+          {
+            title: 'Uncontrolled system theme', code: `<ThemeProvider defaultTheme="system">
   <App />
 </ThemeProvider>` },
-          { title: 'Portaled components', code: `<ThemeProvider syncDocumentTheme>
+          {
+            title: 'Portaled components', code: `<ThemeProvider syncDocumentTheme>
   <Select items={items} value={value} onValueChange={setValue} />
   <Dialog trigger={<Button>Open</Button>}>Content</Dialog>
 </ThemeProvider>` },
@@ -481,17 +519,20 @@ function Documentation() {
           { name: 'name / testId', type: 'string', description: 'Customize generated test IDs.' },
         ],
         usage: [
-          { title: 'Closed by default', code: `<Accordion
+          {
+            title: 'Closed by default', code: `<Accordion
   title="Advanced settings"
   defaultOpen={false}>
   <p>Panel content</p>
 </Accordion>` },
-          { title: 'Header actions', code: `<Accordion
+          {
+            title: 'Header actions', code: `<Accordion
   title={<strong>Filters</strong>}
   actions={<Button type="button">Reset</Button>}>
   <FilterControls />
 </Accordion>` },
-          { title: 'Open-state callback', code: `<Accordion
+          {
+            title: 'Open-state callback', code: `<Accordion
   title="Audit details"
   onOpenChange={(open) => analytics.track('accordion', { open })}>
   <AuditTrail />
@@ -526,13 +567,16 @@ function Documentation() {
           { name: 'name / testId', type: 'string', description: 'Customize generated test IDs.' },
         ],
         usage: [
-          { title: 'Basic action', code: `<Button type="button" onClick={handleSave}>
+          {
+            title: 'Basic action', code: `<Button type="button" onClick={handleSave}>
   Save
 </Button>` },
-          { title: 'Icon button content', code: `<Button type="button" aria-label="Save changes">
+          {
+            title: 'Icon button content', code: `<Button type="button" aria-label="Save changes">
   <Save size={18} />
 </Button>` },
-          { title: 'Disabled state', code: `<Button type="button" disabled>
+          {
+            title: 'Disabled state', code: `<Button type="button" disabled>
   Saving
 </Button>` },
         ],
@@ -562,18 +606,21 @@ function Documentation() {
           { name: 'name / testId', type: 'string', description: 'Customize generated test IDs.' },
         ],
         usage: [
-          { title: 'Single date', code: `<Calendar
+          {
+            title: 'Single date', code: `<Calendar
   mode="single"
   selected={date}
   onSelect={setDate}
 />` },
-          { title: 'Range selection', code: `<Calendar
+          {
+            title: 'Range selection', code: `<Calendar
   mode="range"
   selected={range}
   onSelect={setRange}
   disabled={{ after: new Date() }}
 />` },
-          { title: 'Custom classes', code: `<Calendar
+          {
+            title: 'Custom classes', code: `<Calendar
   mode="single"
   selected={date}
   onSelect={setDate}
@@ -638,16 +685,19 @@ function Documentation() {
           { name: 'name / testId', type: 'string', description: 'Customize generated test IDs.' },
         ],
         usage: [
-          { title: 'Status label', code: `<Chip
+          {
+            title: 'Status label', code: `<Chip
   label="Active"
   slotProps={{ classes: { Root: 'ChipSuccess' } }}
 />` },
-          { title: 'Clickable chip', code: `<Chip
+          {
+            title: 'Clickable chip', code: `<Chip
   label="Clear filter"
   onChipClick={() => clearFilter('status')}
   slotProps={{ classes: { Root: 'ChipNeutral' } }}
 />` },
-          { title: 'Custom content', code: `<Chip
+          {
+            title: 'Custom content', code: `<Chip
   label={<><Check size={12} /> Complete</>}
   slotProps={{ classes: { Root: 'ChipInfo' } }}
 />` },
@@ -682,14 +732,16 @@ function Documentation() {
           { name: 'slotProps', type: '{ classes?, disable? }', description: 'Customize internal slots and hide trigger, separator, or indicators.' },
         ],
         usage: [
-          { title: 'Single searchable value', code: `<Combobox
+          {
+            title: 'Single searchable value', code: `<Combobox
   items={items}
   value={value}
   placeholder="Choose item"
   emptyLabel="No item found"
   onValueChange={setValue}
 />` },
-          { title: 'Multiple chips', code: `<Combobox
+          {
+            title: 'Multiple chips', code: `<Combobox
   multiple
   items={items}
   value={values}
@@ -697,7 +749,8 @@ function Documentation() {
   emptyLabel="No items found"
   onValueChange={setValues}
 />` },
-          { title: 'Custom option and selected value', code: `<Combobox
+          {
+            title: 'Custom option and selected value', code: `<Combobox
   items={users}
   value={user}
   itemToStringValue={(user) => user.id}
@@ -755,6 +808,82 @@ function Documentation() {
         ),
       },
       {
+        id: 'autocomplete',
+        title: 'AutoComplete',
+        summary: 'A Base UI autocomplete text input with static or async suggestions.',
+        layer: '@layer base',
+        props: [
+          { name: 'items', type: 'Value[]', description: 'Static suggestions rendered in the popup.' },
+          { name: 'async', type: 'boolean', description: 'Enables async suggestion loading through loadItems.' },
+          { name: 'loadItems', type: '(query, { signal }) => Promise<Value[]>', description: 'Async loader for remote or deferred suggestions. The signal aborts stale requests.' },
+          { name: 'value / defaultValue', type: 'Value | null', description: 'Controlled selected suggestion, matching Combobox value semantics.' },
+          { name: 'onValueChange', type: '(value: Value | null) => void', description: 'Receives the selected suggestion value.' },
+          { name: 'inputValue / defaultInputValue', type: 'string', description: 'Controls the text currently shown in the input.' },
+          { name: 'onInputValueChange', type: '(value) => void', description: 'Receives the next typed input text.' },
+          { name: 'onItemSelect', type: '(item, event) => void', description: 'Optional item activation callback with the click event.' },
+          { name: 'minQueryLength', type: 'number', description: 'Minimum input length before the async loader runs.' },
+          { name: 'itemComponent', type: '(item) => ReactNode', description: 'Custom suggestion renderer.' },
+          { name: 'slotProps', type: '{ classes?, disable? }', description: 'Customize internal slots and hide trigger, clear button, status, or empty label.' },
+        ],
+        usage: [
+          {
+            title: 'Async suggestions', code: `<AutoComplete
+  async
+  value={customer}
+  onValueChange={setCustomer}
+  inputValue={query}
+  onInputValueChange={setQuery}
+  loadItems={(query, { signal }) => searchCustomers(query, { signal })}
+  minQueryLength={2}
+  placeholder="Search customer"
+  emptyLabel={(query) => \`No customers match "\${query}"\`}
+/>` },
+          {
+            title: 'Static suggestions', code: `<AutoComplete
+  items={customers}
+  value={customer}
+  onValueChange={setCustomer}
+  placeholder="Search customer"
+/>` },
+          {
+            title: 'Custom object items', code: `<AutoComplete
+  items={users}
+  value={user}
+  onValueChange={setUser}
+  itemToStringValue={(user) => user.name}
+  itemComponent={(user) => <UserOption user={user} />}
+/>` },
+        ],
+        notes: [
+          'Use AutoComplete when users type a query and may choose a suggested item; use Combobox when the user must select one or more option values from the list.',
+          'value follows Combobox-style item semantics: primitive values, { value, label } pairs, and objects are supported.',
+          'Pass async to enable loadItems. Without async, the component uses static items and Base UI filtering.',
+          'In async mode, local filtering is disabled by default so server-ranked results are shown as returned. Pass filter to re-enable client-side filtering.',
+          'loadItems receives an AbortSignal in async mode; abort-aware loaders prevent slower responses from replacing newer results.',
+        ],
+        preview: (
+          <div className="PreviewStack">
+            <AutoComplete
+              async
+              name="docs-autocomplete"
+              value={autoCompleteValue}
+              inputValue={autoCompleteInputValue}
+              startAdornment={<Dna />}
+              loadItems={loadAutoCompleteOptions}
+              minQueryLength={1}
+              placeholder="Search customer"
+              emptyLabel={(query) => `No customers match "${query}"`}
+              onInputValueChange={(nextInputValue) => {
+                setAutoCompleteInputValue(nextInputValue);
+                setAutoCompleteValue(null);
+              }}
+              onValueChange={setAutoCompleteValue}
+            />
+            <output>{autoCompleteValue?.label ?? (autoCompleteInputValue || 'No customer selected')}</output>
+          </div>
+        ),
+      },
+      {
         id: 'datatable',
         title: 'DataTable',
         summary: 'A TanStack-powered data grid with sorting, row selection, loading rows, optional filters, detail panels, and virtualization support.',
@@ -772,25 +901,29 @@ function Documentation() {
           { name: 'name / testId', type: 'string', description: 'Customize generated test IDs for the wrapper, table, and global search input.' },
         ],
         usage: [
-          { title: 'Basic sortable table', code: `<DataTable
+          {
+            title: 'Basic sortable table', code: `<DataTable
   columns={columns}
   data={rows}
   getRowId={(row) => row.id}
 />` },
-          { title: 'Search and filters', code: `<DataTable
+          {
+            title: 'Search and filters', code: `<DataTable
   columns={columns}
   data={rows}
   enableGlobalSearch
   globalSearchPlaceholder="Search invoices"
   showColumnFilters
 />` },
-          { title: 'Selection and detail panel', code: `<DataTable
+          {
+            title: 'Selection and detail panel', code: `<DataTable
   columns={columns}
   data={rows}
   enableRowSelectionColumn
   renderDetailPanel={({ row }) => <InvoiceDetails invoice={row.original} />}
 />` },
-          { title: 'Virtualized dense rows', code: `<DataTable
+          {
+            title: 'Virtualized dense rows', code: `<DataTable
   columns={columns}
   data={largeRows}
   dense
@@ -828,13 +961,13 @@ function Documentation() {
               renderDetailPanel={
                 dataTableMode === 'details'
                   ? ({ row }) => (
-                      <div className="DataTableDetail">
-                        <strong>{row.original.customer}</strong>
-                        <span>
-                          Owned by {row.original.owner}. Current status is {row.original.status.toLowerCase()}.
-                        </span>
-                      </div>
-                    )
+                    <div className="DataTableDetail">
+                      <strong>{row.original.customer}</strong>
+                      <span>
+                        Owned by {row.original.owner}. Current status is {row.original.status.toLowerCase()}.
+                      </span>
+                    </div>
+                  )
                   : undefined
               }
             />
@@ -856,17 +989,20 @@ function Documentation() {
           { name: 'popupFooter', type: 'ReactNode', description: 'Optional content below the calendar.' },
         ],
         usage: [
-          { title: 'Single date input', code: `<DatePicker
+          {
+            title: 'Single date input', code: `<DatePicker
   value={date}
   onValueChange={(nextDate) => setDate(nextDate)}
 />` },
-          { title: 'Range picker that stays open', code: `<DatePicker
+          {
+            title: 'Range picker that stays open', code: `<DatePicker
   mode="range"
   value={range}
   closeOnSelect={false}
   onValueChange={setRange}
 />` },
-          { title: 'Multiple dates with max date', code: `<DatePicker
+          {
+            title: 'Multiple dates with max date', code: `<DatePicker
   mode="multiple"
   value={dates}
   maxDate={new Date()}
@@ -948,19 +1084,22 @@ function Documentation() {
           { name: 'slotProps.hidden.trigger', type: 'boolean', description: 'Allows rendering a controlled dialog without a visible trigger.' },
         ],
         usage: [
-          { title: 'Triggered modal', code: `<Dialog trigger={<Button>Open dialog</Button>}>
+          {
+            title: 'Triggered modal', code: `<Dialog trigger={<Button>Open dialog</Button>}>
   <div>
     <CloseButton />
     <div>Dialog content</div>
   </div>
 </Dialog>` },
-          { title: 'Controlled modal', code: `<Dialog
+          {
+            title: 'Controlled modal', code: `<Dialog
   open={open}
   onOpenChange={setOpen}
   slotProps={{ hidden: { trigger: true } }}>
   <ConfirmDelete onClose={() => setOpen(false)} />
 </Dialog>` },
-          { title: 'Disabled trigger', code: `<Dialog
+          {
+            title: 'Disabled trigger', code: `<Dialog
   trigger={<Button>Open</Button>}
   slotProps={{ disabled: { trigger: isSaving } }}>
   <Form />
@@ -1000,18 +1139,21 @@ function Documentation() {
           { name: 'slotProps.disableBackdrop', type: 'boolean', description: 'Removes the backdrop when true.' },
         ],
         usage: [
-          { title: 'Right drawer', code: `<Drawer slotProps={{ direction: 'right', width: '360px' }}>
+          {
+            title: 'Right drawer', code: `<Drawer slotProps={{ direction: 'right', width: '360px' }}>
   <div>
     <CloseButton />
     <div>Drawer content</div>
   </div>
 </Drawer>` },
-          { title: 'Bottom drawer', code: `<Drawer
+          {
+            title: 'Bottom drawer', code: `<Drawer
   triggerIcon={<Settings />}
   slotProps={{ direction: 'bottom', height: '45vh' }}>
   <SettingsPanel />
 </Drawer>` },
-          { title: 'Without backdrop', code: `<Drawer slotProps={{ disableBackdrop: true, width: '320px' }}>
+          {
+            title: 'Without backdrop', code: `<Drawer slotProps={{ disableBackdrop: true, width: '320px' }}>
   <FilterPanel />
 </Drawer>` },
         ],
@@ -1066,17 +1208,20 @@ function Documentation() {
           { name: 'name / testId', type: 'string', description: 'Customize generated test IDs.' },
         ],
         usage: [
-          { title: 'Controlled input', code: `<Input
+          {
+            title: 'Controlled input', code: `<Input
   value={value}
   onChange={(event) => setValue(event.target.value)}
 />` },
-          { title: 'Named form input', code: `<Input
+          {
+            title: 'Named form input', code: `<Input
   name="email"
   type="email"
   placeholder="name@example.com"
   autoComplete="email"
 />` },
-          { title: 'Disabled input', code: `<Input
+          {
+            title: 'Disabled input', code: `<Input
   value="Readonly display"
   disabled
 />` },
@@ -1114,23 +1259,27 @@ function Documentation() {
           { name: 'name / testId', type: 'string', description: 'Customize generated test IDs.' },
         ],
         usage: [
-          { title: 'Icon trigger menu', code: `<Menu
+          {
+            title: 'Icon trigger menu', code: `<Menu
   items={['Profile', 'Settings', 'Sign out']}
   slotProps={{ trigger: <List /> }}
 />` },
-          { title: 'Action items', code: `<Menu
+          {
+            title: 'Action items', code: `<Menu
   items={[
     <button type="button" onClick={edit}>Edit</button>,
     <button type="button" onClick={archive}>Archive</button>,
   ]}
 />` },
-          { title: 'Grouped menu', code: `<Menu
+          {
+            title: 'Grouped menu', code: `<Menu
   items={[
     { label: 'Account', items: ['Profile', 'Security'] },
     { label: 'Danger zone', items: ['Delete account'] },
   ]}
 />` },
-          { title: 'Controlled menu', code: `<Menu
+          {
+            title: 'Controlled menu', code: `<Menu
   open={open}
   onOpenChange={setOpen}
   items={actions}
@@ -1156,9 +1305,9 @@ function Documentation() {
               name="docs-menu"
               items={menuMode === 'grouped'
                 ? [
-                    { label: 'Account', items: ['Profile', 'Settings'] },
-                    { label: 'Session', items: ['Sign out'] },
-                  ]
+                  { label: 'Account', items: ['Profile', 'Settings'] },
+                  { label: 'Session', items: ['Sign out'] },
+                ]
                 : ['Profile', 'Settings', 'Sign out']}
               slotProps={{ trigger: <List size={20} /> }}
             />
@@ -1179,20 +1328,23 @@ function Documentation() {
           { name: 'slotProps.classes', type: 'NumberField class map', description: 'Adds classes to root, label, group, input, and controls.' },
         ],
         usage: [
-          { title: 'Controlled amount', code: `<NumberField
+          {
+            title: 'Controlled amount', code: `<NumberField
   label="Amount"
   min={0}
   max={20}
   value={count}
   onValueChange={(value) => setCount(value ?? 0)}
 />` },
-          { title: 'Commit-only side effects', code: `<NumberField
+          {
+            title: 'Commit-only side effects', code: `<NumberField
   label="Quantity"
   value={quantity}
   onValueChange={(value) => setQuantity(value ?? 0)}
   onValueCommitted={(value) => saveQuantity(value)}
 />` },
-          { title: 'Disabled display', code: `<NumberField
+          {
+            title: 'Disabled display', code: `<NumberField
   label="Locked"
   value={10}
   disabled
@@ -1234,7 +1386,8 @@ function Documentation() {
           { name: 'name / testId', type: 'string', description: 'RadioGroup name controls the submitted field; name and testId also customize generated test IDs.' },
         ],
         usage: [
-          { title: 'Mapped options', code: `<RadioGroup
+          {
+            title: 'Mapped options', code: `<RadioGroup
   name="notification"
   value={value}
   onValueChange={setValue}
@@ -1243,13 +1396,15 @@ function Documentation() {
     { value: 'sms', label: 'SMS' },
   ]}
 />` },
-          { title: 'Custom children', code: `<RadioGroup name="plan" defaultValue="team">
+          {
+            title: 'Custom children', code: `<RadioGroup name="plan" defaultValue="team">
   <Radio value="solo" label="Solo" description="For one user" />
   <Radio value="team">
     <strong>Team</strong>
   </Radio>
 </RadioGroup>` },
-          { title: 'Horizontal layout', code: `<RadioGroup
+          {
+            title: 'Horizontal layout', code: `<RadioGroup
   name="size"
   orientation="horizontal"
   defaultValue="m"
@@ -1309,19 +1464,22 @@ function Documentation() {
           { name: 'itemDisabled', type: '(item) => boolean', description: 'Marks options as disabled.' },
         ],
         usage: [
-          { title: 'Value-label options', code: `<Select
+          {
+            title: 'Value-label options', code: `<Select
   items={cityOptions}
   value={city}
   placeholder="Choose city"
   onValueChange={setCity}
 />` },
-          { title: 'Primitive options', code: `<Select
+          {
+            title: 'Primitive options', code: `<Select
   items={['Low', 'Medium', 'High']}
   value={priority}
   placeholder="Priority"
   onValueChange={setPriority}
 />` },
-          { title: 'Custom rendering', code: `<Select
+          {
+            title: 'Custom rendering', code: `<Select
   items={users}
   value={assignee}
   itemToStringValue={(user) => user.id}
@@ -1388,18 +1546,21 @@ function Documentation() {
           { name: 'name / testId', type: 'string', description: 'Customize generated test IDs.' },
         ],
         usage: [
-          { title: 'Floating actions', code: `<SpeedDial
+          {
+            title: 'Floating actions', code: `<SpeedDial
   trigger={<button>+</button>}
   items={[{ visible: true, component: <button>Save</button> }]}
 />` },
-          { title: 'Conditional actions', code: `<SpeedDial
+          {
+            title: 'Conditional actions', code: `<SpeedDial
   trigger={<Plus />}
   items={[
     { visible: canSave, component: <button onClick={save}>Save</button> },
     { visible: canNotify, component: <button onClick={notify}>Notify</button> },
   ]}
 />` },
-          { title: 'Nested SpeedDialMenu', code: `<SpeedDial
+          {
+            title: 'Nested SpeedDialMenu', code: `<SpeedDial
   trigger={<Plus />}
   items={[
     {
@@ -1449,7 +1610,8 @@ function Documentation() {
           { name: 'name / testId', type: 'string', description: 'Customize generated test IDs for the submenu trigger, popup, items, and separators.' },
         ],
         usage: [
-          { title: 'Inside SpeedDial', code: `<SpeedDial
+          {
+            title: 'Inside SpeedDial', code: `<SpeedDial
   trigger={<Plus />}
   items={[{
     visible: true,
@@ -1461,12 +1623,14 @@ function Documentation() {
     ),
   }]}
 />` },
-          { title: 'Open on hover', code: `<SpeedDialMenu
+          {
+            title: 'Open on hover', code: `<SpeedDialMenu
   trigger="Export"
   items={['CSV', 'PDF']}
   slotProps={{ openOnHover: true }}
 />` },
-          { title: 'No separators', code: `<SpeedDialMenu
+          {
+            title: 'No separators', code: `<SpeedDialMenu
   trigger="Actions"
   items={actions}
   slotProps={{ disable: { separator: true } }}
@@ -1525,13 +1689,15 @@ function Documentation() {
           { name: 'Step.disabled / completed', type: 'boolean', description: 'Overrides state for individual steps.' },
         ],
         usage: [
-          { title: 'Uncontrolled stepper', code: `<Stepper defaultActive={1}>
+          {
+            title: 'Uncontrolled stepper', code: `<Stepper defaultActive={1}>
   <Step index={0}>
     <StepIndicator />
     <StepLabel>Account</StepLabel>
   </Step>
 </Stepper>` },
-          { title: 'Controlled stepper', code: `<Stepper active={activeStep} setActiveStep={setActiveStep}>
+          {
+            title: 'Controlled stepper', code: `<Stepper active={activeStep} setActiveStep={setActiveStep}>
   {steps.map((step, index) => (
     <Step key={step.id} index={index} completed={index < activeStep}>
       <StepIndicator />
@@ -1539,7 +1705,8 @@ function Documentation() {
     </Step>
   ))}
 </Stepper>` },
-          { title: 'Vertical stepper', code: `<Stepper orientation="vertical" defaultActive={0}>
+          {
+            title: 'Vertical stepper', code: `<Stepper orientation="vertical" defaultActive={0}>
   <Step index={0}><StepIndicator /><StepLabel>Account</StepLabel></Step>
   <Step index={1} disabled><StepIndicator /><StepLabel>Review</StepLabel></Step>
 </Stepper>` },
@@ -1582,16 +1749,19 @@ function Documentation() {
           { name: 'name / testId', type: 'string', description: 'Customize generated test IDs.' },
         ],
         usage: [
-          { title: 'Controlled tabs', code: `<Tabs
+          {
+            title: 'Controlled tabs', code: `<Tabs
   tabs={tabs}
   activeTab={activeTab}
   setActiveTab={setActiveTab}
 />` },
-          { title: 'Tab definitions', code: `const tabs = [
+          {
+            title: 'Tab definitions', code: `const tabs = [
   { value: 0, label: <><List size={14} /> Overview</>, labelText: 'Overview', color: '#2563eb' },
   { value: 1, label: 'Details', color: '#16a34a' },
 ];` },
-          { title: 'Render panel content', code: `<>
+          {
+            title: 'Render panel content', code: `<>
   <Tabs tabs={tabs} activeTab={activeTab} setActiveTab={setActiveTab} />
   {activeTab === 0 ? <Overview /> : <Details />}
 </>` },
@@ -1608,7 +1778,7 @@ function Documentation() {
               name="docs-tabs"
               tabs={tabOptions}
               activeTab={activeTab}
-              setActiveTab={setActiveTab}
+              setActiveTab={(tab) => setActiveTab(Number(tab))}
             />
             <output>{activeTabOption?.labelText ?? activeTabOption?.label}</output>
           </div>
@@ -1630,14 +1800,16 @@ function Documentation() {
           { name: 'name / testId', type: 'string', description: 'Customize generated test IDs.' },
         ],
         usage: [
-          { title: 'Controlled toggle', code: `<Toggle
+          {
+            title: 'Controlled toggle', code: `<Toggle
   pressed={compact}
   onPressedChange={setCompact}
   icon={<Settings size={16} />}>
   Compact
 </Toggle>` },
           { title: 'Uncontrolled toggle', code: `<Toggle defaultPressed label="Pinned" />` },
-          { title: 'Disabled toggle', code: `<Toggle pressed disabled>
+          {
+            title: 'Disabled toggle', code: `<Toggle pressed disabled>
   Locked
 </Toggle>` },
         ],
@@ -1691,15 +1863,18 @@ function Documentation() {
           { name: 'slotProps.provider', type: 'Tooltip.Provider props', description: 'Overrides provider behavior such as delay.' },
         ],
         usage: [
-          { title: 'Basic tooltip', code: `<Tooltip title="Helpful detail" slotProps={{ side: 'top' }}>
+          {
+            title: 'Basic tooltip', code: `<Tooltip title="Helpful detail" slotProps={{ side: 'top' }}>
   <Button>Hover</Button>
 </Tooltip>` },
-          { title: 'Outline style', code: `<Tooltip
+          {
+            title: 'Outline style', code: `<Tooltip
   title="Validation note"
   slotProps={{ side: 'right', boldType: 'Outline', outlineColor: '#dc2626' }}>
   <Button>Inspect</Button>
 </Tooltip>` },
-          { title: 'Provider delay', code: `<Tooltip
+          {
+            title: 'Provider delay', code: `<Tooltip
   title="Appears immediately"
   slotProps={{ provider: { delay: 0 }, disableArrow: true }}>
   <Button>Fast</Button>
@@ -1754,13 +1929,16 @@ function Documentation() {
           { name: 'name / testId', type: 'string', description: 'Customize generated test IDs.' },
         ],
         usage: [
-          { title: 'Input label', code: `<Typography htmlFor="email">
+          {
+            title: 'Input label', code: `<Typography htmlFor="email">
   Email address
 </Typography>` },
-          { title: 'Required label', code: `<Typography htmlFor="firstName">
+          {
+            title: 'Required label', code: `<Typography htmlFor="firstName">
   First name <span aria-hidden="true">*</span>
 </Typography>` },
-          { title: 'Custom label props', code: `<Typography
+          {
+            title: 'Custom label props', code: `<Typography
   htmlFor="amount"
   className={styles.RequiredLabel}>
   Amount
@@ -1816,54 +1994,54 @@ function Documentation() {
 
   return (
     <DirectionProvider direction="ltr">
-        <DarkModeProvider theme={docsTheme} className="ThemeRoot">
-          <main className="DocsPage">
-            <aside className="Sidebar" aria-label="Component documentation">
-              <div className="SidebarHeader">
-                <strong>Reshet Components</strong>
-                <span>{componentDocs.length} components</span>
-              </div>
-              <nav className="VerticalTabs" role="tablist" aria-orientation="vertical">
-                {componentDocs.map((doc) => (
-                  <button
-                    key={doc.id}
-                    id={`tab-${doc.id}`}
-                    type="button"
-                    role="tab"
-                    aria-selected={activeDoc.id === doc.id}
-                    aria-controls={`panel-${doc.id}`}
-                    className="VerticalTab"
-                    onClick={() => setActiveComponent(doc.id)}>
-                    <span>{doc.title}</span>
-                    <small>{doc.layer.replaceAll('@layer ', '')}</small>
-                  </button>
-                ))}
-              </nav>
-            </aside>
-
-            <div className="DocsMain">
-              <header className="Hero">
-                <div>
-                  <p className="Eyebrow">React component library</p>
-                  <h1>Component Documentation</h1>
-                  <p>
-                    Select a component from the vertical tabs to see its live example,
-                    detailed prop notes, multiple usage examples, AI usage notes, and CSS layer guidance.
-                  </p>
-                </div>
-                <div className="HeroActions">
-                  <Button
-                    type="button"
-                    onClick={() => setDocsTheme((theme) => theme === 'dark' ? 'light' : 'dark')}>
-                    {docsTheme === 'dark' ? 'Light mode' : 'Dark mode'}
-                  </Button>
-                </div>
-              </header>
-
-              <ComponentPanel doc={activeDoc} />
+      <DarkModeProvider theme={docsTheme} className="ThemeRoot">
+        <main className="DocsPage">
+          <aside className="Sidebar" aria-label="Component documentation">
+            <div className="SidebarHeader">
+              <strong>Reshet Components</strong>
+              <span>{componentDocs.length} components</span>
             </div>
-          </main>
-        </DarkModeProvider>
+            <nav className="VerticalTabs" role="tablist" aria-orientation="vertical">
+              {componentDocs.map((doc) => (
+                <button
+                  key={doc.id}
+                  id={`tab-${doc.id}`}
+                  type="button"
+                  role="tab"
+                  aria-selected={activeDoc.id === doc.id}
+                  aria-controls={`panel-${doc.id}`}
+                  className="VerticalTab"
+                  onClick={() => setActiveComponent(doc.id)}>
+                  <span>{doc.title}</span>
+                  <small>{doc.layer.replaceAll('@layer ', '')}</small>
+                </button>
+              ))}
+            </nav>
+          </aside>
+
+          <div className="DocsMain">
+            <header className="Hero">
+              <div>
+                <p className="Eyebrow">React component library</p>
+                <h1>Component Documentation</h1>
+                <p>
+                  Select a component from the vertical tabs to see its live example,
+                  detailed prop notes, multiple usage examples, AI usage notes, and CSS layer guidance.
+                </p>
+              </div>
+              <div className="HeroActions">
+                <Button
+                  type="button"
+                  onClick={() => setDocsTheme((theme) => theme === 'dark' ? 'light' : 'dark')}>
+                  {docsTheme === 'dark' ? 'Light mode' : 'Dark mode'}
+                </Button>
+              </div>
+            </header>
+
+            <ComponentPanel doc={activeDoc} />
+          </div>
+        </main>
+      </DarkModeProvider>
     </DirectionProvider>
   );
 }

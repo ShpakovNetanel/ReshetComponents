@@ -1,6 +1,7 @@
 import './theme.css';
 
 export { Accordion } from './components/Accordion/Accordion';
+export { AutoComplete, type AutoCompleteLoadItems, type AutoCompleteProps, type Primitive as AutoCompletePrimitive, type ValueLabelPair as AutoCompleteValueLabelPair } from './components/AutoComplete/AutoComplete';
 export { ArrowSvg } from './components/ArrowSvg/ArrowSvg';
 export { Button } from './components/Button/Button';
 export { default as Calendar, type CalendarSlotProps } from './components/Calendar/Calendar';

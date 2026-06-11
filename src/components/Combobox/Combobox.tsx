@@ -1,7 +1,7 @@
 import { Combobox as BaseCombobox, Separator as BaseSeparator } from "@base-ui/react"
 import clsx from "clsx"
 import { Check, ChevronDown, X } from "lucide-react"
-import { useId, useRef, type MouseEvent, type ReactNode } from "react"
+import React, { useId, useRef, type MouseEvent, type ReactNode } from "react"
 import type { ClassNames } from "../../types/baseui"
 import { createTestIdBuilder } from "../../utils/testIds"
 import styles from './Combobox.module.scss'
@@ -206,9 +206,9 @@ export const Combobox = <Value, Multiple extends boolean | undefined = false>({
 							{!slotProps?.disable?.trigger &&
 								<BaseCombobox.Trigger
 									data-testid={testIds.part('Trigger')}
-								className={clsx(styles.Trigger, slotProps?.classes?.Trigger)}
-								data-selected={hasSingleValue}
-								aria-label="Open popup">
+									className={clsx(styles.Trigger, slotProps?.classes?.Trigger)}
+									data-selected={hasSingleValue}
+									aria-label="Open popup">
 									<ChevronDown className={clsx(styles.TriggerIcon, slotProps?.classes?.TriggerIcon)} />
 								</BaseCombobox.Trigger>}
 						</div>
@@ -221,8 +221,8 @@ export const Combobox = <Value, Multiple extends boolean | undefined = false>({
 					className={clsx(styles.Positioner, slotProps?.classes?.Positioner)}
 					sideOffset={4}
 					anchor={containerRef}>
-					<BaseCombobox.Popup data-testid={testIds.part('Popup')} 
-					className={clsx(styles.Popup, slotProps?.classes?.Popup)}>
+					<BaseCombobox.Popup data-testid={testIds.part('Popup')}
+						className={clsx(styles.Popup, slotProps?.classes?.Popup)}>
 						{!slotProps?.disable?.emptyLabel &&
 							<BaseCombobox.Empty data-testid={testIds.part('Empty')} className={clsx(styles.Empty, slotProps?.classes?.Empty)}>
 								{emptyLabel}

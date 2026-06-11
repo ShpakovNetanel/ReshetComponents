@@ -1,0 +1,224 @@
+@layer base {
+    .Container {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        gap: 0.25rem;
+        width: 100%;
+    }
+
+    .InputWrapper {
+        position: relative;
+        box-sizing: border-box;
+        display: flex;
+        align-items: center;
+        width: 100%;
+        min-width: 10rem;
+        height: 2.5rem;
+        padding-left: 0.875rem;
+        padding-right: 0.5rem;
+        border: 1px solid var(--color-gray-200);
+        border-radius: 0.375rem;
+        background-color: transparent;
+        cursor: text;
+
+        &[data-popup-open] {
+            background-color: var(--color-gray-100);
+        }
+    }
+
+    .Input {
+        flex: 1;
+        box-sizing: border-box;
+        min-width: 3rem;
+        height: 2rem;
+        padding: 0;
+        margin: 0;
+        border: none;
+        border-radius: 0.375rem;
+        outline: 0;
+        background-color: transparent;
+        color: var(--color-gray-900);
+        font-family: inherit;
+        font-size: 1rem;
+        font-weight: normal;
+
+        &:focus {
+            outline: 0;
+            box-shadow: none;
+        }
+    }
+
+    .ActionButtons {
+        box-sizing: border-box;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.125rem;
+        height: 100%;
+        border: none;
+        border-radius: 0.25rem;
+        padding: 0;
+    }
+
+    .StartAdornment,
+    .Clear,
+    .Trigger {
+        box-sizing: border-box;
+        flex: 0 0 1.5rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 1.5rem;
+        height: 1.5rem;
+        border: none;
+        border-radius: 0.25rem;
+        padding: 0;
+        background: none;
+        color: var(--color-gray-500);
+        cursor: pointer;
+
+        &[data-disabled] {
+            cursor: default;
+        }
+
+        &:hover {
+            color: var(--color-gray-700);
+            background-color: var(--color-gray-100);
+        }
+    }
+
+    .StartAdornment {
+        color: var(--color-gray-600);
+    }
+
+    .Clear {
+        &[data-starting-style],
+        &[data-ending-style] {
+            opacity: 0;
+        }
+    }
+
+    .ClearIcon,
+    .TriggerIcon {
+        width: 1rem;
+        height: 1rem;
+    }
+
+    .Positioner {
+        outline: 0;
+        z-index: 12000;
+    }
+
+    .Popup {
+        box-sizing: border-box;
+        width: var(--anchor-width);
+        max-width: var(--available-width);
+        max-height: min(var(--available-height), 24rem);
+        border-radius: 0.5rem;
+        padding-block: 0.5rem;
+        outline: 1px solid var(--color-popup-outline);
+        overflow-y: auto;
+        overscroll-behavior: contain;
+        scroll-padding-block: 0.5rem;
+        background-color: var(--color-surface-elevated);
+        color: var(--color-gray-900);
+        box-shadow:
+            0 10px 15px -3px var(--color-popup-shadow),
+            0 4px 6px -4px var(--color-popup-shadow);
+        transform-origin: var(--transform-origin);
+        transition:
+            opacity 0.1s,
+            transform 0.1s;
+
+        &[data-starting-style],
+        &[data-ending-style] {
+            opacity: 0;
+            transform: scale(0.95);
+        }
+    }
+
+    .Viewport {
+        box-sizing: border-box;
+    }
+
+    .Status:not(:empty),
+    .Empty:not(:empty) {
+        box-sizing: border-box;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.5rem 1rem;
+        color: var(--color-gray-600);
+        font-size: 0.925rem;
+        line-height: 1rem;
+    }
+
+    .List {
+        box-sizing: border-box;
+        position: relative;
+        overflow-y: auto;
+        max-height: min(var(--available-height), 24rem);
+        scroll-padding-block: 0.5rem;
+    }
+
+    .Item {
+        box-sizing: border-box;
+        position: relative;
+        display: grid;
+        grid-template-columns: 1fr;
+        align-items: center;
+        gap: 0.5rem;
+        padding-block: 0.5rem;
+        padding-left: 1rem;
+        padding-right: 1rem;
+        outline: 0;
+        cursor: default;
+        color: inherit;
+        font-size: 1rem;
+        line-height: 1rem;
+        -webkit-user-select: none;
+        user-select: none;
+
+        &[data-highlighted] {
+            z-index: 0;
+        }
+
+        &[data-highlighted]::before {
+            content: "";
+            z-index: -1;
+            position: absolute;
+            inset-block: 0;
+            inset-inline: 0.5rem;
+            border-radius: 0.25rem;
+            background-color: var(--color-surface-hover);
+        }
+
+        &[data-disabled] {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+    }
+
+    .ItemText {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    .Spinner {
+        box-sizing: border-box;
+        width: 0.75rem;
+        height: 0.75rem;
+        border-radius: 50%;
+        border: 1px solid currentColor;
+        border-right-color: transparent;
+        animation: autocomplete-spinner 0.75s linear infinite;
+    }
+
+    @keyframes autocomplete-spinner {
+        100% {
+            transform: rotate(360deg);
+        }
+    }
+}

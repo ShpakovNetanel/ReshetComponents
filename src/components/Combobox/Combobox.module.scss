@@ -103,7 +103,7 @@
     color: var(--color-gray-500);
     border-radius: 0.25rem;
     cursor: pointer;
-    
+
     &[data-disabled] {
       cursor: default;
     }
@@ -277,5 +277,21 @@
     width: 20px;
     flex-shrink: 0;
     align-self: stretch;
+  }
+
+  .Spinner {
+    box-sizing: border-box;
+    width: 0.75rem;
+    height: 0.75rem;
+    border-radius: 50%;
+    border: 1px solid currentColor;
+    border-right-color: transparent;
+    animation: autocompleteSpinner 0.75s linear infinite;
+  }
+
+  @keyframes autocompleteSpinner {
+    100% {
+      transform: rotate(360deg);
+    }
   }
 }

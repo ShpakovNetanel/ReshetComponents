@@ -17,6 +17,7 @@ The package exports its public components from [src/index.ts](../index.ts).
 Main component exports:
 
 - `Accordion`
+- `AutoComplete`
 - `Button`
 - `Calendar`
 - `Chip`
@@ -100,7 +101,7 @@ Supported modes:
 Important popup note:
 
 - `syncDocumentTheme` defaults to `true`.
-- Keep it enabled when using portaled components such as `Select`, `Combobox`, `DatePicker`, `Menu`, `Dialog`, `Drawer`, `Tooltip`, and `Toast`.
+- Keep it enabled when using portaled components such as `Select`, `Combobox`, `AutoComplete`, `DatePicker`, `Menu`, `Dialog`, `Drawer`, `Tooltip`, and `Toast`.
 - It mirrors `data-theme` to `document.documentElement`, so popup surfaces inherit the same light/dark tokens as the provider subtree.
 
 Inside a provider, `useReshetTheme()` returns:
